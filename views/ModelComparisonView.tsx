@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, BarChart, Bar, ScatterChart, Scatter, ReferenceLine, ReferenceDot } from 'recharts';
 import { MLModelType } from '../types';
-import { Sliders, Activity } from 'lucide-react';
+import { Sliders, Activity, TrendingUp } from 'lucide-react';
 
 // --- DATA & CONFIGURATION ---
 
@@ -83,6 +83,82 @@ const HYPERPARAMETERS = {
   ]
 };
 
+// Impact Simulation Data
+interface ParamImpact {
+  paramName: string;
+  data: { x: number | string, y: number }[];
+  labelX: string;
+}
+
+const MODEL_IMPACTS: Record<MLModelType, ParamImpact[]> = {
+  [MLModelType.LOGISTIC_REGRESSION]: [
+    {
+      paramName: 'C (Inverse Reg)',
+      labelX: 'C Value (Log Scale)',
+      data: [
+        { x: '0.001', y: 0.65 }, { x: '0.01', y: 0.72 }, { x: '0.1', y: 0.82 }, { x: '1.0', y: 0.85 }, { x: '10', y: 0.84 }, { x: '100', y: 0.83 }
+      ]
+    }
+  ],
+  [MLModelType.RANDOM_FOREST]: [
+    {
+      paramName: 'n_estimators',
+      labelX: 'Number of Trees',
+      data: [
+        { x: 10, y: 0.78 }, { x: 50, y: 0.88 }, { x: 100, y: 0.91 }, { x: 200, y: 0.92 }, { x: 500, y: 0.925 }
+      ]
+    },
+    {
+      paramName: 'max_depth',
+      labelX: 'Max Depth',
+      data: [
+        { x: 2, y: 0.70 }, { x: 5, y: 0.82 }, { x: 10, y: 0.89 }, { x: 20, y: 0.91 }, { x: 50, y: 0.88 } // Overfitting at 50
+      ]
+    }
+  ],
+  [MLModelType.SVM]: [
+    {
+      paramName: 'C (Regularization)',
+      labelX: 'C Value',
+      data: [
+         { x: '0.1', y: 0.75 }, { x: '1', y: 0.86 }, { x: '10', y: 0.84 }, { x: '100', y: 0.81 }
+      ]
+    },
+    {
+      paramName: 'gamma',
+      labelX: 'Gamma',
+      data: [
+         { x: '0.001', y: 0.70 }, { x: '0.01', y: 0.82 }, { x: '0.1', y: 0.88 }, { x: '1', y: 0.75 }, { x: '10', y: 0.65 }
+      ]
+    }
+  ],
+  [MLModelType.KNN]: [
+    {
+      paramName: 'n_neighbors',
+      labelX: 'k Neighbors',
+      data: [
+        { x: 1, y: 0.74 }, { x: 3, y: 0.81 }, { x: 5, y: 0.85 }, { x: 10, y: 0.83 }, { x: 20, y: 0.79 }, { x: 50, y: 0.72 }
+      ]
+    }
+  ],
+  [MLModelType.XGBOOST]: [
+    {
+      paramName: 'learning_rate',
+      labelX: 'Learning Rate',
+      data: [
+        { x: 0.01, y: 0.82 }, { x: 0.05, y: 0.89 }, { x: 0.1, y: 0.93 }, { x: 0.3, y: 0.91 }, { x: 0.5, y: 0.86 }, { x: 1.0, y: 0.78 }
+      ]
+    },
+    {
+      paramName: 'n_estimators',
+      labelX: 'Boosting Rounds',
+      data: [
+        { x: 50, y: 0.85 }, { x: 100, y: 0.91 }, { x: 200, y: 0.93 }, { x: 500, y: 0.935 }
+      ]
+    }
+  ]
+};
+
 // Visualization Data Generators
 const generateSigmoid = () => Array.from({ length: 20 }, (_, i) => ({ x: i - 10, y: 1 / (1 + Math.exp(-(i - 10))) }));
 const generateTrees = () => Array.from({ length: 10 }, (_, i) => ({ trees: (i + 1) * 10, accuracy: 0.7 + (0.25 * (1 - Math.exp(-0.3 * i))) }));
@@ -102,6 +178,13 @@ const generateKNNData = () => [
 export const ModelComparisonView: React.FC = () => {
   const [modelA, setModelA] = useState<MLModelType>(MLModelType.LOGISTIC_REGRESSION);
   const [modelB, setModelB] = useState<MLModelType>(MLModelType.XGBOOST);
+  
+  const [paramIdxA, setParamIdxA] = useState(0);
+  const [paramIdxB, setParamIdxB] = useState(0);
+
+  // Reset param selection when model changes
+  useEffect(() => setParamIdxA(0), [modelA]);
+  useEffect(() => setParamIdxB(0), [modelB]);
 
   const renderVisual = (model: MLModelType, color: string) => {
     switch (model) {
@@ -307,6 +390,75 @@ export const ModelComparisonView: React.FC = () => {
                 </div>
             </div>
         </div>
+      </div>
+
+      {/* Hyperparameter Sensitivity Analysis Section */}
+      <div className="mt-16 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
+         <div className="mb-6 border-b border-slate-800 pb-4">
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+               <TrendingUp size={24} className="text-fuchsia-400" /> 
+               Hyperparameter Sensitivity Analysis
+            </h3>
+            <p className="text-slate-400 text-sm mt-1">
+              Visualize how critical hyperparameters impact performance metric (Accuracy) for the selected models.
+            </p>
+         </div>
+
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Chart for Model A */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                 <span className="text-sm font-bold text-indigo-400">{modelA}</span>
+                 <select 
+                   value={paramIdxA}
+                   onChange={(e) => setParamIdxA(Number(e.target.value))}
+                   className="bg-slate-800 text-xs text-slate-300 p-1.5 rounded border border-slate-700 focus:outline-none"
+                 >
+                   {MODEL_IMPACTS[modelA].map((p, i) => (
+                     <option key={i} value={i}>Effect of {p.paramName}</option>
+                   ))}
+                 </select>
+              </div>
+              <div className="h-48 bg-slate-950 rounded-lg border border-slate-800 p-2">
+                <ResponsiveContainer width="100%" height="100%">
+                   <LineChart data={MODEL_IMPACTS[modelA][paramIdxA].data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                      <XAxis dataKey="x" stroke="#64748b" fontSize={10} label={{ value: MODEL_IMPACTS[modelA][paramIdxA].labelX, position: 'insideBottom', offset: -4, fill: '#64748b', fontSize: 10 }} />
+                      <YAxis stroke="#64748b" fontSize={10} domain={['auto', 'auto']} />
+                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                      <Line type="monotone" dataKey="y" stroke="#818cf8" strokeWidth={2} dot={{ r: 3 }} name="Accuracy" />
+                   </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Chart for Model B */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                 <span className="text-sm font-bold text-emerald-400">{modelB}</span>
+                 <select 
+                   value={paramIdxB}
+                   onChange={(e) => setParamIdxB(Number(e.target.value))}
+                   className="bg-slate-800 text-xs text-slate-300 p-1.5 rounded border border-slate-700 focus:outline-none"
+                 >
+                   {MODEL_IMPACTS[modelB].map((p, i) => (
+                     <option key={i} value={i}>Effect of {p.paramName}</option>
+                   ))}
+                 </select>
+              </div>
+              <div className="h-48 bg-slate-950 rounded-lg border border-slate-800 p-2">
+                <ResponsiveContainer width="100%" height="100%">
+                   <LineChart data={MODEL_IMPACTS[modelB][paramIdxB].data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                      <XAxis dataKey="x" stroke="#64748b" fontSize={10} label={{ value: MODEL_IMPACTS[modelB][paramIdxB].labelX, position: 'insideBottom', offset: -4, fill: '#64748b', fontSize: 10 }} />
+                      <YAxis stroke="#64748b" fontSize={10} domain={['auto', 'auto']} />
+                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                      <Line type="monotone" dataKey="y" stroke="#34d399" strokeWidth={2} dot={{ r: 3 }} name="Accuracy" />
+                   </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+         </div>
       </div>
     </div>
   );
