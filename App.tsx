@@ -32,10 +32,12 @@ const NAV_ITEMS: NavigationItem[] = [
     label: 'Foundations', 
     icon: <BookOpen size={20} />,
     subItems: [
-        { id: 'math-primer', label: 'Math Primer' },
-        { id: 'python-core', label: 'Python Core' },
-        { id: 'data-stack', label: 'DS Libraries' },
-        { id: 'gradient-descent', label: 'Optimization' }
+        { id: 'math-primer', label: '1. Math Primer' },
+        { id: 'python-core', label: '2. Python Core' },
+        { id: 'learning-definition', label: '3. What is Learning?' },
+        { id: 'data-preprocessing', label: '4. Data & Scaling' },
+        { id: 'optimization', label: '5. Optimization' },
+        { id: 'bias-variance', label: '6. Bias-Variance' }
     ]
   },
   { 
