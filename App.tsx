@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ViewSection, NavigationItem } from './types';
-import { OptimizationView } from './views/OptimizationView';
+import { FoundationsView } from './views/FoundationsView';
 import { RegressionView } from './views/RegressionView';
 import { ClassificationView } from './views/ClassificationView';
 import { UnsupervisedView } from './views/UnsupervisedView';
@@ -32,7 +32,10 @@ const NAV_ITEMS: NavigationItem[] = [
     label: 'Foundations', 
     icon: <BookOpen size={20} />,
     subItems: [
-        { id: 'gradient-descent', label: 'Gradient Descent' }
+        { id: 'math-primer', label: 'Math Primer' },
+        { id: 'python-core', label: 'Python Core' },
+        { id: 'data-stack', label: 'DS Libraries' },
+        { id: 'gradient-descent', label: 'Optimization' }
     ]
   },
   { 
@@ -117,7 +120,7 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (currentView) {
-      case ViewSection.FOUNDATIONS: return <OptimizationView />;
+      case ViewSection.FOUNDATIONS: return <FoundationsView />;
       case ViewSection.REGRESSION: return <RegressionView />;
       case ViewSection.CLASSIFICATION: return <ClassificationView />;
       case ViewSection.ENSEMBLE: return <EnsembleView />;
@@ -126,7 +129,7 @@ const App: React.FC = () => {
       case ViewSection.REINFORCEMENT: return <ReinforcementView />;
       case ViewSection.MODEL_COMPARISON: return <ModelComparisonView />;
       case ViewSection.PROJECT_LAB: return <ProjectLabView />;
-      default: return <OptimizationView />;
+      default: return <FoundationsView />;
     }
   };
 
