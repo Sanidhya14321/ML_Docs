@@ -35,9 +35,10 @@ const NAV_ITEMS: NavigationItem[] = [
         { id: 'math-primer', label: '1. Math Primer' },
         { id: 'python-core', label: '2. Python Core' },
         { id: 'learning-definition', label: '3. What is Learning?' },
-        { id: 'data-preprocessing', label: '4. Data & Scaling' },
-        { id: 'optimization', label: '5. Optimization' },
-        { id: 'bias-variance', label: '6. Bias-Variance' }
+        { id: 'types-of-learning', label: '4. Types of Learning' },
+        { id: 'data-preprocessing', label: '5. Data & Scaling' },
+        { id: 'optimization', label: '6. Optimization' },
+        { id: 'bias-variance', label: '7. Bias-Variance' }
     ]
   },
   { 
@@ -227,7 +228,6 @@ const App: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500"></div>
             <div>
-              <div className="text-xs font-bold text-white">Senior Scientist</div>
               <div className="text-[10px] text-slate-500">Encyclopedia Mode</div>
             </div>
           </div>

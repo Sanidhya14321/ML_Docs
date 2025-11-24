@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { CodeBlock } from '../components/CodeBlock';
 import { MathBlock } from '../components/MathBlock';
@@ -65,6 +65,15 @@ const parabolaData = Array.from({ length: 41 }, (_, i) => {
   const tangent = 4 * x - 4;
   return { x, y, tangent: (x > 0 && x < 4) ? tangent : null }; 
 });
+
+// 8. Types of Learning (Radar Chart Data)
+const typesLearningData = [
+  { subject: 'Labeled Data Needed', Supervised: 100, Unsupervised: 0, Reinforcement: 20 },
+  { subject: 'Pattern Discovery', Supervised: 30, Unsupervised: 100, Reinforcement: 60 },
+  { subject: 'Real-time Feedback', Supervised: 10, Unsupervised: 0, Reinforcement: 100 },
+  { subject: 'Prediction Accuracy', Supervised: 100, Unsupervised: 40, Reinforcement: 80 },
+  { subject: 'Human Supervision', Supervised: 100, Unsupervised: 20, Reinforcement: 50 },
+];
 
 // --- SUB-COMPONENTS ---
 
@@ -283,24 +292,44 @@ squares = [x**2 for x in range(10)]
 data = [10, 20, 30, 40, 50]
 train = data[:3]  # [10, 20, 30]
 
-# Lambda
+# Lambda Functions
 add = lambda x, y: x + y`} />
                </div>
             </div>
             
             <div className="space-y-8">
                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
-                  <h3 className="text-lg font-bold text-white mb-4">Pandas & NumPy</h3>
-                  <CodeBlock code={`import pandas as pd
+                  <h3 className="text-lg font-bold text-white mb-4">Object Oriented Programming (Models)</h3>
+                   <p className="text-slate-400 text-sm mb-4">Understanding Classes is vital for building models in PyTorch/Sklearn.</p>
+                  <CodeBlock code={`class LinearModel:
+    def __init__(self, lr=0.01):
+        self.lr = lr
+        self.weights = None
+        
+    def fit(self, X, y):
+        # Training logic uses self.lr
+        pass
+        
+    def predict(self, X):
+        return X * self.weights`} />
+               </div>
+            </div>
+
+            <div className="lg:col-span-2">
+               <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
+                  <h3 className="text-lg font-bold text-white mb-4">Data Manipulation with Pandas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <CodeBlock code={`import pandas as pd
 import numpy as np
 
-# Broadcasting
+# Broadcasting (NumPy)
 arr = np.array([1, 2]) * 2 # [2, 4]
 
-# DataFrame Operations
+# Filtering (Pandas)
 df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
 subset = df[df['A'] > 1]`} />
-                  <div className="mt-4"><DataFrameViz /></div>
+                    <DataFrameViz />
+                  </div>
                </div>
             </div>
         </div>
@@ -351,10 +380,56 @@ model = LinearRegression().fit(X, y)`}
         </AlgorithmCard>
       </section>
 
+      {/* --- SECTION 3.5: TYPES OF LEARNING --- */}
+      <section id="types-of-learning" className="scroll-mt-24">
+        <div className="flex items-center gap-3 mb-8">
+            <span className="text-sm font-mono text-slate-500">04</span>
+            <h2 className="text-2xl font-bold text-yellow-400 uppercase tracking-widest">Types of Learning</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+        </div>
+        
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-lg">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                 <div>
+                    <h3 className="text-xl font-serif font-bold text-white mb-6">The Three Paradigms</h3>
+                    <div className="space-y-6">
+                        <div className="p-4 rounded-lg bg-indigo-900/20 border border-indigo-500/30">
+                            <h4 className="font-bold text-indigo-400 mb-1">Supervised Learning</h4>
+                            <p className="text-sm text-slate-400">Learning with a teacher. The model learns from labeled examples (Input X -> Output Y).</p>
+                        </div>
+                        <div className="p-4 rounded-lg bg-emerald-900/20 border border-emerald-500/30">
+                            <h4 className="font-bold text-emerald-400 mb-1">Unsupervised Learning</h4>
+                            <p className="text-sm text-slate-400">Learning without a teacher. The model finds hidden structures or patterns in unlabeled data.</p>
+                        </div>
+                        <div className="p-4 rounded-lg bg-rose-900/20 border border-rose-500/30">
+                            <h4 className="font-bold text-rose-400 mb-1">Reinforcement Learning</h4>
+                            <p className="text-sm text-slate-400">Learning by trial and error. An agent learns to make decisions by receiving rewards/penalties.</p>
+                        </div>
+                    </div>
+                 </div>
+                 <div className="h-80 w-full relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={typesLearningData}>
+                            <PolarGrid stroke="#334155" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                            <Radar name="Supervised" dataKey="Supervised" stroke="#818cf8" fill="#818cf8" fillOpacity={0.3} />
+                            <Radar name="Unsupervised" dataKey="Unsupervised" stroke="#34d399" fill="#34d399" fillOpacity={0.3} />
+                            <Radar name="Reinforcement" dataKey="Reinforcement" stroke="#f43f5e" fill="#f43f5e" fillOpacity={0.3} />
+                            <Legend />
+                            <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+                        </RadarChart>
+                    </ResponsiveContainer>
+                    <p className="text-xs text-center text-slate-500 mt-2">Paradigm Comparison</p>
+                 </div>
+             </div>
+        </div>
+      </section>
+
       {/* --- SECTION 4: DATA PREPROCESSING --- */}
       <section id="data-preprocessing" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">04</span>
+            <span className="text-sm font-mono text-slate-500">05</span>
             <h2 className="text-2xl font-bold text-orange-400 uppercase tracking-widest">Data Processing</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -433,7 +508,7 @@ X_norm = min_max.fit_transform(X)`}
       {/* --- SECTION 5: OPTIMIZATION --- */}
       <section id="optimization" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">05</span>
+            <span className="text-sm font-mono text-slate-500">06</span>
             <h2 className="text-2xl font-bold text-sky-400 uppercase tracking-widest">Optimization</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -477,7 +552,7 @@ for i in range(epochs):
       {/* --- SECTION 6: BIAS-VARIANCE TRADEOFF --- */}
       <section id="bias-variance" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">06</span>
+            <span className="text-sm font-mono text-slate-500">07</span>
             <h2 className="text-2xl font-bold text-rose-400 uppercase tracking-widest">Bias-Variance Tradeoff</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
