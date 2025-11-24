@@ -395,7 +395,7 @@ model = LinearRegression().fit(X, y)`}
                     <div className="space-y-6">
                         <div className="p-4 rounded-lg bg-indigo-900/20 border border-indigo-500/30">
                             <h4 className="font-bold text-indigo-400 mb-1">Supervised Learning</h4>
-                            <p className="text-sm text-slate-400">Learning with a teacher. The model learns from labeled examples (Input X -> Output Y).</p>
+                            <p className="text-sm text-slate-400">Learning with a teacher. The model learns from labeled examples (Input X &rarr; Output Y).</p>
                         </div>
                         <div className="p-4 rounded-lg bg-emerald-900/20 border border-emerald-500/30">
                             <h4 className="font-bold text-emerald-400 mb-1">Unsupervised Learning</h4>
