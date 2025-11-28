@@ -1,3 +1,5 @@
+import React from 'react';
+
 export enum ViewSection {
   FOUNDATIONS = 'Foundations',
   REGRESSION = 'Regression',

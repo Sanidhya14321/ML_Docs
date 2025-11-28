@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ReferenceArea } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { CodeBlock } from '../components/CodeBlock';
 import { MathBlock } from '../components/MathBlock';
@@ -16,15 +16,15 @@ const learningDefData = Array.from({ length: 40 }, (_, i) => {
   return { x, y, trueFx, learnedFx };
 });
 
-// 2. Bias-Variance Tradeoff
+// 2. Bias-Variance Tradeoff (Refined for clearer U-Shape)
 const biasVarianceData = Array.from({ length: 20 }, (_, i) => {
   const complexity = i + 1;
-  // High Bias at low complexity, Low Bias at high complexity
-  const biasSq = 5 * Math.exp(-0.3 * complexity); 
-  // Low Variance at low complexity, High Variance at high complexity
-  const variance = 0.05 * Math.pow(complexity, 1.8);
+  // Bias decreases as complexity increases
+  const biasSq = 8 * Math.exp(-0.4 * complexity); 
+  // Variance increases as complexity increases
+  const variance = 0.02 * Math.pow(complexity, 2.5);
   // Irreducible error
-  const sigma = 0.5;
+  const sigma = 1;
   const totalError = biasSq + variance + sigma;
   return { complexity, biasSq, variance, totalError };
 });
@@ -582,15 +582,20 @@ model = RandomForest(max_depth=10)`}
                         <YAxis stroke="#94a3b8" label={{ value: 'Error', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
                         <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
                         <Legend />
-                        <Line name="Bias² (Underfitting)" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
-                        <Line name="Variance (Overfitting)" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
-                        <Line name="Total Error" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} />
+                        
+                        {/* Zones */}
+                        <ReferenceArea x1={1} x2={5} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting", position: 'insideTopLeft', fill: '#ef4444', fontSize: 10 }} />
+                        <ReferenceArea x1={13} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting", position: 'insideTopRight', fill: '#818cf8', fontSize: 10 }} />
+                        
+                        <Line name="Bias² (Simplistic)" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
+                        <Line name="Variance (Complex)" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
+                        <Line name="Total Error (U-Curve)" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} />
                         
                         {/* Optimal Line */}
-                        <ReferenceLine x={8} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal Complexity", fill: "#10b981", position: "top" }} />
+                        <ReferenceLine x={7.8} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal Complexity", fill: "#10b981", position: "top" }} />
                     </ComposedChart>
                 </ResponsiveContainer>
-                <p className="text-xs text-center text-slate-500 mt-2">The U-Shape Curve: Finding the balance between Underfitting and Overfitting.</p>
+                <p className="text-xs text-center text-slate-500 mt-2">The U-Shape Curve: Finding the balance between Underfitting (High Bias) and Overfitting (High Variance).</p>
             </div>
         </AlgorithmCard>
       </section>
