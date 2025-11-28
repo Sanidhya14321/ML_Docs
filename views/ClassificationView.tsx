@@ -144,19 +144,19 @@ probs = clf.predict_proba(X_test)`}
         hyperparameters={[
           {
             name: 'C',
-            description: 'Inverse of regularization strength; must be a positive float. Smaller values specify stronger regularization.',
+            description: 'Inverse of regularization strength. Smaller values (e.g., 0.01) increase regularization intensity (reducing overfitting), while larger values (e.g., 100) reduce regularization (fitting training data more closely).',
             default: '1.0',
-            range: '[0, infinity)'
+            range: '(0, infinity)'
           },
           {
             name: 'penalty',
-            description: 'Used to specify the norm used in the penalization.',
+            description: 'Specifies the norm used in penalization. \'l1\' creates sparse models (feature selection), while \'l2\' shrinks all coefficients efficiently.',
             default: 'l2',
             range: 'l1, l2, elasticnet, none'
           },
           {
             name: 'solver',
-            description: 'Algorithm to use in the optimization problem.',
+            description: 'The algorithm for optimization. Use \'liblinear\' for small datasets, and \'sag\' or \'saga\' for faster convergence on large datasets.',
             default: 'lbfgs',
             range: 'liblinear, newton-cg, lbfgs, sag, saga'
           }
