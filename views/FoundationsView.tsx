@@ -17,15 +17,15 @@ const learningDefData = Array.from({ length: 40 }, (_, i) => {
 });
 
 // 2. Bias-Variance Tradeoff (Refined for clearer U-Shape)
-const biasVarianceData = Array.from({ length: 20 }, (_, i) => {
-  const complexity = i + 1;
-  // Bias decreases as complexity increases
-  const biasSq = 8 * Math.exp(-0.4 * complexity); 
-  // Variance increases as complexity increases
-  const variance = 0.02 * Math.pow(complexity, 2.5);
-  // Irreducible error
-  const sigma = 1;
-  const totalError = biasSq + variance + sigma;
+const biasVarianceData = Array.from({ length: 42 }, (_, i) => {
+  const complexity = (i / 2) + 1; // Range 1 to ~21
+  // Bias decreases exponentially (Underfitting -> Good)
+  const biasSq = 45 * Math.exp(-0.32 * complexity); 
+  // Variance increases polynomially (Good -> Overfitting)
+  const variance = 0.012 * Math.pow(complexity, 3.1);
+  // Irreducible error constant
+  const noise = 3;
+  const totalError = biasSq + variance + noise;
   return { complexity, biasSq, variance, totalError };
 });
 
@@ -574,28 +574,28 @@ model = RandomForest(max_depth=10)`}
             pros={['Fundamental framework for diagnostics', 'Explains Overfitting/Underfitting', 'Guides regularization']}
             cons={['Theoretical concept (cannot exactly calculate bias/variance in practice)']}
         >
-            <div className="h-72 w-full">
+            <div className="h-80 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={biasVarianceData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="complexity" stroke="#94a3b8" label={{ value: 'Model Complexity', position: 'insideBottom', offset: -10, fill: '#64748b' }} />
+                        <XAxis dataKey="complexity" type="number" domain={[1, 20]} stroke="#94a3b8" label={{ value: 'Model Complexity', position: 'insideBottom', offset: -10, fill: '#64748b' }} />
                         <YAxis stroke="#94a3b8" label={{ value: 'Error', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-                        <Legend />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} formatter={(value: number) => value.toFixed(2)} />
+                        <Legend verticalAlign="top" height={36} />
                         
                         {/* Zones */}
-                        <ReferenceArea x1={1} x2={5} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting", position: 'insideTopLeft', fill: '#ef4444', fontSize: 10 }} />
-                        <ReferenceArea x1={13} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting", position: 'insideTopRight', fill: '#818cf8', fontSize: 10 }} />
-                        
-                        <Line name="Bias² (Simplistic)" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
-                        <Line name="Variance (Complex)" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
-                        <Line name="Total Error (U-Curve)" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} />
+                        <ReferenceArea x1={1} x2={4.5} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting", position: 'insideTop', fill: '#ef4444', fontSize: 11 }} />
+                        <ReferenceArea x1={12} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting", position: 'insideTop', fill: '#818cf8', fontSize: 11 }} />
                         
                         {/* Optimal Line */}
-                        <ReferenceLine x={7.8} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal Complexity", fill: "#10b981", position: "top" }} />
+                        <ReferenceLine x={7.8} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal", fill: "#10b981", position: "insideTop", fontSize: 11 }} />
+                        
+                        <Line name="Bias²" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
+                        <Line name="Variance" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
+                        <Line name="Total Error" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} />
                     </ComposedChart>
                 </ResponsiveContainer>
-                <p className="text-xs text-center text-slate-500 mt-2">The U-Shape Curve: Finding the balance between Underfitting (High Bias) and Overfitting (High Variance).</p>
+                <p className="text-xs text-center text-slate-500 mt-2">Low Complexity = High Bias (Underfitting). High Complexity = High Variance (Overfitting).</p>
             </div>
         </AlgorithmCard>
       </section>
