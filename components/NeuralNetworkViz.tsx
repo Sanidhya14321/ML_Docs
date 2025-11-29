@@ -1,159 +1,160 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 
 export const NeuralNetworkViz: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Refs for nodes to calculate positions
   const inputRefs = useRef<(HTMLDivElement | null)[]>([]);
   const hiddenRefs = useRef<(HTMLDivElement | null)[]>([]);
   const outputRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // State for activation animation
+  // Store style objects for edges
+  const [edges1, setEdges1] = useState<{style: React.CSSProperties}[]>([]);
+  const [edges2, setEdges2] = useState<{style: React.CSSProperties}[]>([]);
+  
+  // State for activation animation sequence (0: Input, 1: Hidden, 2: Output)
   const [activeLayer, setActiveLayer] = useState<0 | 1 | 2>(0);
 
-  // Data layers
+  // Network Topology
   const inputNodes = [1, 2, 3];
   const hiddenNodes = [1, 2, 3, 4];
   const outputNodes = [1, 2];
 
-  // Animation Loop for Canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+  // Logic to calculate CSS geometry for connecting lines
+  const updateLines = () => {
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const getGeometry = (n1: HTMLDivElement, n2: HTMLDivElement): React.CSSProperties => {
+        const r1 = n1.getBoundingClientRect();
+        const r2 = n2.getBoundingClientRect();
+        
+        // Calculate centers relative to container
+        const x1 = r1.left - containerRect.left + r1.width / 2;
+        const y1 = r1.top - containerRect.top + r1.height / 2;
+        const x2 = r2.left - containerRect.left + r2.width / 2;
+        const y2 = r2.top - containerRect.top + r2.height / 2;
 
-    let animationFrameId: number;
-    let startTime = performance.now();
+        const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-    const getCoords = (refs: React.MutableRefObject<(HTMLDivElement | null)[]>) => {
-      return refs.current.map(el => {
-        if (!el) return { x: 0, y: 0 };
-        const rect = el.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
         return {
-          x: rect.left - containerRect.left + rect.width / 2,
-          y: rect.top - containerRect.top + rect.height / 2
+            position: 'absolute',
+            top: y1,
+            left: x1,
+            width: length,
+            height: 1, 
+            transform: `rotate(${angle}deg)`,
+            transformOrigin: '0 0',
+            zIndex: 0,
+            transition: 'opacity 0.5s ease, height 0.3s ease',
+            pointerEvents: 'none'
         };
-      });
     };
 
-    const draw = (time: number) => {
-      // Handle Resize
-      canvas.width = container.offsetWidth;
-      canvas.height = container.offsetHeight;
-      
-      const inputs = getCoords(inputRefs);
-      const hiddens = getCoords(hiddenRefs);
-      const outputs = getCoords(outputRefs);
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Cycle time: 3000ms
-      // 0-1000ms: Input -> Hidden
-      // 1000-2000ms: Hidden -> Output
-      // 2000-3000ms: Pause/Reset
-      const duration = 3000;
-      const progress = (time - startTime) % duration;
-      
-      // Update React State for Node Glow (roughly aligned with phases)
-      if (progress < 1000) setActiveLayer(0);
-      else if (progress < 2000) setActiveLayer(1);
-      else setActiveLayer(2);
-
-      // --- Helper to draw connections ---
-      const drawConnections = (
-        layerA: {x: number, y: number}[], 
-        layerB: {x: number, y: number}[], 
-        phaseStart: number, 
-        phaseEnd: number,
-        colorStart: string,
-        colorEnd: string
-      ) => {
-        const phaseProgress = Math.max(0, Math.min(1, (progress - phaseStart) / (phaseEnd - phaseStart)));
-        const isActivePhase = progress >= phaseStart && progress < phaseEnd;
-
-        layerA.forEach(a => {
-          layerB.forEach(b => {
-            // Static Line
-            const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-            grad.addColorStop(0, colorStart);
-            grad.addColorStop(1, colorEnd);
-            
-            ctx.beginPath();
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = 0.2;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-
-            // Animated Packet
-            if (isActivePhase) {
-              const px = a.x + (b.x - a.x) * phaseProgress;
-              const py = a.y + (b.y - a.y) * phaseProgress;
-              
-              ctx.beginPath();
-              ctx.fillStyle = '#fff';
-              ctx.globalAlpha = 1;
-              ctx.shadowBlur = 10;
-              ctx.shadowColor = 'white';
-              ctx.arc(px, py, 2, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.shadowBlur = 0; // Reset
+    // Edges between Input and Hidden
+    const newEdges1: {style: React.CSSProperties}[] = [];
+    inputRefs.current.forEach(inNode => {
+        hiddenRefs.current.forEach(hidNode => {
+            if(inNode && hidNode) {
+                const style = getGeometry(inNode, hidNode);
+                style.background = 'linear-gradient(90deg, #6366f1, #94a3b8)'; // Indigo to Slate
+                newEdges1.push({ style });
             }
-          });
         });
-      };
+    });
+    setEdges1(newEdges1);
 
-      // Draw Input -> Hidden
-      drawConnections(inputs, hiddens, 0, 1000, 'rgba(99, 102, 241, 0.5)', 'rgba(148, 163, 184, 0.5)');
+    // Edges between Hidden and Output
+    const newEdges2: {style: React.CSSProperties}[] = [];
+    hiddenRefs.current.forEach(hidNode => {
+        outputRefs.current.forEach(outNode => {
+            if(hidNode && outNode) {
+                const style = getGeometry(hidNode, outNode);
+                style.background = 'linear-gradient(90deg, #94a3b8, #10b981)'; // Slate to Emerald
+                newEdges2.push({ style });
+            }
+        });
+    });
+    setEdges2(newEdges2);
+  };
 
-      // Draw Hidden -> Output
-      drawConnections(hiddens, outputs, 1000, 2000, 'rgba(148, 163, 184, 0.5)', 'rgba(16, 185, 129, 0.5)');
-
-      animationFrameId = requestAnimationFrame(draw);
+  // Recalculate lines on mount and resize
+  useLayoutEffect(() => {
+    updateLines();
+    window.addEventListener('resize', updateLines);
+    // Delay to allow layout to settle
+    const timer = setTimeout(updateLines, 200);
+    return () => {
+        window.removeEventListener('resize', updateLines);
+        clearTimeout(timer);
     };
+  }, []);
 
-    animationFrameId = requestAnimationFrame(draw);
-
-    return () => cancelAnimationFrame(animationFrameId);
+  // Animation Loop
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setActiveLayer(prev => (prev + 1) % 3 as 0|1|2);
+    }, 1200);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-64 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-around relative overflow-hidden p-8 shadow-inner">
-      {/* Canvas for Gradient Lines & Particles */}
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0" />
+    <div ref={containerRef} className="w-full h-64 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-around relative overflow-hidden p-8 shadow-inner select-none">
+       
+       {/* --- EDGES (Pure CSS Divs) --- */}
+       
+       {/* Input -> Hidden Edges */}
+       {edges1.map((edge, i) => (
+           <div 
+             key={`e1-${i}`} 
+             style={{
+               ...edge.style, 
+               opacity: activeLayer === 0 ? 0.8 : 0.15, 
+               height: activeLayer === 0 ? 2 : 1 
+             }} 
+           />
+       ))}
 
-      {/* Input Layer */}
-      <div className="flex flex-col justify-center space-y-6 z-10">
-        <div className="text-xs text-center text-slate-400 mb-2 font-mono uppercase tracking-wider">Input</div>
+       {/* Hidden -> Output Edges */}
+       {edges2.map((edge, i) => (
+           <div 
+             key={`e2-${i}`} 
+             style={{
+               ...edge.style, 
+               opacity: activeLayer === 1 ? 0.8 : 0.15,
+               height: activeLayer === 1 ? 2 : 1
+             }} 
+           />
+       ))}
+
+       {/* --- NODES (Flex Items) --- */}
+
+       {/* Input Layer */}
+       <div className="flex flex-col justify-center gap-6 z-10">
+        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Input</div>
         {inputNodes.map((n, i) => (
           <div 
             key={`in-${n}`}
             ref={el => { inputRefs.current[i] = el; }}
-            className={`w-8 h-8 rounded-full border-2 transition-all duration-300 ${
+            className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ease-in-out ${
               activeLayer === 0 
-                ? 'bg-indigo-500 border-white shadow-[0_0_20px_rgba(99,102,241,0.8)] scale-110' 
-                : 'bg-indigo-900/50 border-indigo-500/50'
+                ? 'bg-indigo-500 border-white shadow-[0_0_15px_rgba(99,102,241,0.6)] scale-110' 
+                : 'bg-indigo-900/40 border-indigo-500/40'
             }`}
           />
         ))}
       </div>
 
       {/* Hidden Layer */}
-      <div className="flex flex-col justify-center space-y-4 z-10">
-        <div className="text-xs text-center text-slate-400 mb-2 font-mono uppercase tracking-wider">Hidden</div>
+      <div className="flex flex-col justify-center gap-4 z-10">
+        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Hidden</div>
         {hiddenNodes.map((n, i) => (
           <div 
             key={`hid-${n}`}
             ref={el => { hiddenRefs.current[i] = el; }}
-            className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+            className={`w-6 h-6 rounded-full border-2 transition-all duration-500 ease-in-out ${
               activeLayer === 1
-                ? 'bg-slate-200 border-white shadow-[0_0_20px_rgba(255,255,255,0.8)] scale-110' 
+                ? 'bg-slate-200 border-white shadow-[0_0_15px_rgba(255,255,255,0.6)] scale-110' 
                 : 'bg-slate-800 border-slate-600'
             }`}
           />
@@ -161,26 +162,26 @@ export const NeuralNetworkViz: React.FC = () => {
       </div>
 
       {/* Output Layer */}
-      <div className="flex flex-col justify-center space-y-8 z-10">
-        <div className="text-xs text-center text-slate-400 mb-2 font-mono uppercase tracking-wider">Output</div>
+      <div className="flex flex-col justify-center gap-8 z-10">
+        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Output</div>
         {outputNodes.map((n, i) => (
           <div 
             key={`out-${n}`}
             ref={el => { outputRefs.current[i] = el; }}
-            className={`w-8 h-8 rounded-full border-2 transition-all duration-300 ${
+            className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ease-in-out ${
               activeLayer === 2
-                ? 'bg-emerald-500 border-white shadow-[0_0_20px_rgba(16,185,129,0.8)] scale-110' 
-                : 'bg-emerald-900/50 border-emerald-500/50'
+                ? 'bg-emerald-500 border-white shadow-[0_0_15px_rgba(16,185,129,0.6)] scale-110' 
+                : 'bg-emerald-900/40 border-emerald-500/40'
             }`}
           />
         ))}
       </div>
       
-      {/* Legend / Status Text */}
-      <div className="absolute bottom-2 right-4 text-[10px] font-mono text-slate-500">
-        {activeLayer === 0 && "Forward Pass: Input Features"}
-        {activeLayer === 1 && "Forward Pass: Hidden Activations"}
-        {activeLayer === 2 && "Forward Pass: Output Prediction"}
+      {/* Legend */}
+      <div className="absolute bottom-2 right-4 text-[10px] font-mono text-slate-500 opacity-70">
+        {activeLayer === 0 && "Step 1: Input Features"}
+        {activeLayer === 1 && "Step 2: Hidden Processing"}
+        {activeLayer === 2 && "Step 3: Prediction"}
       </div>
     </div>
   );
