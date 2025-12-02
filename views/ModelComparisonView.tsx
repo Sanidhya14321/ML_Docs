@@ -173,18 +173,117 @@ const generateKNNData = () => [
   { x: 20, y: 20, type: 'Other' }, { x: 80, y: 80, type: 'Other' }
 ];
 
-// --- COMPONENT ---
+// --- HELPER COMPONENTS ---
+
+interface SensitivityPanelProps {
+  model: MLModelType;
+  impacts: ParamImpact[];
+  color: string;
+}
+
+const SensitivityPanel: React.FC<SensitivityPanelProps> = ({ model, impacts, color }) => {
+  const [selectedParamIdx, setSelectedParamIdx] = useState(0);
+  const [sliderIndex, setSliderIndex] = useState(0);
+
+  // When model changes, reset param index
+  useEffect(() => {
+    setSelectedParamIdx(0);
+  }, [model]);
+
+  // When param (or model) changes, reset slider to middle
+  useEffect(() => {
+    if (impacts && impacts[selectedParamIdx]) {
+      setSliderIndex(Math.floor(impacts[selectedParamIdx].data.length / 2));
+    }
+  }, [selectedParamIdx, impacts, model]);
+
+  if (!impacts) return <div className="text-slate-500 text-sm">No sensitivity data available for this model.</div>;
+
+  const currentParam = impacts[selectedParamIdx];
+  const currentDataPoint = currentParam.data[sliderIndex];
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      {/* Header & Dropdown */}
+      <div className="flex justify-between items-center bg-slate-800/50 p-2 rounded-t-lg border-b border-slate-800">
+        <span className="text-sm font-bold pl-2" style={{ color }}>{model}</span>
+        <select 
+          value={selectedParamIdx}
+          onChange={(e) => setSelectedParamIdx(Number(e.target.value))}
+          className="bg-slate-900 text-xs text-slate-300 p-1.5 rounded border border-slate-700 focus:outline-none focus:border-indigo-500 cursor-pointer"
+        >
+          {impacts.map((p, i) => (
+            <option key={i} value={i}>Effect of {p.paramName}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Chart */}
+      <div className="h-48 bg-slate-950 rounded-lg border border-slate-800 p-2 relative">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={currentParam.data} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <XAxis 
+              dataKey="x" 
+              stroke="#64748b" 
+              fontSize={10} 
+              label={{ value: currentParam.labelX, position: 'insideBottom', offset: -4, fill: '#64748b', fontSize: 10 }} 
+            />
+            <YAxis stroke="#64748b" fontSize={10} domain={[0, 1]} tickFormatter={(val) => val.toFixed(1)} />
+            <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} formatter={(val: number) => [val.toFixed(2), 'Accuracy']} />
+            <Line 
+              type="monotone" 
+              dataKey="y" 
+              stroke={color} 
+              strokeWidth={2} 
+              dot={{ r: 3, fill: color }} 
+              activeDot={{ r: 6 }}
+              animationDuration={500}
+              name="Accuracy"
+            />
+            {/* Interactive Dot tracking the slider */}
+            <ReferenceDot 
+              x={currentDataPoint.x} 
+              y={currentDataPoint.y} 
+              r={6} 
+              fill="#ffffff" 
+              stroke={color} 
+              strokeWidth={2} 
+              isFront={true}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Interactive Slider Control */}
+      <div className="bg-slate-800 p-4 rounded-b-lg border border-t-0 border-slate-800 shadow-inner">
+        <div className="flex justify-between text-xs text-slate-400 mb-3 font-mono">
+          <span>Hyperparameter: <strong className="text-white text-sm ml-1">{currentDataPoint.x}</strong></span>
+          <span>Accuracy: <strong style={{ color }} className="text-sm ml-1">{(currentDataPoint.y * 100).toFixed(1)}%</strong></span>
+        </div>
+        <input 
+          type="range" 
+          min={0} 
+          max={currentParam.data.length - 1} 
+          value={sliderIndex}
+          onChange={(e) => setSliderIndex(Number(e.target.value))}
+          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+          style={{ accentColor: color }}
+        />
+        <div className="flex justify-between text-[10px] text-slate-600 mt-2 font-mono uppercase">
+           <span>Low</span>
+           <span>High</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- MAIN COMPONENT ---
 
 export const ModelComparisonView: React.FC = () => {
   const [modelA, setModelA] = useState<MLModelType>(MLModelType.LOGISTIC_REGRESSION);
   const [modelB, setModelB] = useState<MLModelType>(MLModelType.XGBOOST);
-  
-  const [paramIdxA, setParamIdxA] = useState(0);
-  const [paramIdxB, setParamIdxB] = useState(0);
-
-  // Reset param selection when model changes
-  useEffect(() => setParamIdxA(0), [modelA]);
-  useEffect(() => setParamIdxB(0), [modelB]);
 
   const renderVisual = (model: MLModelType, color: string) => {
     switch (model) {
@@ -283,7 +382,7 @@ export const ModelComparisonView: React.FC = () => {
 
       {/* Selectors */}
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-slate-900 p-4 rounded-t-lg border-b-4 border-indigo-500">
+        <div className="bg-slate-900 p-4 rounded-t-lg border-b-4 border-indigo-500 shadow-lg">
            <label className="block text-xs font-bold text-indigo-400 uppercase mb-2">Challenger A</label>
            <select 
              value={modelA} 
@@ -293,7 +392,7 @@ export const ModelComparisonView: React.FC = () => {
              {Object.values(MLModelType).map(m => <option key={m} value={m}>{m}</option>)}
            </select>
         </div>
-        <div className="bg-slate-900 p-4 rounded-t-lg border-b-4 border-emerald-500">
+        <div className="bg-slate-900 p-4 rounded-t-lg border-b-4 border-emerald-500 shadow-lg">
            <label className="block text-xs font-bold text-emerald-400 uppercase mb-2">Challenger B</label>
            <select 
              value={modelB} 
@@ -392,7 +491,7 @@ export const ModelComparisonView: React.FC = () => {
         </div>
       </div>
 
-      {/* Hyperparameter Sensitivity Analysis Section */}
+      {/* Hyperparameter Sensitivity Analysis Section (Interactive) */}
       <div className="mt-16 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
          <div className="mb-6 border-b border-slate-800 pb-4">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
@@ -400,64 +499,21 @@ export const ModelComparisonView: React.FC = () => {
                Hyperparameter Sensitivity Analysis
             </h3>
             <p className="text-slate-400 text-sm mt-1">
-              Visualize how critical hyperparameters impact performance metric (Accuracy) for the selected models.
+              Simulate hyperparameter tuning. Adjust the sliders below to see how critical parameters impact model accuracy on validation data.
             </p>
          </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Chart for Model A */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                 <span className="text-sm font-bold text-indigo-400">{modelA}</span>
-                 <select 
-                   value={paramIdxA}
-                   onChange={(e) => setParamIdxA(Number(e.target.value))}
-                   className="bg-slate-800 text-xs text-slate-300 p-1.5 rounded border border-slate-700 focus:outline-none"
-                 >
-                   {MODEL_IMPACTS[modelA].map((p, i) => (
-                     <option key={i} value={i}>Effect of {p.paramName}</option>
-                   ))}
-                 </select>
-              </div>
-              <div className="h-48 bg-slate-950 rounded-lg border border-slate-800 p-2">
-                <ResponsiveContainer width="100%" height="100%">
-                   <LineChart data={MODEL_IMPACTS[modelA][paramIdxA].data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                      <XAxis dataKey="x" stroke="#64748b" fontSize={10} label={{ value: MODEL_IMPACTS[modelA][paramIdxA].labelX, position: 'insideBottom', offset: -4, fill: '#64748b', fontSize: 10 }} />
-                      <YAxis stroke="#64748b" fontSize={10} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
-                      <Line type="monotone" dataKey="y" stroke="#818cf8" strokeWidth={2} dot={{ r: 3 }} name="Accuracy" />
-                   </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Chart for Model B */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                 <span className="text-sm font-bold text-emerald-400">{modelB}</span>
-                 <select 
-                   value={paramIdxB}
-                   onChange={(e) => setParamIdxB(Number(e.target.value))}
-                   className="bg-slate-800 text-xs text-slate-300 p-1.5 rounded border border-slate-700 focus:outline-none"
-                 >
-                   {MODEL_IMPACTS[modelB].map((p, i) => (
-                     <option key={i} value={i}>Effect of {p.paramName}</option>
-                   ))}
-                 </select>
-              </div>
-              <div className="h-48 bg-slate-950 rounded-lg border border-slate-800 p-2">
-                <ResponsiveContainer width="100%" height="100%">
-                   <LineChart data={MODEL_IMPACTS[modelB][paramIdxB].data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                      <XAxis dataKey="x" stroke="#64748b" fontSize={10} label={{ value: MODEL_IMPACTS[modelB][paramIdxB].labelX, position: 'insideBottom', offset: -4, fill: '#64748b', fontSize: 10 }} />
-                      <YAxis stroke="#64748b" fontSize={10} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
-                      <Line type="monotone" dataKey="y" stroke="#34d399" strokeWidth={2} dot={{ r: 3 }} name="Accuracy" />
-                   </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            <SensitivityPanel 
+              model={modelA} 
+              impacts={MODEL_IMPACTS[modelA]} 
+              color="#818cf8" 
+            />
+            <SensitivityPanel 
+              model={modelB} 
+              impacts={MODEL_IMPACTS[modelB]} 
+              color="#34d399" 
+            />
          </div>
       </div>
     </div>
