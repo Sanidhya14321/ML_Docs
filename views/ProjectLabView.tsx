@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { MLModelType, ModelMetrics } from '../types';
-import { Loader2, Code, Activity, Database } from 'lucide-react';
+import { Loader2, Code, Activity, Database, ArrowRight } from 'lucide-react';
 import { CodeBlock } from '../components/CodeBlock';
 
 // Mock Data for the simulation
@@ -93,6 +93,61 @@ const TARGET_BALANCE = [
 ];
 const COLORS = ['#ef4444', '#10b981'];
 
+const PipelineViz = () => (
+  <div className="flex items-center justify-between w-full text-xs font-mono text-slate-400 py-6 overflow-x-auto select-none">
+    <div className="flex flex-col items-center gap-2 min-w-[80px]">
+      <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-800 flex items-center justify-center text-slate-500 shadow-md">
+        Raw
+      </div>
+      <span className="text-[10px] uppercase tracking-wider">Input</span>
+    </div>
+    
+    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+        <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+    </div>
+
+    <div className="flex flex-col items-center gap-2 min-w-[80px]">
+       <div className="w-12 h-12 rounded-lg border border-indigo-500 bg-indigo-900/20 flex items-center justify-center text-indigo-400 font-bold shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+         NaN
+       </div>
+       <span className="text-[10px] uppercase tracking-wider text-indigo-400">Impute</span>
+    </div>
+
+    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+        <ArrowRight size={12} className="text-slate-600 absolute" />
+    </div>
+
+     <div className="flex flex-col items-center gap-2 min-w-[80px]">
+       <div className="w-12 h-12 rounded-lg border border-emerald-500 bg-emerald-900/20 flex items-center justify-center text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+         0..1
+       </div>
+       <span className="text-[10px] uppercase tracking-wider text-emerald-400">Scale</span>
+    </div>
+
+    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+        <ArrowRight size={12} className="text-slate-600 absolute" />
+    </div>
+
+     <div className="flex flex-col items-center gap-2 min-w-[80px]">
+       <div className="w-12 h-12 rounded-lg border border-fuchsia-500 bg-fuchsia-900/20 flex items-center justify-center text-fuchsia-400 font-bold shadow-[0_0_15px_rgba(217,70,239,0.2)]">
+         0/1
+       </div>
+       <span className="text-[10px] uppercase tracking-wider text-fuchsia-400">Encode</span>
+    </div>
+
+    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+        <div className="w-1 h-1 rounded-full bg-slate-600"></div>
+    </div>
+
+    <div className="flex flex-col items-center gap-2 min-w-[80px]">
+       <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-800 flex items-center justify-center text-white shadow-md">
+         Clean
+       </div>
+       <span className="text-[10px] uppercase tracking-wider">Output</span>
+    </div>
+  </div>
+);
+
 export const ProjectLabView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'eda' | 'code' | 'performance'>('performance');
   const [selectedModel, setSelectedModel] = useState<MLModelType>(MLModelType.LOGISTIC_REGRESSION);
@@ -114,7 +169,7 @@ export const ProjectLabView: React.FC = () => {
     if (activeTab === 'eda') {
       return (
         <div className="space-y-6 animate-fade-in">
-           <div className="bg-slate-900 p-6 rounded-lg border border-slate-800">
+           <div className="bg-slate-900 p-6 rounded-lg border border-slate-800 shadow-md">
              <h3 className="text-xl font-bold text-indigo-400 mb-4">Dataset Summary (Cleveland Heart Disease)</h3>
              <div className="overflow-x-auto">
                <table className="w-full text-sm text-left text-slate-400">
@@ -129,21 +184,21 @@ export const ProjectLabView: React.FC = () => {
                    </tr>
                  </thead>
                  <tbody>
-                   <tr className="border-b border-slate-800">
-                     <td className="px-4 py-3">63</td>
-                     <td className="px-4 py-3">1</td>
-                     <td className="px-4 py-3">3</td>
-                     <td className="px-4 py-3">145</td>
-                     <td className="px-4 py-3">233</td>
-                     <td className="px-4 py-3 text-red-400 font-bold">1</td>
+                   <tr className="border-b border-slate-800 hover:bg-slate-800/50">
+                     <td className="px-4 py-3 font-mono">63</td>
+                     <td className="px-4 py-3 font-mono">1</td>
+                     <td className="px-4 py-3 font-mono">3</td>
+                     <td className="px-4 py-3 font-mono">145</td>
+                     <td className="px-4 py-3 font-mono">233</td>
+                     <td className="px-4 py-3 text-red-400 font-bold font-mono">1</td>
                    </tr>
-                   <tr className="border-b border-slate-800">
-                     <td className="px-4 py-3">37</td>
-                     <td className="px-4 py-3">1</td>
-                     <td className="px-4 py-3">2</td>
-                     <td className="px-4 py-3">130</td>
-                     <td className="px-4 py-3">250</td>
-                     <td className="px-4 py-3 text-green-400 font-bold">0</td>
+                   <tr className="border-b border-slate-800 hover:bg-slate-800/50">
+                     <td className="px-4 py-3 font-mono">37</td>
+                     <td className="px-4 py-3 font-mono">1</td>
+                     <td className="px-4 py-3 font-mono">2</td>
+                     <td className="px-4 py-3 font-mono">130</td>
+                     <td className="px-4 py-3 font-mono">250</td>
+                     <td className="px-4 py-3 text-green-400 font-bold font-mono">0</td>
                    </tr>
                    <tr>
                      <td className="px-4 py-3 italic text-slate-600" colSpan={6}>... 301 more rows</td>
@@ -154,7 +209,7 @@ export const ProjectLabView: React.FC = () => {
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             <div className="bg-slate-900 p-4 rounded-lg border border-slate-800">
+             <div className="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
                <h4 className="text-sm font-bold text-slate-300 mb-4">Age Distribution</h4>
                <div className="h-64">
                  <ResponsiveContainer width="100%" height="100%">
@@ -168,7 +223,7 @@ export const ProjectLabView: React.FC = () => {
                  </ResponsiveContainer>
                </div>
              </div>
-             <div className="bg-slate-900 p-4 rounded-lg border border-slate-800">
+             <div className="bg-slate-900 p-4 rounded-lg border border-slate-800 shadow-md">
                <h4 className="text-sm font-bold text-slate-300 mb-4">Target Class Balance</h4>
                <div className="h-64 flex items-center justify-center">
                  <ResponsiveContainer width="100%" height="100%">
@@ -178,7 +233,7 @@ export const ProjectLabView: React.FC = () => {
                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                        ))}
                      </Pie>
-                     <Tooltip />
+                     <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
                      <Legend />
                    </PieChart>
                  </ResponsiveContainer>
@@ -187,27 +242,40 @@ export const ProjectLabView: React.FC = () => {
            </div>
 
            {/* Data Cleaning Pipeline Section */}
-           <div className="bg-slate-900 p-6 rounded-lg border border-slate-800">
-             <h3 className="text-xl font-bold text-indigo-400 mb-4">Data Cleaning Pipeline</h3>
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+           <div className="bg-slate-900 p-6 rounded-lg border border-slate-800 shadow-md">
+             <h3 className="text-xl font-bold text-indigo-400 mb-6">Data Cleaning Pipeline</h3>
+             
+             {/* Visual Pipeline */}
+             <div className="mb-8 bg-slate-950 p-4 rounded-lg border border-slate-800">
+               <PipelineViz />
+             </div>
+
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <div>
-                   <h4 className="text-lg font-bold text-slate-200 mb-3">Essential Preprocessing Steps</h4>
-                   <p className="text-slate-400 mb-4 text-sm leading-relaxed">
+                   <h4 className="text-lg font-bold text-slate-200 mb-4">Essential Preprocessing Steps</h4>
+                   <p className="text-slate-400 mb-6 text-sm leading-relaxed">
                      Raw data is rarely ready for modeling. To ensure high performance and avoid biases, we apply a standard cleaning pipeline before feeding data into algorithms.
                    </p>
                    <ul className="space-y-4">
                      <li className="flex gap-4">
                         <div className="mt-0.5 w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 flex flex-shrink-0 items-center justify-center font-bold text-xs border border-indigo-500/50">1</div>
                         <div>
-                          <strong className="text-slate-200 block text-sm">Handling Missing Values</strong>
+                          <strong className="text-slate-200 block text-sm">Handling Missing Values (Imputation)</strong>
                           <span className="text-sm text-slate-400">Imputing nulls with mean/median or dropping incomplete rows ensures we don't lose valuable data or introduce errors.</span>
                         </div>
                      </li>
                      <li className="flex gap-4">
-                        <div className="mt-0.5 w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 flex flex-shrink-0 items-center justify-center font-bold text-xs border border-indigo-500/50">2</div>
+                        <div className="mt-0.5 w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 flex flex-shrink-0 items-center justify-center font-bold text-xs border border-emerald-500/50">2</div>
                         <div>
-                          <strong className="text-slate-200 block text-sm">Feature Scaling</strong>
-                          <span className="text-sm text-slate-400">Standardizing features (e.g., Age vs. Cholesterol) prevents variables with larger magnitudes from dominating distance-based algorithms like KNN or SVM.</span>
+                          <strong className="text-slate-200 block text-sm">Feature Scaling (Standardization)</strong>
+                          <span className="text-sm text-slate-400">Standardizing features (e.g., Age vs. Cholesterol) prevents variables with larger magnitudes from dominating distance-based algorithms.</span>
+                        </div>
+                     </li>
+                     <li className="flex gap-4">
+                        <div className="mt-0.5 w-6 h-6 rounded bg-fuchsia-500/20 text-fuchsia-400 flex flex-shrink-0 items-center justify-center font-bold text-xs border border-fuchsia-500/50">3</div>
+                        <div>
+                          <strong className="text-slate-200 block text-sm">Categorical Encoding</strong>
+                          <span className="text-sm text-slate-400">Converting text categories (like 'Chest Pain Type') into numeric vectors (One-Hot Encoding) so the model can process them.</span>
                         </div>
                      </li>
                    </ul>
@@ -221,7 +289,11 @@ df['chol'] = df['chol'].fillna(df['chol'].mean())
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 cols = ['age', 'trestbps', 'chol', 'thalach']
-df[cols] = scaler.fit_transform(df[cols])`} />
+df[cols] = scaler.fit_transform(df[cols])
+
+# 3. Categorical Encoding (One-Hot)
+# Converts 'cp' (0,1,2,3) into 'cp_0', 'cp_1', ...
+df = pd.get_dummies(df, columns=['cp', 'thal'])`} />
                 </div>
              </div>
            </div>
@@ -241,24 +313,27 @@ from sklearn.ensemble import RandomForestClassifier
 df = pd.read_csv('heart.csv')
 
 # 2. Preprocessing
+# Encode categorical variables
 df = pd.get_dummies(df, columns=['cp', 'thal', 'slope'])
+
+# Separate Features and Target
 X = df.drop('target', axis=1)
 y = df['target']
 
-# 3. Split
+# 3. Split Data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 4. Scale
+# 4. Scale Features
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# 5. Model
+# 5. Model Initialization & Training
 model = RandomForestClassifier(n_estimators=100)
 model.fit(X_train, y_train)
 
-# 6. Evaluate
-print(model.score(X_test, y_test))`} />
+# 6. Evaluation
+print(f"Accuracy: {model.score(X_test, y_test):.4f}")`} />
         </div>
       );
     }
@@ -266,7 +341,7 @@ print(model.score(X_test, y_test))`} />
     return (
       <div className="space-y-6 animate-fade-in">
         {/* Controls Area */}
-        <div className="bg-slate-900 p-6 rounded-lg border border-slate-800 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="bg-slate-900 p-6 rounded-lg border border-slate-800 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between shadow-md">
           <div className="flex-1 w-full">
             <label className="block text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2">Select Algorithm</label>
             <div className="relative">
@@ -288,7 +363,7 @@ print(model.score(X_test, y_test))`} />
           
           <div className="flex gap-4 w-full md:w-auto">
             {['Accuracy', 'Precision', 'Recall'].map((metric) => (
-              <div key={metric} className="bg-slate-800 p-4 rounded border border-slate-700 flex-1 min-w-[100px] text-center">
+              <div key={metric} className="bg-slate-800 p-4 rounded border border-slate-700 flex-1 min-w-[100px] text-center shadow-sm">
                 <div className="text-xs text-slate-400 uppercase">{metric}</div>
                 <div className={`text-2xl font-bold ${isTraining ? 'text-slate-600' : 'text-emerald-400'}`}>
                   {isTraining ? '--' : (currentMetrics[metric.toLowerCase() as keyof ModelMetrics] as number)}%
@@ -370,22 +445,22 @@ print(model.score(X_test, y_test))`} />
       </header>
 
       {/* Tab Navigation */}
-      <div className="flex border-b border-slate-800 mb-6">
+      <div className="flex border-b border-slate-800 mb-6 overflow-x-auto">
          <button 
            onClick={() => setActiveTab('eda')}
-           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'eda' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
+           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${activeTab === 'eda' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
          >
            <Database size={16} /> Data Analysis
          </button>
          <button 
            onClick={() => setActiveTab('code')}
-           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'code' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
+           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${activeTab === 'code' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
          >
            <Code size={16} /> The Code
          </button>
          <button 
            onClick={() => setActiveTab('performance')}
-           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${activeTab === 'performance' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
+           className={`px-6 py-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${activeTab === 'performance' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-white'}`}
          >
            <Activity size={16} /> Model Performance
          </button>
