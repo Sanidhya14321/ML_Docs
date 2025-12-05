@@ -34,11 +34,12 @@ const NAV_ITEMS: NavigationItem[] = [
     subItems: [
         { id: 'math-primer', label: '1. Math Primer' },
         { id: 'python-core', label: '2. Python Core' },
-        { id: 'learning-definition', label: '3. What is Learning?' },
-        { id: 'types-of-learning', label: '4. Types of Learning' },
-        { id: 'data-preprocessing', label: '5. Data & Scaling' },
-        { id: 'optimization', label: '6. Optimization' },
-        { id: 'bias-variance', label: '7. Bias-Variance' }
+        { id: 'ml-libraries', label: '3. Key Libraries' },
+        { id: 'learning-definition', label: '4. What is Learning?' },
+        { id: 'types-of-learning', label: '5. Types of Learning' },
+        { id: 'data-preprocessing', label: '6. Data & Scaling' },
+        { id: 'optimization', label: '7. Optimization' },
+        { id: 'bias-variance', label: '8. Bias-Variance' }
     ]
   },
   { 

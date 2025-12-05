@@ -335,10 +335,63 @@ subset = df[df['A'] > 1]`} />
         </div>
       </section>
 
-      {/* --- SECTION 3: DEFINITION OF LEARNING --- */}
-      <section id="learning-definition" className="scroll-mt-24">
+      {/* --- SECTION 3: KEY ML LIBRARIES --- */}
+      <section id="ml-libraries" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
             <span className="text-sm font-mono text-slate-500">03</span>
+            <h2 className="text-2xl font-bold text-teal-400 uppercase tracking-widest">Key ML Libraries</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* NumPy */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg hover:border-teal-500/50 transition-colors">
+                <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center mb-4 border border-blue-500/30">
+                    <span className="font-mono font-bold text-lg">Np</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">NumPy</h3>
+                <p className="text-sm text-slate-400 mb-4">
+                    The fundamental package for scientific computing. It provides high-performance multidimensional array objects and tools for working with these arrays.
+                </p>
+                <div className="bg-slate-950 p-3 rounded border border-slate-800">
+                    <code className="text-xs text-blue-300">import numpy as np<br/>X = np.array([[1, 2], [3, 4]])</code>
+                </div>
+            </div>
+
+            {/* Pandas */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg hover:border-teal-500/50 transition-colors">
+                <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-lg flex items-center justify-center mb-4 border border-indigo-500/30">
+                    <span className="font-mono font-bold text-lg">Pd</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Pandas</h3>
+                <p className="text-sm text-slate-400 mb-4">
+                    Built on top of NumPy, it provides easy-to-use data structures (DataFrames) and data analysis tools for manipulating numerical tables and time series.
+                </p>
+                <div className="bg-slate-950 p-3 rounded border border-slate-800">
+                    <code className="text-xs text-indigo-300">import pandas as pd<br/>df = pd.read_csv('data.csv')</code>
+                </div>
+            </div>
+
+            {/* Scikit-Learn */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg hover:border-teal-500/50 transition-colors">
+                 <div className="w-12 h-12 bg-orange-500/20 text-orange-400 rounded-lg flex items-center justify-center mb-4 border border-orange-500/30">
+                    <span className="font-mono font-bold text-lg">Sk</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Scikit-Learn</h3>
+                <p className="text-sm text-slate-400 mb-4">
+                    Simple and efficient tools for predictive data analysis. It features various algorithms like SVM, random forests, and k-neighbors.
+                </p>
+                <div className="bg-slate-950 p-3 rounded border border-slate-800">
+                    <code className="text-xs text-orange-300">from sklearn.svm import SVC<br/>clf = SVC().fit(X, y)</code>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* --- SECTION 4: DEFINITION OF LEARNING --- */}
+      <section id="learning-definition" className="scroll-mt-24">
+        <div className="flex items-center gap-3 mb-8">
+            <span className="text-sm font-mono text-slate-500">04</span>
             <h2 className="text-2xl font-bold text-fuchsia-400 uppercase tracking-widest">The Definition of Learning</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -380,10 +433,10 @@ model = LinearRegression().fit(X, y)`}
         </AlgorithmCard>
       </section>
 
-      {/* --- SECTION 3.5: TYPES OF LEARNING --- */}
+      {/* --- SECTION 5: TYPES OF LEARNING --- */}
       <section id="types-of-learning" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">04</span>
+            <span className="text-sm font-mono text-slate-500">05</span>
             <h2 className="text-2xl font-bold text-yellow-400 uppercase tracking-widest">Types of Learning</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -426,10 +479,10 @@ model = LinearRegression().fit(X, y)`}
         </div>
       </section>
 
-      {/* --- SECTION 4: DATA PREPROCESSING --- */}
+      {/* --- SECTION 6: DATA PREPROCESSING --- */}
       <section id="data-preprocessing" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">05</span>
+            <span className="text-sm font-mono text-slate-500">06</span>
             <h2 className="text-2xl font-bold text-orange-400 uppercase tracking-widest">Data Processing</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -505,10 +558,10 @@ X_norm = min_max.fit_transform(X)`}
         </div>
       </section>
 
-      {/* --- SECTION 5: OPTIMIZATION --- */}
+      {/* --- SECTION 7: OPTIMIZATION --- */}
       <section id="optimization" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">06</span>
+            <span className="text-sm font-mono text-slate-500">07</span>
             <h2 className="text-2xl font-bold text-sky-400 uppercase tracking-widest">Optimization</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
@@ -549,10 +602,10 @@ for i in range(epochs):
         </AlgorithmCard>
       </section>
 
-      {/* --- SECTION 6: BIAS-VARIANCE TRADEOFF --- */}
+      {/* --- SECTION 8: BIAS-VARIANCE TRADEOFF --- */}
       <section id="bias-variance" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-8">
-            <span className="text-sm font-mono text-slate-500">07</span>
+            <span className="text-sm font-mono text-slate-500">08</span>
             <h2 className="text-2xl font-bold text-rose-400 uppercase tracking-widest">Bias-Variance Tradeoff</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
         </div>
