@@ -93,60 +93,77 @@ const TARGET_BALANCE = [
 ];
 const COLORS = ['#ef4444', '#10b981'];
 
-const PipelineViz = () => (
-  <div className="flex items-center justify-between w-full text-xs font-mono text-slate-400 py-6 overflow-x-auto select-none">
-    <div className="flex flex-col items-center gap-2 min-w-[80px]">
-      <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-800 flex items-center justify-center text-slate-500 shadow-md">
-        Raw
+const PipelineViz = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 5);
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center justify-between w-full text-xs font-mono text-slate-400 py-6 overflow-x-auto select-none">
+      
+      {/* Node 0: Raw Input */}
+      <div className={`flex flex-col items-center gap-2 min-w-[80px] transition-all duration-500 ${activeStep === 0 ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+        <div className={`w-12 h-12 rounded-lg border flex items-center justify-center shadow-md transition-colors duration-300 ${activeStep === 0 ? 'border-slate-400 bg-slate-700 text-white' : 'border-slate-600 bg-slate-800 text-slate-500'}`}>
+          Raw
+        </div>
+        <span className="text-[10px] uppercase tracking-wider">Input</span>
       </div>
-      <span className="text-[10px] uppercase tracking-wider">Input</span>
-    </div>
-    
-    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
-        <div className="w-1 h-1 rounded-full bg-slate-600"></div>
-    </div>
+      
+      <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+          <div className={`absolute inset-0 bg-indigo-500 transition-transform duration-1000 origin-left ${activeStep === 0 ? 'scale-x-100' : 'scale-x-0'}`}></div>
+      </div>
 
-    <div className="flex flex-col items-center gap-2 min-w-[80px]">
-       <div className="w-12 h-12 rounded-lg border border-indigo-500 bg-indigo-900/20 flex items-center justify-center text-indigo-400 font-bold shadow-[0_0_15px_rgba(99,102,241,0.2)]">
-         NaN
-       </div>
-       <span className="text-[10px] uppercase tracking-wider text-indigo-400">Impute</span>
-    </div>
+      {/* Node 1: Impute */}
+      <div className={`flex flex-col items-center gap-2 min-w-[80px] transition-all duration-500 ${activeStep === 1 ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+        <div className={`w-12 h-12 rounded-lg border flex items-center justify-center font-bold shadow-[0_0_15px_rgba(99,102,241,0.2)] transition-colors duration-300 ${activeStep === 1 ? 'border-indigo-400 bg-indigo-900/40 text-indigo-300' : 'border-indigo-500/50 bg-indigo-900/20 text-indigo-500'}`}>
+          NaN
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-indigo-400">Impute</span>
+      </div>
 
-    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
-        <ArrowRight size={12} className="text-slate-600 absolute" />
-    </div>
+      <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+          <div className={`absolute inset-0 bg-emerald-500 transition-transform duration-1000 origin-left ${activeStep === 1 ? 'scale-x-100' : 'scale-x-0'}`}></div>
+      </div>
 
-     <div className="flex flex-col items-center gap-2 min-w-[80px]">
-       <div className="w-12 h-12 rounded-lg border border-emerald-500 bg-emerald-900/20 flex items-center justify-center text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-         0..1
-       </div>
-       <span className="text-[10px] uppercase tracking-wider text-emerald-400">Scale</span>
-    </div>
+      {/* Node 2: Scale */}
+      <div className={`flex flex-col items-center gap-2 min-w-[80px] transition-all duration-500 ${activeStep === 2 ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+        <div className={`w-12 h-12 rounded-lg border flex items-center justify-center font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-colors duration-300 ${activeStep === 2 ? 'border-emerald-400 bg-emerald-900/40 text-emerald-300' : 'border-emerald-500/50 bg-emerald-900/20 text-emerald-500'}`}>
+          0..1
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-emerald-400">Scale</span>
+      </div>
 
-    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
-        <ArrowRight size={12} className="text-slate-600 absolute" />
-    </div>
+      <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+          <div className={`absolute inset-0 bg-fuchsia-500 transition-transform duration-1000 origin-left ${activeStep === 2 ? 'scale-x-100' : 'scale-x-0'}`}></div>
+      </div>
 
-     <div className="flex flex-col items-center gap-2 min-w-[80px]">
-       <div className="w-12 h-12 rounded-lg border border-fuchsia-500 bg-fuchsia-900/20 flex items-center justify-center text-fuchsia-400 font-bold shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-         0/1
-       </div>
-       <span className="text-[10px] uppercase tracking-wider text-fuchsia-400">Encode</span>
-    </div>
+      {/* Node 3: Encode */}
+      <div className={`flex flex-col items-center gap-2 min-w-[80px] transition-all duration-500 ${activeStep === 3 ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+        <div className={`w-12 h-12 rounded-lg border flex items-center justify-center font-bold shadow-[0_0_15px_rgba(217,70,239,0.2)] transition-colors duration-300 ${activeStep === 3 ? 'border-fuchsia-400 bg-fuchsia-900/40 text-fuchsia-300' : 'border-fuchsia-500/50 bg-fuchsia-900/20 text-fuchsia-500'}`}>
+          0/1
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-fuchsia-400">Encode</span>
+      </div>
 
-    <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
-        <div className="w-1 h-1 rounded-full bg-slate-600"></div>
-    </div>
+      <div className="flex-1 h-px bg-slate-700 mx-2 flex items-center justify-center relative">
+          <div className={`absolute inset-0 bg-slate-400 transition-transform duration-1000 origin-left ${activeStep === 3 ? 'scale-x-100' : 'scale-x-0'}`}></div>
+      </div>
 
-    <div className="flex flex-col items-center gap-2 min-w-[80px]">
-       <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-800 flex items-center justify-center text-white shadow-md">
-         Clean
-       </div>
-       <span className="text-[10px] uppercase tracking-wider">Output</span>
+      {/* Node 4: Output */}
+      <div className={`flex flex-col items-center gap-2 min-w-[80px] transition-all duration-500 ${activeStep === 4 ? 'opacity-100 scale-105' : 'opacity-40 scale-100'}`}>
+        <div className={`w-12 h-12 rounded-lg border flex items-center justify-center shadow-md transition-colors duration-300 ${activeStep === 4 ? 'border-white bg-slate-700 text-white' : 'border-slate-600 bg-slate-800 text-slate-500'}`}>
+          Clean
+        </div>
+        <span className="text-[10px] uppercase tracking-wider">Output</span>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const ProjectLabView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'eda' | 'code' | 'performance'>('performance');
