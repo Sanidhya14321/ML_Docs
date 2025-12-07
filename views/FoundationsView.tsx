@@ -162,6 +162,66 @@ const DataFrameViz = () => (
   </div>
 );
 
+const DataStructuresViz = () => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs select-none">
+    {/* List Viz */}
+    <div className="bg-slate-900 border border-slate-700 rounded p-3 flex flex-col gap-2 relative shadow-sm hover:border-indigo-500/50 transition-colors">
+       <div className="text-indigo-400 font-bold border-b border-slate-800 pb-1 flex justify-between">
+          <span>List</span>
+          <span className="text-[10px] text-slate-500 font-normal">Ordered, Mutable</span>
+       </div>
+       <div className="flex items-center gap-1 overflow-x-auto py-1">
+          {[10, 20, 30].map((v, i) => (
+             <React.Fragment key={i}>
+                <div className="w-8 h-8 flex flex-shrink-0 items-center justify-center bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded hover:bg-indigo-500/20">
+                   {v}
+                </div>
+                {i < 2 && <div className="text-slate-600">→</div>}
+             </React.Fragment>
+          ))}
+       </div>
+       <div className="text-slate-500 text-[10px] italic">Batch of data points</div>
+    </div>
+
+    {/* Dict Viz */}
+    <div className="bg-slate-900 border border-slate-700 rounded p-3 flex flex-col gap-2 relative shadow-sm hover:border-emerald-500/50 transition-colors">
+       <div className="text-emerald-400 font-bold border-b border-slate-800 pb-1 flex justify-between">
+          <span>Dict</span>
+          <span className="text-[10px] text-slate-500 font-normal">Key-Value Map</span>
+       </div>
+       <div className="flex flex-col gap-1.5 py-1">
+          <div className="flex justify-between items-center bg-emerald-900/10 p-1 px-2 rounded border border-emerald-500/20">
+             <span className="text-emerald-200">"lr"</span>
+             <span className="text-slate-500 text-[10px]">:</span>
+             <span className="text-emerald-400 font-bold">0.01</span>
+          </div>
+          <div className="flex justify-between items-center bg-emerald-900/10 p-1 px-2 rounded border border-emerald-500/20">
+             <span className="text-emerald-200">"opt"</span>
+             <span className="text-slate-500 text-[10px]">:</span>
+             <span className="text-emerald-400 font-bold">"Adam"</span>
+          </div>
+       </div>
+       <div className="text-slate-500 text-[10px] italic">Model Configuration</div>
+    </div>
+
+    {/* Set Viz */}
+    <div className="bg-slate-900 border border-slate-700 rounded p-3 flex flex-col gap-2 relative shadow-sm hover:border-rose-500/50 transition-colors">
+       <div className="text-rose-400 font-bold border-b border-slate-800 pb-1 flex justify-between">
+          <span>Set</span>
+          <span className="text-[10px] text-slate-500 font-normal">Unique Items</span>
+       </div>
+       <div className="flex flex-wrap gap-1.5 py-1 justify-center">
+          {['cat', 'dog', 'bird'].map((v) => (
+             <div key={v} className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-full text-[10px] hover:bg-rose-500/20">
+                {v}
+             </div>
+          ))}
+       </div>
+       <div className="text-slate-500 text-[10px] italic">Unique Vocabulary</div>
+    </div>
+  </div>
+);
+
 export const FoundationsView: React.FC = () => {
   return (
     <div className="space-y-24 animate-fade-in pb-12">
@@ -282,6 +342,28 @@ variance = np.var(s)`}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            
+            {/* Core Data Structures - NEW BLOCK */}
+            <div className="lg:col-span-2">
+               <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
+                  <h3 className="text-lg font-bold text-white mb-4">Core Data Structures</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <CodeBlock code={`# Lists (Sequences)
+losses = [0.5, 0.4, 0.3]
+losses.append(0.2)
+
+# Dictionaries (Mappings)
+config = {'lr': 0.01, 'optimizer': 'Adam'}
+lr = config['lr']
+
+# Sets (Unique Collection)
+text = "ai ml ai"
+vocab = set(text.split()) # {'ai', 'ml'}`} />
+                    <DataStructuresViz />
+                  </div>
+               </div>
+            </div>
+
             <div className="space-y-8">
                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
                   <h3 className="text-lg font-bold text-white mb-4">Python Essentials</h3>
