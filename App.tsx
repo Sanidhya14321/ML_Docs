@@ -94,6 +94,7 @@ const NAV_ITEMS: NavigationItem[] = [
         { id: 'mlp', label: 'MLP' },
         { id: 'cnn', label: 'CNN' },
         { id: 'rnn', label: 'RNN / LSTM' },
+        { id: 'embeddings', label: 'Embeddings' },
         { id: 'transformers', label: 'Transformers' }
     ]
   },

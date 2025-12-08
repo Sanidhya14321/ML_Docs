@@ -1,7 +1,7 @@
 import React from 'react';
 import { NeuralNetworkViz } from '../components/NeuralNetworkViz';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
 
 // Data for RNN
 const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({
@@ -9,6 +9,14 @@ const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({
     actual: Math.sin(i * 0.5),
     predicted: Math.sin(i * 0.5 - 0.5) // lagged prediction
 }));
+
+// Data for Embeddings Viz
+const embeddingData = [
+    { x: 2, y: 2, label: 'Man', fill: '#818cf8' },
+    { x: 2, y: 6, label: 'Woman', fill: '#f472b6' },
+    { x: 6, y: 2, label: 'King', fill: '#818cf8' },
+    { x: 6, y: 6, label: 'Queen', fill: '#f472b6' }
+];
 
 const ConvolutionViz = () => (
     <div className="flex items-center justify-center gap-4 py-8 select-none">
@@ -57,6 +65,43 @@ const AttentionViz = () => (
         <div className="flex gap-2 mt-2">
              <div className="text-xs text-slate-500">Self-Attention Matrix</div>
         </div>
+    </div>
+);
+
+const EmbeddingsViz = () => (
+    <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis type="number" dataKey="x" hide domain={[0, 8]} />
+                <YAxis type="number" dataKey="y" hide domain={[0, 8]} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+                
+                {/* Vectors */}
+                {/* Man -> Woman */}
+                <ReferenceLine segment={[{x: 2, y: 2}, {x: 2, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" markerEnd="url(#arrow)" />
+                {/* King -> Queen */}
+                <ReferenceLine segment={[{x: 6, y: 2}, {x: 6, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" markerEnd="url(#arrow)" />
+                {/* Man -> King */}
+                <ReferenceLine segment={[{x: 2, y: 2}, {x: 6, y: 2}]} stroke="#475569" strokeDasharray="2 2" />
+
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                    </marker>
+                </defs>
+
+                <Scatter data={embeddingData} shape="circle">
+                    <LabelList dataKey="label" position="top" fill="#cbd5e1" fontSize={12} offset={10} />
+                    {embeddingData.map((entry, index) => (
+                         <ReferenceLine key={index} /> // Dummy to fix type issues if needed, mostly handled by Scatter
+                    ))}
+                </Scatter>
+            </ScatterChart>
+        </ResponsiveContainer>
+        <p className="text-xs text-center text-slate-500 mt-2">
+            Vector Arithmetic: <em>King - Man + Woman &approx; Queen</em>. Semantic relationships are preserved as geometric distances.
+        </p>
     </div>
 );
 
@@ -192,6 +237,40 @@ model = models.Sequential([
             </ResponsiveContainer>
             <p className="text-xs text-center text-slate-500 mt-2">Sequence Prediction: Learning time-series patterns.</p>
          </div>
+      </AlgorithmCard>
+
+      <AlgorithmCard
+        id="embeddings"
+        title="Embeddings"
+        theory="Embeddings are dense vector representations of discrete variables (like words or users). Unlike one-hot encoding, embeddings capture semantic relationships—similar items are closer in the vector space."
+        math={<span>J(&theta;) = <sup>1</sup>&frasl;<sub>T</sub> &Sigma;<sub>t=1</sub><sup>T</sup> &Sigma;<sub>-c &le; j &le; c, j &ne; 0</sub> log p(w<sub>t+j</sub> | w<sub>t</sub>)</span>}
+        mathLabel="Skip-Gram Objective (Word2Vec)"
+        code={`from tensorflow.keras.layers import Embedding
+
+# Input: Integers (indices), Output: Vectors
+# Vocab size: 10,000, Vector dim: 300
+embedding_layer = Embedding(input_dim=10000, output_dim=300)
+
+# Lookup vector for word index 5
+vector = embedding_layer(5)`}
+        pros={['Captures semantic meaning', 'Reduces dimensionality compared to one-hot', 'Transferable (pre-trained embeddings)']}
+        cons={['Requires large datasets to learn good representations', 'Static (traditional embeddings ignore context)', 'Bias amplification']}
+        hyperparameters={[
+          {
+            name: 'output_dim',
+            description: 'Dimension of the dense embedding. Higher dimension captures more nuances but requires more data.',
+            default: '100',
+            range: 'Integer'
+          },
+          {
+            name: 'input_dim',
+            description: 'Size of the vocabulary, i.e., maximum integer index + 1.',
+            default: 'None',
+            range: 'Integer'
+          }
+        ]}
+      >
+        <EmbeddingsViz />
       </AlgorithmCard>
 
       <AlgorithmCard
