@@ -17,14 +17,14 @@ const learningDefData = Array.from({ length: 40 }, (_, i) => {
 });
 
 // 2. Bias-Variance Tradeoff (Refined for clearer U-Shape)
-const biasVarianceData = Array.from({ length: 42 }, (_, i) => {
-  const complexity = (i / 2) + 1; // Range 1 to ~21
-  // Bias decreases exponentially (Underfitting -> Good)
-  const biasSq = 45 * Math.exp(-0.32 * complexity); 
-  // Variance increases polynomially (Good -> Overfitting)
-  const variance = 0.012 * Math.pow(complexity, 3.1);
+const biasVarianceData = Array.from({ length: 50 }, (_, i) => {
+  const complexity = (i / 2.5) + 1; // Range 1 to ~20
+  // Bias drops sharply as complexity increases
+  const biasSq = 60 * Math.exp(-0.45 * complexity); 
+  // Variance rises slowly then sharply
+  const variance = 0.5 * Math.pow(complexity, 1.6);
   // Irreducible error constant
-  const noise = 3;
+  const noise = 5;
   const totalError = biasSq + variance + noise;
   return { complexity, biasSq, variance, totalError };
 });
@@ -719,11 +719,11 @@ model = RandomForest(max_depth=10)`}
                         <Legend verticalAlign="top" height={36} />
                         
                         {/* Zones */}
-                        <ReferenceArea x1={1} x2={4.5} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting", position: 'insideTop', fill: '#ef4444', fontSize: 11 }} />
-                        <ReferenceArea x1={12} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting", position: 'insideTop', fill: '#818cf8', fontSize: 11 }} />
+                        <ReferenceArea x1={1} x2={6} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting (High Bias)", position: 'insideTop', fill: '#f87171', fontSize: 12, fontWeight: 'bold' }} />
+                        <ReferenceArea x1={13} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting (High Variance)", position: 'insideTop', fill: '#818cf8', fontSize: 12, fontWeight: 'bold' }} />
                         
                         {/* Optimal Line */}
-                        <ReferenceLine x={7.8} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal", fill: "#10b981", position: "insideTop", fontSize: 11 }} />
+                        <ReferenceLine x={8.5} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal Balance", position: 'top', fill: '#34d399', fontSize: 12, fontWeight: 'bold' }} />
                         
                         <Line name="Bias²" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
                         <Line name="Variance" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
