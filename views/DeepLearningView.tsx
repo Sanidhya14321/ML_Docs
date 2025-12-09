@@ -105,6 +105,58 @@ const EmbeddingsViz = () => (
     </div>
 );
 
+const BackpropViz = () => (
+    <div className="flex flex-col gap-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+        <div className="flex justify-between items-center text-xs font-mono text-slate-400 border-b border-slate-700 pb-2">
+             <span>Forward Pass &rarr;</span>
+             <span>Backward Pass (Gradients) &larr;</span>
+        </div>
+        <div className="flex justify-between items-center gap-2">
+            {/* Input */}
+            <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full border-2 border-indigo-500 flex items-center justify-center bg-indigo-900/20 text-indigo-300 font-bold">x</div>
+                <span className="text-[10px] mt-1 text-slate-500">Input</span>
+            </div>
+            
+            {/* Connection 1 */}
+            <div className="flex-1 h-px bg-slate-600 relative group">
+                <div className="absolute top-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-slate-400">w1</div>
+                <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">&part;L/&part;w1</div>
+            </div>
+
+            {/* Hidden */}
+            <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center bg-slate-800 text-slate-300 font-bold">h</div>
+                <span className="text-[10px] mt-1 text-slate-500">Hidden</span>
+            </div>
+
+             {/* Connection 2 */}
+             <div className="flex-1 h-px bg-slate-600 relative group">
+                <div className="absolute top-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-slate-400">w2</div>
+                <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">&part;L/&part;w2</div>
+            </div>
+
+            {/* Output */}
+            <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center bg-emerald-900/20 text-emerald-300 font-bold">y&#770;</div>
+                <span className="text-[10px] mt-1 text-slate-500">Pred</span>
+            </div>
+
+            <div className="w-8 text-center text-slate-500 text-xs">vs</div>
+
+            {/* Target */}
+             <div className="flex flex-col items-center">
+                <div className="w-10 h-10 rounded border border-slate-500 flex items-center justify-center bg-slate-800 text-white font-bold">y</div>
+                <span className="text-[10px] mt-1 text-slate-500">Target</span>
+            </div>
+        </div>
+        <div className="bg-slate-900 p-3 rounded text-[10px] font-mono text-slate-400 border border-slate-700">
+            <span className="text-rose-400 font-bold">Chain Rule:</span> <br/>
+            &part;L/&part;w1 = (&part;L/&part;y&#770;) * (&part;y&#770;/&part;h) * (&part;h/&part;w1)
+        </div>
+    </div>
+);
+
 export const DeepLearningView: React.FC = () => {
   return (
     <div className="space-y-8 animate-fade-in">
@@ -150,6 +202,17 @@ model = models.Sequential([
         ]}
       >
         <NeuralNetworkViz />
+        <div className="mt-8">
+            <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-4">Training Mechanism: Backpropagation</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <p className="text-slate-400 text-sm leading-relaxed">
+                    MLPs learn by minimizing a loss function <em>L</em>. <strong className="text-slate-200">Backpropagation</strong> is the algorithm used to compute the gradient of the loss function with respect to the weights. 
+                    It works by applying the <strong className="text-slate-200">Chain Rule</strong> of calculus, computing gradients layer by layer from the output back to the input.
+                    These gradients tell the optimizer (like Gradient Descent) how to adjust the weights to reduce the error.
+                </p>
+                <BackpropViz />
+            </div>
+        </div>
       </AlgorithmCard>
 
       <AlgorithmCard
@@ -243,7 +306,7 @@ model = models.Sequential([
         id="embeddings"
         title="Embeddings"
         theory="Embeddings are dense vector representations of discrete variables (like words or users). Unlike one-hot encoding, embeddings capture semantic relationships—similar items are closer in the vector space."
-        math={<span>J(&theta;) = <sup>1</sup>&frasl;<sub>T</sub> &Sigma;<sub>t=1</sub><sup>T</sup> &Sigma;<sub>-c &le; j &le; c, j &ne; 0</sub> log p(w<sub>t+j</sub> | w<sub>t</sub>)</span>}
+        math={<span>J(&theta;) = <sup>1</sup>&frasl;<sub>T</sub> &Sigma;<sub>t=1</sub><sup>T</sup> &Sigma;<sub>-c &le; j &le; c, j &ne; 0</sub> <span className="not-italic">log</span> p(w<sub>t+j</sub> | w<sub>t</sub>)</span>}
         mathLabel="Skip-Gram Objective (Word2Vec)"
         code={`from tensorflow.keras.layers import Embedding
 
@@ -277,7 +340,7 @@ vector = embedding_layer(5)`}
         id="transformers"
         title="Transformers"
         theory="The modern architecture for NLP. Abandoning recurrence, it relies entirely on an attention mechanism (Self-Attention) to draw global dependencies between input and output. It enables massive parallelization."
-        math={<span>Attention(Q, K, V) = softmax(<sup>QK<sup>T</sup></sup>&frasl;<sub>&radic;d<sub>k</sub></sub>)V</span>}
+        math={<span><span className="not-italic">Attention</span>(Q, K, V) = <span className="not-italic">softmax</span>(<sup>QK<sup><span className="not-italic">T</span></sup></sup>&frasl;<sub>&radic;d<sub>k</sub></sub>)V</span>}
         mathLabel="Scaled Dot-Product Attention"
         code={`# Pseudocode for a Transformer Block
 def transformer_block(x):
