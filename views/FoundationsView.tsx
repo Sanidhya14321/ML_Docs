@@ -343,6 +343,42 @@ variance = np.var(s)`}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             
+            {/* Python Basics - NEW BLOCK */}
+            <div className="lg:col-span-2">
+               <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
+                  <h3 className="text-lg font-bold text-white mb-4">Python Basics</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div>
+                        <h4 className="text-sm font-bold text-slate-300 mb-2">Variables & Types</h4>
+                        <p className="text-xs text-slate-400 mb-2">Python dynamically interprets data types, making it easy to define model parameters.</p>
+                        <CodeBlock code={`# Variables behave as labels
+lr = 0.001          # float
+epochs = 50         # int
+model_type = "CNN"  # string
+is_converged = True # bool
+
+# Dynamic Typing (Reassignment)
+x = 10
+x = "Now I'm a string"`} />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-bold text-slate-300 mb-2">Control Flow</h4>
+                        <p className="text-xs text-slate-400 mb-2">Logic gates (if/else) and loops are essential for training iterations.</p>
+                        <CodeBlock code={`# Conditional Logic
+if loss < 0.1:
+    print("Stop training")
+else:
+    print("Continue")
+
+# Loop (Iterate over epochs)
+for epoch in range(epochs):
+    train(data)
+    print(f"Epoch {epoch} complete")`} />
+                    </div>
+                  </div>
+               </div>
+            </div>
+
             {/* Core Data Structures - NEW BLOCK */}
             <div className="lg:col-span-2">
                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg h-full">
