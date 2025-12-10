@@ -103,7 +103,11 @@ const NAV_ITEMS: NavigationItem[] = [
       label: 'Reinforcement',
       icon: <Gamepad2 size={20} />,
       subItems: [
-          { id: 'q-learning', label: 'Q-Learning' }
+          { id: 'rl-foundations', label: 'Foundations (MDP)' },
+          { id: 'exploration', label: 'Exploration (Bandits)' },
+          { id: 'value-based', label: 'Value-Based (DQN)' },
+          { id: 'policy-based', label: 'Policy-Based' },
+          { id: 'actor-critic', label: 'Actor-Critic' }
       ]
   },
   {
