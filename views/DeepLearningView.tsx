@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NeuralNetworkViz } from '../components/NeuralNetworkViz';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
@@ -157,6 +157,99 @@ const BackpropViz = () => (
     </div>
 );
 
+const BPTTViz = () => {
+    const [phase, setPhase] = useState<'forward' | 'backward'>('forward');
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStep(prev => {
+                if (phase === 'forward') {
+                    if (prev >= 3) { // 3 steps forward (0, 1, 2)
+                        setPhase('backward');
+                        return 2;
+                    }
+                    return prev + 1;
+                } else {
+                    if (prev <= 0) {
+                        setPhase('forward');
+                        return 0;
+                    }
+                    return prev - 1;
+                }
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [phase]);
+
+    return (
+        <div className="w-full bg-slate-900 rounded-lg border border-slate-800 p-4 relative overflow-hidden">
+            <div className="absolute top-2 right-4 text-[10px] font-mono font-bold uppercase tracking-wider">
+                Mode: <span className={phase === 'forward' ? 'text-indigo-400' : 'text-rose-400'}>{phase === 'forward' ? 'Forward Propagation' : 'Backprop Through Time'}</span>
+            </div>
+            
+            <div className="flex justify-around items-center mt-6">
+                {[0, 1, 2].map((t) => {
+                    const isActive = phase === 'forward' ? step >= t : step <= t;
+                    const isGradient = phase === 'backward' && step <= t;
+
+                    return (
+                        <div key={t} className="flex flex-col items-center gap-2 relative group">
+                             {/* Time Label */}
+                             <div className="absolute -top-6 text-[10px] text-slate-500 font-mono">t={t+1}</div>
+
+                             {/* Output Node */}
+                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110' : isActive ? 'border-emerald-500 bg-emerald-900/30 text-emerald-300' : 'border-slate-700 bg-slate-800 text-slate-600'}`}>
+                                y&#770;
+                             </div>
+
+                             {/* Vertical Connection */}
+                             <div className={`w-0.5 h-6 transition-colors duration-500 ${isGradient ? 'bg-rose-500' : isActive ? 'bg-slate-500' : 'bg-slate-800'}`}></div>
+
+                             {/* Hidden Node */}
+                             <div className={`w-10 h-10 rounded border-2 flex items-center justify-center text-xs font-bold transition-all duration-500 z-10 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110 shadow-[0_0_10px_rgba(244,63,94,0.4)]' : isActive ? 'border-indigo-500 bg-indigo-900/30 text-indigo-300' : 'border-slate-700 bg-slate-800 text-slate-600'}`}>
+                                h
+                             </div>
+
+                             {/* Vertical Connection */}
+                             <div className={`w-0.5 h-6 transition-colors duration-500 ${isActive ? 'bg-slate-500' : 'bg-slate-800'}`}></div>
+
+                             {/* Input Node */}
+                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isActive ? 'border-slate-400 bg-slate-700 text-white' : 'border-slate-800 bg-slate-900 text-slate-600'}`}>
+                                x
+                             </div>
+
+                             {/* Horizontal Recurrent Connection (Right Arrow) */}
+                             {t < 2 && (
+                                 <div className="absolute top-[3.2rem] left-8 w-12 h-8 flex items-center justify-center">
+                                     {/* Forward Line */}
+                                     <div className={`absolute w-full h-0.5 transition-colors duration-500 ${phase === 'forward' && step > t ? 'bg-indigo-500' : 'bg-slate-800'}`}></div>
+                                     {/* Backward Line (Gradient) */}
+                                     <div className={`absolute w-full h-0.5 transition-all duration-500 ${phase === 'backward' && step <= t ? 'bg-rose-500 translate-y-1 opacity-100' : 'opacity-0'}`}></div>
+                                     
+                                     {/* Arrow Heads */}
+                                     <div className={`absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-4 transition-colors duration-500 ${phase === 'forward' && step > t ? 'border-l-indigo-500' : 'border-l-slate-800'}`}></div>
+                                     <div className={`absolute left-0 top-1/2 -translate-y-[1px] w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-rose-500 transition-opacity duration-500 ${phase === 'backward' && step <= t ? 'opacity-100' : 'opacity-0'}`}></div>
+                                 </div>
+                             )}
+                        </div>
+                    );
+                })}
+            </div>
+            
+            {/* Legend */}
+            <div className="flex justify-center gap-6 mt-6 text-[10px] text-slate-500">
+                <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div> Forward (State)
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-rose-500 rounded-full"></div> Backward (Gradient)
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const DeepLearningView: React.FC = () => {
   return (
     <div className="space-y-8 animate-fade-in">
@@ -287,6 +380,11 @@ model = models.Sequential([
           }
         ]}
       >
+         {/* Backprop Through Time Viz */}
+         <div className="mb-8">
+             <BPTTViz />
+         </div>
+
          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
                <LineChart data={timeSeriesData}>
