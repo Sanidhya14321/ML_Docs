@@ -39,7 +39,8 @@ const NAV_ITEMS: NavigationItem[] = [
         { id: 'types-of-learning', label: '5. Types of Learning' },
         { id: 'data-preprocessing', label: '6. Data & Scaling' },
         { id: 'optimization', label: '7. Optimization' },
-        { id: 'bias-variance', label: '8. Bias-Variance' }
+        { id: 'bias-variance', label: '8. Bias-Variance' },
+        { id: 'search-logic', label: '9. Search & Logic' }
     ]
   },
   { 

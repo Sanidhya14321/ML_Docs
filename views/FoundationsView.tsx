@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ReferenceArea } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { CodeBlock } from '../components/CodeBlock';
 import { MathBlock } from '../components/MathBlock';
+import { Play, RotateCcw, FastForward } from 'lucide-react';
 
 // --- DATA FOR CHARTS ---
 
@@ -75,7 +76,152 @@ const typesLearningData = [
   { subject: 'Human Supervision', Supervised: 100, Unsupervised: 20, Reinforcement: 50 },
 ];
 
+// --- SUDOKU LOGIC (SEARCH) ---
+
+const INITIAL_BOARD = [
+  [5, 3, 0, 0, 7, 0, 0, 0, 0],
+  [6, 0, 0, 1, 9, 5, 0, 0, 0],
+  [0, 9, 8, 0, 0, 0, 0, 6, 0],
+  [8, 0, 0, 0, 6, 0, 0, 0, 3],
+  [4, 0, 0, 8, 0, 3, 0, 0, 1],
+  [7, 0, 0, 0, 2, 0, 0, 0, 6],
+  [0, 6, 0, 0, 0, 0, 2, 8, 0],
+  [0, 0, 0, 4, 1, 9, 0, 0, 5],
+  [0, 0, 0, 0, 8, 0, 0, 7, 9]
+];
+
 // --- SUB-COMPONENTS ---
+
+const SudokuViz: React.FC = () => {
+  const [board, setBoard] = useState<number[][]>(JSON.parse(JSON.stringify(INITIAL_BOARD)));
+  const [solving, setSolving] = useState(false);
+  const [speed, setSpeed] = useState(10); // ms delay
+  const stopRef = useRef(false);
+
+  const resetBoard = () => {
+    stopRef.current = true;
+    setSolving(false);
+    setBoard(JSON.parse(JSON.stringify(INITIAL_BOARD)));
+  };
+
+  const isValid = (board: number[][], row: number, col: number, num: number) => {
+    for (let x = 0; x < 9; x++) {
+      if (board[row][x] === num || board[x][col] === num) return false;
+      const subRow = 3 * Math.floor(row / 3) + Math.floor(x / 3);
+      const subCol = 3 * Math.floor(col / 3) + (x % 3);
+      if (board[subRow][subCol] === num) return false;
+    }
+    return true;
+  };
+
+  const solve = async () => {
+    if (solving) return;
+    setSolving(true);
+    stopRef.current = false;
+    
+    const b = JSON.parse(JSON.stringify(board));
+    await solveStep(b);
+    setSolving(false);
+  };
+
+  const solveStep = async (b: number[][]): Promise<boolean> => {
+    if (stopRef.current) return false;
+
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (b[row][col] === 0) {
+          for (let num = 1; num <= 9; num++) {
+            if (isValid(b, row, col, num)) {
+              b[row][col] = num;
+              setBoard([...b.map(r => [...r])]); // Update UI
+              
+              if (speed > 0) await new Promise(r => setTimeout(r, speed));
+              
+              if (await solveStep(b)) return true;
+              
+              b[row][col] = 0; // Backtrack
+              setBoard([...b.map(r => [...r])]);
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  return (
+    <div className="flex flex-col items-center w-full">
+      {/* Responsive Controls */}
+      <div className="flex flex-wrap gap-4 mb-6 justify-center w-full">
+        <button 
+          onClick={solve} 
+          disabled={solving}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded font-bold text-sm transition-colors shadow-lg shadow-indigo-900/50"
+        >
+          <Play size={16} /> Start Backtracking
+        </button>
+        <button 
+          onClick={resetBoard} 
+          className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-bold text-sm transition-colors border border-slate-600"
+        >
+          <RotateCcw size={16} /> Reset
+        </button>
+        <div className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded border border-slate-800">
+           <FastForward size={16} className="text-slate-400" />
+           <select 
+             value={speed} 
+             onChange={(e) => setSpeed(Number(e.target.value))}
+             disabled={solving}
+             className="bg-transparent text-slate-300 text-xs font-mono outline-none cursor-pointer"
+           >
+             <option value={100}>Slow</option>
+             <option value={10}>Fast</option>
+             <option value={0}>Instant</option>
+           </select>
+        </div>
+      </div>
+
+      {/* Responsive Sudoku Grid Container */}
+      <div className="w-full max-w-[400px] aspect-square bg-slate-800 p-1 md:p-2 rounded-lg shadow-2xl border border-slate-700">
+        <div className="w-full h-full grid grid-cols-9 grid-rows-9 gap-px bg-slate-600 border-2 border-slate-900">
+          {board.map((row, rIdx) => (
+            row.map((cell, cIdx) => {
+              // Calculate borders for 3x3 subgrids
+              const borderRight = (cIdx + 1) % 3 === 0 && cIdx !== 8 ? 'border-r-2 border-r-slate-900' : '';
+              const borderBottom = (rIdx + 1) % 3 === 0 && rIdx !== 8 ? 'border-b-2 border-b-slate-900' : '';
+              
+              const isInitial = INITIAL_BOARD[rIdx][cIdx] !== 0;
+
+              return (
+                <div 
+                  key={`${rIdx}-${cIdx}`}
+                  className={`
+                    relative flex items-center justify-center 
+                    bg-slate-900 
+                    ${borderRight} ${borderBottom}
+                    hover:bg-slate-800 transition-colors duration-75
+                  `}
+                >
+                  <span className={`
+                    font-mono font-bold select-none
+                    ${isInitial ? 'text-slate-400' : 'text-indigo-400 animate-pulse'}
+                    text-base sm:text-lg md:text-xl lg:text-2xl
+                  `}>
+                    {cell !== 0 ? cell : ''}
+                  </span>
+                </div>
+              );
+            })
+          ))}
+        </div>
+      </div>
+      <p className="text-xs text-slate-500 mt-4 text-center max-w-md">
+        The algorithm tries a number, moves to the next cell, and <strong className="text-indigo-400">backtracks</strong> (returns to 0) if it hits a dead end.
+      </p>
+    </div>
+  );
+};
 
 const DotProductViz = () => (
   <div className="flex flex-col md:flex-row items-center justify-center gap-8 py-6 select-none">
@@ -768,6 +914,48 @@ model = RandomForest(max_depth=10)`}
                 </ResponsiveContainer>
                 <p className="text-xs text-center text-slate-500 mt-2">Low Complexity = High Bias (Underfitting). High Complexity = High Variance (Overfitting).</p>
             </div>
+        </AlgorithmCard>
+      </section>
+
+      {/* --- SECTION 9: SEARCH & LOGIC --- */}
+      <section id="search-logic" className="scroll-mt-24">
+        <div className="flex items-center gap-3 mb-8">
+            <span className="text-sm font-mono text-slate-500">09</span>
+            <h2 className="text-2xl font-bold text-cyan-400 uppercase tracking-widest">Search & Logic</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+        </div>
+
+        <AlgorithmCard
+            id="constraint-satisfaction"
+            title="Constraint Satisfaction (Backtracking)"
+            theory="Backtracking is a general algorithm for finding all (or some) solutions to computational problems, notably Constraint Satisfaction Problems (CSPs), that incrementally builds candidates to the solutions, and abandons a candidate ('backtracks') as soon as it determines that the candidate cannot possibly be completed to a valid solution."
+            math={<span>Solve(P): if P is full return true; else &forall; v &in; Domain: if valid(v) &rarr; Solve(P+v)</span>}
+            mathLabel="Recursive Search Logic"
+            code={`def solve(board):
+    row, col = find_empty(board)
+    if row is None: return True # Solved
+
+    for num in range(1, 10):
+        if is_valid(board, num, (row, col)):
+            board[row][col] = num
+            
+            if solve(board): return True
+            
+            board[row][col] = 0 # Backtrack
+
+    return False`}
+            pros={['Guaranteed to find a solution (if one exists)', 'More efficient than Brute Force', 'Simple recursive implementation']}
+            cons={['Exponential time complexity O(m^n)', 'Can be very slow for large/complex inputs', 'Not an optimization algorithm (just satisfiability)']}
+            hyperparameters={[
+            {
+                name: 'heuristic',
+                description: 'Strategy to choose which variable to assign next (e.g., Minimum Remaining Values).',
+                default: 'None',
+                range: 'MRV, Degree, LCV'
+            }
+            ]}
+        >
+            <SudokuViz />
         </AlgorithmCard>
       </section>
     </div>
