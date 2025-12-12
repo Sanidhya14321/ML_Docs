@@ -368,6 +368,83 @@ const DataStructuresViz = () => (
   </div>
 );
 
+const OneHotViz = () => (
+  <div className="flex flex-col md:flex-row items-center justify-center gap-8 py-6 select-none font-mono text-xs">
+    {/* Input Column */}
+    <div className="bg-slate-900 border border-slate-700 rounded p-4 shadow-lg w-full max-w-[200px]">
+       <div className="text-center text-slate-400 mb-2 border-b border-slate-700 pb-1 font-bold">Raw Feature</div>
+       <table className="w-full text-center">
+         <thead><tr><th className="p-1 text-indigo-400 border-b border-slate-800">Color</th></tr></thead>
+         <tbody>
+           <tr><td className="p-2 border-b border-slate-800/50">Red</td></tr>
+           <tr><td className="p-2 border-b border-slate-800/50">Blue</td></tr>
+           <tr><td className="p-2 border-b border-slate-800/50">Green</td></tr>
+           <tr><td className="p-2">Red</td></tr>
+         </tbody>
+       </table>
+    </div>
+
+    <div className="text-2xl text-slate-500 font-bold hidden md:block">&rarr;</div>
+    <div className="text-2xl text-slate-500 font-bold md:hidden">&darr;</div>
+
+    {/* Output Columns */}
+    <div className="bg-slate-900 border border-slate-700 rounded p-4 shadow-lg w-full max-w-[350px]">
+       <div className="text-center text-slate-400 mb-2 border-b border-slate-700 pb-1 font-bold">One-Hot Encoded</div>
+       <table className="w-full text-center">
+         <thead>
+            <tr>
+                <th className="p-1 text-rose-400 border-b border-slate-800">Is_Red</th>
+                <th className="p-1 text-sky-400 border-b border-slate-800">Is_Blue</th>
+                <th className="p-1 text-emerald-400 border-b border-slate-800">Is_Green</th>
+            </tr>
+         </thead>
+         <tbody>
+           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td></tr>
+           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td></tr>
+           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td></tr>
+           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 font-bold text-white">1</td><td className="p-2 text-slate-600">0</td><td className="p-2 text-slate-600">0</td></tr>
+         </tbody>
+       </table>
+    </div>
+  </div>
+);
+
+const MetricsViz = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Precision Block */}
+      <div className="bg-slate-900 border border-slate-700 p-4 rounded-lg relative overflow-hidden group hover:border-indigo-500 transition-colors shadow-lg">
+          <div className="text-xs font-bold text-slate-400 uppercase mb-2">Precision (Quality)</div>
+          <div className="flex items-center gap-2 mb-2">
+             <div className="text-3xl font-bold text-indigo-400 font-serif">High</div>
+             <div className="text-xs text-slate-500 leading-tight border-l-2 border-slate-700 pl-2">"I am 99% sure this is spam."</div>
+          </div>
+          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+             <div className="h-full bg-indigo-500 w-[95%]"></div>
+          </div>
+          <p className="text-[10px] text-slate-500 leading-relaxed">
+             <strong>Formula:</strong> TP / (TP + FP). <br/>
+             Minimizes False Positives. Crucial for spam filters or fraud detection (don't flag innocent users).
+          </p>
+      </div>
+
+      {/* Recall Block */}
+      <div className="bg-slate-900 border border-slate-700 p-4 rounded-lg relative overflow-hidden group hover:border-emerald-500 transition-colors shadow-lg">
+          <div className="text-xs font-bold text-slate-400 uppercase mb-2">Recall (Quantity)</div>
+          <div className="flex items-center gap-2 mb-2">
+             <div className="text-3xl font-bold text-emerald-400 font-serif">High</div>
+             <div className="text-xs text-slate-500 leading-tight border-l-2 border-slate-700 pl-2">"I found 99% of all spam."</div>
+          </div>
+          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+             <div className="h-full bg-emerald-500 w-[95%]"></div>
+          </div>
+           <p className="text-[10px] text-slate-500 leading-relaxed">
+             <strong>Formula:</strong> TP / (TP + FN). <br/>
+             Minimizes False Negatives. Crucial for cancer diagnosis (don't miss a case) or security (catch every intruder).
+          </p>
+      </div>
+  </div>
+);
+
 export const FoundationsView: React.FC = () => {
   return (
     <div className="space-y-24 animate-fade-in pb-12">
@@ -957,6 +1034,65 @@ model = RandomForest(max_depth=10)`}
         >
             <SudokuViz />
         </AlgorithmCard>
+      </section>
+
+      {/* --- SECTION 10: FEATURE ENGINEERING --- */}
+      <section id="feature-engineering" className="scroll-mt-24">
+         <div className="flex items-center gap-3 mb-8">
+            <span className="text-sm font-mono text-slate-500">10</span>
+            <h2 className="text-2xl font-bold text-pink-400 uppercase tracking-widest">Feature Engineering</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+         </div>
+         
+         <AlgorithmCard
+           id="feature-eng-card"
+           title="Feature Engineering"
+           theory="Raw data is rarely ready for modeling. Feature engineering is the process of using domain knowledge to extract features (characteristics, properties, attributes) from raw data. This includes encoding categorical variables, binning continuous variables, and creating interaction terms."
+           math={<span>V<sub>enc</sub> = [0, \dots, 1, \dots, 0]</span>}
+           mathLabel="One-Hot Vector"
+           code={`# One-Hot Encoding
+df = pd.get_dummies(df, columns=['color'])
+
+# Interaction Features
+df['area'] = df['width'] * df['height']
+
+# Binning
+df['age_group'] = pd.cut(df['age'], bins=[0, 18, 65, 100], labels=['Child', 'Adult', 'Senior'])`}
+           pros={['Allows models to understand non-numeric data', 'Can capture non-linearities (interactions)', 'Improves model accuracy significantly']}
+           cons={['Can increase dimensionality (Curse of Dimensionality)', 'Requires domain expertise', 'Risk of data leakage if done before splitting']}
+         >
+           <OneHotViz />
+         </AlgorithmCard>
+      </section>
+
+      {/* --- SECTION 11: EVALUATION METRICS --- */}
+      <section id="eval-metrics" className="scroll-mt-24">
+         <div className="flex items-center gap-3 mb-8">
+            <span className="text-sm font-mono text-slate-500">11</span>
+            <h2 className="text-2xl font-bold text-lime-400 uppercase tracking-widest">Evaluation Metrics</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+         </div>
+
+         <AlgorithmCard
+           id="metrics-card"
+           title="Model Evaluation"
+           theory="Accuracy is often misleading, especially with imbalanced datasets. We need robust metrics like Precision (relevance), Recall (completeness), and the F1-Score (harmonic mean) to truly understand model performance and making the right trade-offs."
+           math={<span>F1 = 2 &middot; <sup>Precision &middot; Recall</sup>&frasl;<sub>Precision + Recall</sub></span>}
+           mathLabel="Harmonic Mean (F1 Score)"
+           code={`from sklearn.metrics import classification_report, confusion_matrix
+
+y_pred = model.predict(X_test)
+
+# Comprehensive Report
+print(classification_report(y_true, y_pred))
+
+# Confusion Matrix
+cm = confusion_matrix(y_true, y_pred)`}
+           pros={['Provides a complete picture of performance', 'Crucial for imbalanced classes (Fraud/Disease)', 'Helps in tuning thresholds']}
+           cons={['Metrics can conflict (Precision vs Recall trade-off)', 'Harder to explain to non-technical stakeholders than accuracy']}
+         >
+           <MetricsViz />
+         </AlgorithmCard>
       </section>
     </div>
   );

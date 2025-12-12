@@ -40,7 +40,9 @@ const NAV_ITEMS: NavigationItem[] = [
         { id: 'data-preprocessing', label: '6. Data & Scaling' },
         { id: 'optimization', label: '7. Optimization' },
         { id: 'bias-variance', label: '8. Bias-Variance' },
-        { id: 'search-logic', label: '9. Search & Logic' }
+        { id: 'search-logic', label: '9. Search & Logic' },
+        { id: 'feature-engineering', label: '10. Feature Engineering' },
+        { id: 'eval-metrics', label: '11. Evaluation Metrics' }
     ]
   },
   { 
