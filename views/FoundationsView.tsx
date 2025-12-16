@@ -368,46 +368,84 @@ const DataStructuresViz = () => (
   </div>
 );
 
-const OneHotViz = () => (
-  <div className="flex flex-col md:flex-row items-center justify-center gap-8 py-6 select-none font-mono text-xs">
-    {/* Input Column */}
-    <div className="bg-slate-900 border border-slate-700 rounded p-4 shadow-lg w-full max-w-[200px]">
-       <div className="text-center text-slate-400 mb-2 border-b border-slate-700 pb-1 font-bold">Raw Feature</div>
-       <table className="w-full text-center">
-         <thead><tr><th className="p-1 text-indigo-400 border-b border-slate-800">Color</th></tr></thead>
-         <tbody>
-           <tr><td className="p-2 border-b border-slate-800/50">Red</td></tr>
-           <tr><td className="p-2 border-b border-slate-800/50">Blue</td></tr>
-           <tr><td className="p-2 border-b border-slate-800/50">Green</td></tr>
-           <tr><td className="p-2">Red</td></tr>
-         </tbody>
-       </table>
-    </div>
+const OneHotViz = () => {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-    <div className="text-2xl text-slate-500 font-bold hidden md:block">&rarr;</div>
-    <div className="text-2xl text-slate-500 font-bold md:hidden">&darr;</div>
+  const categories = [
+    { name: 'Red', color: 'text-rose-400', border: 'border-rose-500', shadow: 'shadow-rose-500/50' },
+    { name: 'Blue', color: 'text-sky-400', border: 'border-sky-500', shadow: 'shadow-sky-500/50' },
+    { name: 'Green', color: 'text-emerald-400', border: 'border-emerald-500', shadow: 'shadow-emerald-500/50' }
+  ];
 
-    {/* Output Columns */}
-    <div className="bg-slate-900 border border-slate-700 rounded p-4 shadow-lg w-full max-w-[350px]">
-       <div className="text-center text-slate-400 mb-2 border-b border-slate-700 pb-1 font-bold">One-Hot Encoded</div>
-       <table className="w-full text-center">
-         <thead>
-            <tr>
-                <th className="p-1 text-rose-400 border-b border-slate-800">Is_Red</th>
-                <th className="p-1 text-sky-400 border-b border-slate-800">Is_Blue</th>
-                <th className="p-1 text-emerald-400 border-b border-slate-800">Is_Green</th>
-            </tr>
-         </thead>
-         <tbody>
-           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td></tr>
-           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td></tr>
-           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 text-slate-600 border-b border-slate-800/50">0</td><td className="p-2 font-bold text-white border-b border-slate-800/50">1</td></tr>
-           <tr className="hover:bg-slate-800 transition-colors"><td className="p-2 font-bold text-white">1</td><td className="p-2 text-slate-600">0</td><td className="p-2 text-slate-600">0</td></tr>
-         </tbody>
-       </table>
+  return (
+    <div className="flex flex-col gap-8 py-6 select-none">
+       {/* Interactive Selector */}
+       <div className="flex justify-center gap-4">
+          {categories.map((cat) => (
+            <button
+              key={cat.name}
+              onClick={() => setActiveCategory(cat.name)}
+              className={`
+                px-6 py-3 rounded-lg border transition-all duration-300 transform font-bold
+                ${activeCategory === cat.name 
+                  ? `${cat.border} bg-slate-800 text-white scale-110 shadow-lg ${cat.shadow}` 
+                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-500 hover:text-slate-200'}
+              `}
+            >
+              {cat.name}
+            </button>
+          ))}
+       </div>
+
+       {/* Transformation Visual */}
+       <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12">
+          
+          {/* Input Representation */}
+          <div className="flex flex-col items-center gap-2 opacity-80">
+             <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Raw Feature</span>
+             <div className="w-32 h-16 flex items-center justify-center bg-slate-900 border border-slate-700 rounded-lg text-lg font-mono text-white shadow-inner">
+                {activeCategory ? `"${activeCategory}"` : <span className="text-slate-600 italic">None</span>}
+             </div>
+          </div>
+
+          {/* Arrow */}
+          <div className="flex flex-col items-center">
+              <span className="text-[10px] text-slate-500 mb-1">One-Hot Encode</span>
+              <div className="text-2xl text-indigo-400 animate-pulse">&rarr;</div>
+          </div>
+
+          {/* Output Vector */}
+          <div className="flex flex-col items-center gap-2">
+             <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Feature Vector</span>
+             <div className="flex gap-2 p-3 bg-slate-950 border border-slate-800 rounded-xl shadow-lg">
+                {categories.map((cat) => {
+                   const isActive = activeCategory === cat.name;
+                   return (
+                     <div key={cat.name} className="flex flex-col items-center gap-2 transition-all duration-500">
+                        <span className={`text-[9px] uppercase font-bold transition-colors ${isActive ? cat.color : 'text-slate-600'}`}>
+                           Is_{cat.name}
+                        </span>
+                        <div className={`
+                           w-10 h-12 flex items-center justify-center rounded border-2 font-mono text-xl font-bold transition-all duration-300
+                           ${isActive 
+                             ? `${cat.border} bg-slate-800 text-white shadow-[0_0_10px_currentColor] ${cat.color}` 
+                             : 'border-slate-800 bg-slate-900 text-slate-700'}
+                        `}>
+                           {isActive ? 1 : 0}
+                        </div>
+                     </div>
+                   );
+                })}
+             </div>
+          </div>
+       </div>
+
+       <p className="text-center text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
+          The categorical value <strong className="text-white">"{activeCategory || '...'}"</strong> is mapped to a vector where only the corresponding index is <strong className="text-indigo-400">1</strong> (Hot) and all others are <strong className="text-slate-600">0</strong>.
+       </p>
     </div>
-  </div>
-);
+  );
+};
 
 const MetricsViz = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
