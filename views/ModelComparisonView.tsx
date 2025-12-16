@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, BarChart, Bar, ScatterChart, Scatter, ReferenceLine, ReferenceDot } from 'recharts';
 import { MLModelType } from '../types';
-import { Sliders, Activity, TrendingUp } from 'lucide-react';
+import { Sliders, Activity, TrendingUp, Info } from 'lucide-react';
 
 // --- DATA & CONFIGURATION ---
 
@@ -96,7 +96,13 @@ const MODEL_IMPACTS: Record<MLModelType, ParamImpact[]> = {
       paramName: 'C (Inverse Reg)',
       labelX: 'C Value (Log Scale)',
       data: [
-        { x: '0.001', y: 0.65 }, { x: '0.01', y: 0.72 }, { x: '0.1', y: 0.82 }, { x: '1.0', y: 0.85 }, { x: '10', y: 0.84 }, { x: '100', y: 0.83 }
+        { x: '0.0001', y: 0.50 }, // Strong Reg
+        { x: '0.001', y: 0.65 }, 
+        { x: '0.01', y: 0.78 }, 
+        { x: '0.1', y: 0.86 },   // Optimal
+        { x: '1.0', y: 0.85 }, 
+        { x: '10', y: 0.83 }, 
+        { x: '100', y: 0.80 }    // Weak Reg
       ]
     }
   ],
@@ -121,7 +127,7 @@ const MODEL_IMPACTS: Record<MLModelType, ParamImpact[]> = {
       paramName: 'C (Regularization)',
       labelX: 'C Value',
       data: [
-         { x: '0.1', y: 0.75 }, { x: '1', y: 0.86 }, { x: '10', y: 0.84 }, { x: '100', y: 0.81 }
+         { x: '0.01', y: 0.60 }, { x: '0.1', y: 0.75 }, { x: '1', y: 0.86 }, { x: '10', y: 0.84 }, { x: '100', y: 0.78 }
       ]
     },
     {
@@ -202,6 +208,38 @@ const SensitivityPanel: React.FC<SensitivityPanelProps> = ({ model, impacts, col
   const currentParam = impacts[selectedParamIdx];
   const currentDataPoint = currentParam.data[sliderIndex];
 
+  // Helper to determine insight
+  const getInsight = (paramName: string, index: number, total: number) => {
+    const ratio = index / (total - 1);
+    
+    if (paramName.includes('C (')) {
+        // Low C = Strong Reg = Underfit
+        // High C = Weak Reg = Overfit
+        if (ratio < 0.35) return "Underfitting (High Bias)";
+        if (ratio > 0.65) return "Overfitting (High Variance)";
+        return "Optimal Balance";
+    }
+    if (paramName.includes('n_neighbors')) {
+        // Low k = High Variance (Overfitting)
+        // High k = High Bias (Underfitting)
+        if (ratio < 0.3) return "High Variance (Noise Sensitive)";
+        if (ratio > 0.7) return "High Bias (Over-smoothed)";
+        return "Optimal Balance";
+    }
+    if (paramName.includes('n_estimators')) {
+        if (ratio < 0.2) return "Underfitting";
+        return "Diminishing Returns (Stable)";
+    }
+    if (paramName.includes('learning_rate')) {
+        if (ratio < 0.3) return "Slow Convergence";
+        if (ratio > 0.7) return "Unstable / Divergence";
+        return "Good Convergence";
+    }
+    return "";
+  };
+
+  const insight = getInsight(currentParam.paramName, sliderIndex, currentParam.data.length);
+
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Header & Dropdown */}
@@ -258,21 +296,26 @@ const SensitivityPanel: React.FC<SensitivityPanelProps> = ({ model, impacts, col
       {/* Interactive Slider Control */}
       <div className="bg-slate-800 p-4 rounded-b-lg border border-t-0 border-slate-800 shadow-inner">
         <div className="flex justify-between text-xs text-slate-400 mb-3 font-mono">
-          <span>Hyperparameter: <strong className="text-white text-sm ml-1">{currentDataPoint.x}</strong></span>
+          <span>Value: <strong className="text-white text-sm ml-1">{currentDataPoint.x}</strong></span>
           <span>Accuracy: <strong style={{ color }} className="text-sm ml-1">{(currentDataPoint.y * 100).toFixed(1)}%</strong></span>
         </div>
+        
         <input 
           type="range" 
           min={0} 
           max={currentParam.data.length - 1} 
           value={sliderIndex}
           onChange={(e) => setSliderIndex(Number(e.target.value))}
-          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-3"
           style={{ accentColor: color }}
         />
-        <div className="flex justify-between text-[10px] text-slate-600 mt-2 font-mono uppercase">
-           <span>Low</span>
-           <span>High</span>
+        
+        {/* Dynamic Insight Banner */}
+        <div className="flex items-center gap-2 justify-center bg-slate-900/50 p-2 rounded border border-slate-700/50">
+            <Info size={14} className={insight === "Optimal Balance" ? "text-emerald-400" : "text-amber-400"} />
+            <span className={`text-xs font-bold ${insight === "Optimal Balance" ? "text-emerald-400" : "text-amber-400"}`}>
+                {insight}
+            </span>
         </div>
       </div>
     </div>
