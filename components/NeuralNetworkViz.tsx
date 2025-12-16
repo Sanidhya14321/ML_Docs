@@ -1,188 +1,139 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 export const NeuralNetworkViz: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  const inputRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const hiddenRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const outputRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Sequence: 0=Input->Hidden, 1=Hidden Activation, 2=Hidden->Output, 3=Output Activation
+  const [activeStep, setActiveStep] = useState(0);
 
-  // Store style objects for edges
-  const [edges1, setEdges1] = useState<{style: React.CSSProperties}[]>([]);
-  const [edges2, setEdges2] = useState<{style: React.CSSProperties}[]>([]);
-  
-  // State for activation animation sequence (0: Input, 1: Hidden, 2: Output)
-  const [activeLayer, setActiveLayer] = useState<0 | 1 | 2>(0);
-
-  // Network Topology
-  const inputNodes = [1, 2, 3];
-  const hiddenNodes = [1, 2, 3, 4];
-  const outputNodes = [1, 2];
-
-  // Logic to calculate CSS geometry for connecting lines
-  const updateLines = () => {
-    if (!containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-
-    const getGeometry = (n1: HTMLDivElement, n2: HTMLDivElement): React.CSSProperties => {
-        const r1 = n1.getBoundingClientRect();
-        const r2 = n2.getBoundingClientRect();
-        
-        // Calculate centers relative to container
-        const x1 = r1.left - containerRect.left + r1.width / 2;
-        const y1 = r1.top - containerRect.top + r1.height / 2;
-        const x2 = r2.left - containerRect.left + r2.width / 2;
-        const y2 = r2.top - containerRect.top + r2.height / 2;
-
-        const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-        const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-        return {
-            position: 'absolute',
-            top: y1,
-            left: x1,
-            width: length,
-            height: 1, 
-            transform: `rotate(${angle}deg)`,
-            transformOrigin: '0 0',
-            zIndex: 0,
-            transition: 'opacity 0.5s ease, height 0.3s ease',
-            pointerEvents: 'none'
-        };
-    };
-
-    // Edges between Input and Hidden
-    const newEdges1: {style: React.CSSProperties}[] = [];
-    inputRefs.current.forEach(inNode => {
-        hiddenRefs.current.forEach(hidNode => {
-            if(inNode && hidNode) {
-                const style = getGeometry(inNode, hidNode);
-                style.background = 'linear-gradient(90deg, #6366f1, #94a3b8)'; // Indigo to Slate
-                newEdges1.push({ style });
-            }
-        });
-    });
-    setEdges1(newEdges1);
-
-    // Edges between Hidden and Output
-    const newEdges2: {style: React.CSSProperties}[] = [];
-    hiddenRefs.current.forEach(hidNode => {
-        outputRefs.current.forEach(outNode => {
-            if(hidNode && outNode) {
-                const style = getGeometry(hidNode, outNode);
-                style.background = 'linear-gradient(90deg, #94a3b8, #10b981)'; // Slate to Emerald
-                newEdges2.push({ style });
-            }
-        });
-    });
-    setEdges2(newEdges2);
-  };
-
-  // Recalculate lines on mount and resize
-  useLayoutEffect(() => {
-    updateLines();
-    window.addEventListener('resize', updateLines);
-    // Delay to allow layout to settle
-    const timer = setTimeout(updateLines, 200);
-    return () => {
-        window.removeEventListener('resize', updateLines);
-        clearTimeout(timer);
-    };
-  }, []);
-
-  // Animation Loop
   useEffect(() => {
     const interval = setInterval(() => {
-        setActiveLayer(prev => (prev + 1) % 3 as 0|1|2);
-    }, 1200);
+        setActiveStep(prev => (prev + 1) % 4);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  // Geometry Configuration
+  const width = 600;
+  const height = 300;
+  const layerX = [100, 300, 500]; // X coordinates for Input, Hidden, Output
+  
+  // Node positions Y
+  const inputNodes = [80, 150, 220];
+  const hiddenNodes = [60, 120, 180, 240];
+  const outputNodes = [100, 200];
+
+  // Generate SVG Paths for connections
+  const connections1 = useMemo(() => {
+    const paths = [];
+    for (let i = 0; i < inputNodes.length; i++) {
+        for (let j = 0; j < hiddenNodes.length; j++) {
+            paths.push({
+                d: `M ${layerX[0]} ${inputNodes[i]} C ${layerX[0] + 100} ${inputNodes[i]}, ${layerX[1] - 100} ${hiddenNodes[j]}, ${layerX[1]} ${hiddenNodes[j]}`,
+                key: `i${i}-h${j}`
+            });
+        }
+    }
+    return paths;
+  }, []);
+
+  const connections2 = useMemo(() => {
+    const paths = [];
+    for (let i = 0; i < hiddenNodes.length; i++) {
+        for (let j = 0; j < outputNodes.length; j++) {
+            paths.push({
+                d: `M ${layerX[1]} ${hiddenNodes[i]} C ${layerX[1] + 100} ${hiddenNodes[i]}, ${layerX[2] - 100} ${outputNodes[j]}, ${layerX[2]} ${outputNodes[j]}`,
+                key: `h${i}-o${j}`
+            });
+        }
+    }
+    return paths;
+  }, []);
+
   return (
-    <div ref={containerRef} className="w-full h-64 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-around relative overflow-hidden p-8 shadow-inner select-none">
-       
-       {/* --- EDGES (Pure CSS Divs) --- */}
-       
-       {/* Input -> Hidden Edges */}
-       {edges1.map((edge, i) => (
-           <div 
-             key={`e1-${i}`} 
-             style={{
-               ...edge.style, 
-               opacity: activeLayer === 0 ? 0.8 : 0.15, 
-               height: activeLayer === 0 ? 2 : 1 
-             }} 
-           />
-       ))}
+    <div className="w-full h-64 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center relative overflow-hidden shadow-inner select-none">
+       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full">
+          <defs>
+            <linearGradient id="gradInput" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.2" />
+            </linearGradient>
+            <linearGradient id="gradOutput" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+            </linearGradient>
+          </defs>
 
-       {/* Hidden -> Output Edges */}
-       {edges2.map((edge, i) => (
-           <div 
-             key={`e2-${i}`} 
-             style={{
-               ...edge.style, 
-               opacity: activeLayer === 1 ? 0.8 : 0.15,
-               height: activeLayer === 1 ? 2 : 1
-             }} 
-           />
-       ))}
+          {/* Layer 1 Connections (Input -> Hidden) */}
+          {connections1.map((path) => (
+              <g key={path.key}>
+                  {/* Background Line */}
+                  <path d={path.d} stroke="#334155" strokeWidth="1" fill="none" />
+                  {/* Active Pulse Line */}
+                  <path 
+                    d={path.d} 
+                    stroke="url(#gradInput)" 
+                    strokeWidth={activeStep === 0 ? 3 : 0} 
+                    fill="none"
+                    strokeDasharray="10 5"
+                    className={activeStep === 0 ? "animate-[flow_0.5s_linear_infinite]" : ""}
+                    style={{ opacity: activeStep === 0 ? 1 : 0, transition: 'opacity 0.2s' }}
+                  />
+              </g>
+          ))}
 
-       {/* --- NODES (Flex Items) --- */}
+          {/* Layer 2 Connections (Hidden -> Output) */}
+          {connections2.map((path) => (
+              <g key={path.key}>
+                  <path d={path.d} stroke="#334155" strokeWidth="1" fill="none" />
+                  <path 
+                    d={path.d} 
+                    stroke="url(#gradOutput)" 
+                    strokeWidth={activeStep === 2 ? 3 : 0} 
+                    fill="none"
+                    strokeDasharray="10 5"
+                    className={activeStep === 2 ? "animate-[flow_0.5s_linear_infinite]" : ""}
+                    style={{ opacity: activeStep === 2 ? 1 : 0, transition: 'opacity 0.2s' }}
+                  />
+              </g>
+          ))}
 
-       {/* Input Layer */}
-       <div className="flex flex-col justify-center gap-6 z-10">
-        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Input</div>
-        {inputNodes.map((n, i) => (
-          <div 
-            key={`in-${n}`}
-            ref={el => { inputRefs.current[i] = el; }}
-            className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ease-in-out ${
-              activeLayer === 0 
-                ? 'bg-indigo-500 border-white shadow-[0_0_15px_rgba(99,102,241,0.6)] scale-110' 
-                : 'bg-indigo-900/40 border-indigo-500/40'
-            }`}
-          />
-        ))}
-      </div>
+          {/* Input Nodes */}
+          {inputNodes.map((y, i) => (
+              <g key={`in-${i}`} transform={`translate(${layerX[0]}, ${y})`}>
+                  <circle r="12" fill="#0f172a" stroke={activeStep === 0 || activeStep === 3 ? "#6366f1" : "#475569"} strokeWidth="2" className="transition-colors duration-300" />
+                  <text x="0" y="4" textAnchor="middle" fontSize="10" fill="#cbd5e1" fontFamily="monospace">x{i+1}</text>
+                  {/* Glow effect */}
+                  {activeStep === 0 && <circle r="16" fill="none" stroke="#6366f1" strokeOpacity="0.5" className="animate-ping" />}
+              </g>
+          ))}
 
-      {/* Hidden Layer */}
-      <div className="flex flex-col justify-center gap-4 z-10">
-        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Hidden</div>
-        {hiddenNodes.map((n, i) => (
-          <div 
-            key={`hid-${n}`}
-            ref={el => { hiddenRefs.current[i] = el; }}
-            className={`w-6 h-6 rounded-full border-2 transition-all duration-500 ease-in-out ${
-              activeLayer === 1
-                ? 'bg-slate-200 border-white shadow-[0_0_15px_rgba(255,255,255,0.6)] scale-110' 
-                : 'bg-slate-800 border-slate-600'
-            }`}
-          />
-        ))}
-      </div>
+          {/* Hidden Nodes */}
+          {hiddenNodes.map((y, i) => (
+              <g key={`hid-${i}`} transform={`translate(${layerX[1]}, ${y})`}>
+                  <circle 
+                    r="10" 
+                    fill={activeStep >= 1 && activeStep <= 2 ? "#e2e8f0" : "#0f172a"} 
+                    stroke={activeStep >= 1 && activeStep <= 2 ? "#ffffff" : "#475569"} 
+                    strokeWidth="2" 
+                    className="transition-all duration-300" 
+                  />
+                  {activeStep === 1 && <circle r="14" fill="none" stroke="#e2e8f0" strokeOpacity="0.5" className="animate-ping" />}
+              </g>
+          ))}
 
-      {/* Output Layer */}
-      <div className="flex flex-col justify-center gap-8 z-10">
-        <div className="text-[10px] text-center text-slate-400 font-mono uppercase tracking-wider mb-2">Output</div>
-        {outputNodes.map((n, i) => (
-          <div 
-            key={`out-${n}`}
-            ref={el => { outputRefs.current[i] = el; }}
-            className={`w-8 h-8 rounded-full border-2 transition-all duration-500 ease-in-out ${
-              activeLayer === 2
-                ? 'bg-emerald-500 border-white shadow-[0_0_15px_rgba(16,185,129,0.6)] scale-110' 
-                : 'bg-emerald-900/40 border-emerald-500/40'
-            }`}
-          />
-        ))}
-      </div>
-      
-      {/* Legend */}
-      <div className="absolute bottom-2 right-4 text-[10px] font-mono text-slate-500 opacity-70">
-        {activeLayer === 0 && "Step 1: Input Features"}
-        {activeLayer === 1 && "Step 2: Hidden Processing"}
-        {activeLayer === 2 && "Step 3: Prediction"}
-      </div>
+          {/* Output Nodes */}
+          {outputNodes.map((y, i) => (
+              <g key={`out-${i}`} transform={`translate(${layerX[2]}, ${y})`}>
+                  <circle r="12" fill="#0f172a" stroke={activeStep === 3 ? "#10b981" : "#475569"} strokeWidth="2" className="transition-colors duration-300" />
+                  <text x="0" y="4" textAnchor="middle" fontSize="10" fill="#cbd5e1" fontFamily="monospace">y{i+1}</text>
+                  {activeStep === 3 && <circle r="16" fill="none" stroke="#10b981" strokeOpacity="0.5" className="animate-ping" />}
+              </g>
+          ))}
+
+          {/* Labels */}
+          <text x={layerX[0]} y="40" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">INPUT</text>
+          <text x={layerX[1]} y="30" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">HIDDEN</text>
+          <text x={layerX[2]} y="40" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">OUTPUT</text>
+       </svg>
     </div>
   );
 };

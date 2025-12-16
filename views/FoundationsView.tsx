@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ReferenceArea } from 'recharts';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, ComposedChart, Scatter, ScatterChart, BarChart, Bar, Legend, ReferenceLine, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ReferenceArea, ReferenceDot } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { CodeBlock } from '../components/CodeBlock';
-import { MathBlock } from '../components/MathBlock';
-import { Play, RotateCcw, FastForward } from 'lucide-react';
+import { Play, RotateCcw, FastForward, Activity } from 'lucide-react';
 
 // --- DATA FOR CHARTS ---
 
@@ -44,7 +43,6 @@ const splitData = [
 ];
 
 // 5. Feature Scaling (Raw vs Scaled)
-// Generating two clusters to visually demonstrate scaling
 const scalingData = [
   // Raw Data (Large Scale)
   ...Array.from({ length: 10 }, () => ({ x: Math.random() * 1000 + 1000, y: Math.random() * 5000, type: 'Raw (High Variance)' })),
@@ -223,6 +221,7 @@ const SudokuViz: React.FC = () => {
   );
 };
 
+// ... (Keeping DotProductViz, DataFrameViz, DataStructuresViz as they were, but defining them here for completeness if needed) ... 
 const DotProductViz = () => (
   <div className="flex flex-col md:flex-row items-center justify-center gap-8 py-6 select-none">
     {/* Vector A */}
@@ -482,6 +481,75 @@ const MetricsViz = () => (
       </div>
   </div>
 );
+
+// Bias-Variance Interactive Viz
+const BiasVarianceViz = () => {
+    const [complexity, setComplexity] = useState(8.5); // Default optimal
+
+    const chartData = useMemo(() => {
+        // Find closest point in biasVarianceData
+        const idx = Math.min(Math.max(0, Math.round((complexity - 1) * 2.5)), biasVarianceData.length - 1);
+        return { point: biasVarianceData[idx], full: biasVarianceData };
+    }, [complexity]);
+
+    let zoneLabel = "Optimal Balance";
+    let zoneColor = "#10b981"; // Emerald
+    
+    if (complexity < 6) {
+        zoneLabel = "Underfitting (High Bias)";
+        zoneColor = "#ef4444"; // Red
+    } else if (complexity > 13) {
+        zoneLabel = "Overfitting (High Variance)";
+        zoneColor = "#818cf8"; // Indigo
+    }
+
+    return (
+        <div className="space-y-4">
+            <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={chartData.full} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="complexity" type="number" domain={[1, 20]} stroke="#94a3b8" label={{ value: 'Model Complexity', position: 'insideBottom', offset: -10, fill: '#64748b' }} />
+                        <YAxis stroke="#94a3b8" label={{ value: 'Error', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
+                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} formatter={(value: number) => value.toFixed(2)} />
+                        <Legend verticalAlign="top" height={36} />
+                        
+                        {/* Interactive Vertical Line */}
+                        <ReferenceLine x={complexity} stroke={zoneColor} strokeWidth={2} strokeDasharray="3 3" />
+                        <ReferenceDot x={chartData.point.complexity} y={chartData.point.totalError} r={6} fill={zoneColor} stroke="#fff" />
+
+                        <Line name="Bias²" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} animationDuration={300} />
+                        <Line name="Variance" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} animationDuration={300} />
+                        <Line name="Total Error" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} animationDuration={300} />
+                    </ComposedChart>
+                </ResponsiveContainer>
+            </div>
+
+            {/* Slider Control */}
+            <div className="bg-slate-900 p-4 rounded-lg border border-slate-800 flex flex-col gap-3">
+                <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Adjust Model Complexity</span>
+                    <span className="text-xs font-bold px-2 py-1 rounded" style={{ color: zoneColor, backgroundColor: `${zoneColor}20`, border: `1px solid ${zoneColor}40` }}>
+                        {zoneLabel}
+                    </span>
+                </div>
+                <input 
+                    type="range" 
+                    min="1" 
+                    max="20" 
+                    step="0.5" 
+                    value={complexity} 
+                    onChange={(e) => setComplexity(parseFloat(e.target.value))}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-white"
+                />
+                <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+                    <span>Simple (Linear)</span>
+                    <span>Complex (Deep Tree)</span>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export const FoundationsView: React.FC = () => {
   return (
@@ -1006,29 +1074,7 @@ model = RandomForest(max_depth=10)`}
             pros={['Fundamental framework for diagnostics', 'Explains Overfitting/Underfitting', 'Guides regularization']}
             cons={['Theoretical concept (cannot exactly calculate bias/variance in practice)']}
         >
-            <div className="h-80 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={biasVarianceData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="complexity" type="number" domain={[1, 20]} stroke="#94a3b8" label={{ value: 'Model Complexity', position: 'insideBottom', offset: -10, fill: '#64748b' }} />
-                        <YAxis stroke="#94a3b8" label={{ value: 'Error', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} formatter={(value: number) => value.toFixed(2)} />
-                        <Legend verticalAlign="top" height={36} />
-                        
-                        {/* Zones */}
-                        <ReferenceArea x1={1} x2={6} stroke="none" fill="#ef4444" fillOpacity={0.1} label={{ value: "Underfitting (High Bias)", position: 'insideTop', fill: '#f87171', fontSize: 12, fontWeight: 'bold' }} />
-                        <ReferenceArea x1={13} x2={20} stroke="none" fill="#818cf8" fillOpacity={0.1} label={{ value: "Overfitting (High Variance)", position: 'insideTop', fill: '#818cf8', fontSize: 12, fontWeight: 'bold' }} />
-                        
-                        {/* Optimal Line */}
-                        <ReferenceLine x={8.5} stroke="#10b981" strokeDasharray="3 3" label={{ value: "Optimal Balance", position: 'top', fill: '#34d399', fontSize: 12, fontWeight: 'bold' }} />
-                        
-                        <Line name="Bias²" type="monotone" dataKey="biasSq" stroke="#f472b6" strokeWidth={2} dot={false} />
-                        <Line name="Variance" type="monotone" dataKey="variance" stroke="#818cf8" strokeWidth={2} dot={false} />
-                        <Line name="Total Error" type="monotone" dataKey="totalError" stroke="#ffffff" strokeWidth={4} dot={false} />
-                    </ComposedChart>
-                </ResponsiveContainer>
-                <p className="text-xs text-center text-slate-500 mt-2">Low Complexity = High Bias (Underfitting). High Complexity = High Variance (Overfitting).</p>
-            </div>
+            <BiasVarianceViz />
         </AlgorithmCard>
       </section>
 

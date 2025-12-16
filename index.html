@@ -26,6 +26,16 @@
                 500: '#6366f1',
                 600: '#4f46e5',
               }
+            },
+            animation: {
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'flow': 'flow 1.5s linear infinite',
+            },
+            keyframes: {
+              flow: {
+                '0%': { strokeDashoffset: '24' },
+                '100%': { strokeDashoffset: '0' },
+              }
             }
           }
         }
@@ -34,14 +44,16 @@
     <style>
       /* Custom scrollbar for academic feel */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 10px;
+        height: 10px;
       }
       ::-webkit-scrollbar-track {
-        background: #0f172a; 
+        background: #020617; 
       }
       ::-webkit-scrollbar-thumb {
         background: #334155; 
-        border-radius: 4px;
+        border-radius: 5px;
+        border: 2px solid #020617;
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #475569; 
@@ -54,6 +66,11 @@
       }
       .math-serif sup, .math-serif sub {
         font-style: normal;
+      }
+
+      /* Global Smooth Scroll */
+      html {
+        scroll-behavior: smooth;
       }
     </style>
   <script type="importmap">
@@ -68,7 +85,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-950 text-slate-200 antialiased overflow-hidden">
+  <body class="bg-slate-950 text-slate-200 antialiased overflow-hidden selection:bg-indigo-500/30">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
