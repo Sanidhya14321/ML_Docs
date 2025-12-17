@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { BrainCircuit, Play, RotateCcw, Target, Zap, Trophy, Shuffle, Cpu, Activity, Database } from 'lucide-react';
+import { BrainCircuit, Play, RotateCcw, Target, Zap, Trophy, Shuffle, Cpu, Activity, Database, ArrowRight, TrendingUp } from 'lucide-react';
 
 // --- VISUALIZATIONS ---
 
-// 1. The RL Loop (Agent <-> Environment) with Flowing Particles
+// 1. The RL Loop (Agent <-> Environment)
 const RLLoopViz = () => {
   const [phase, setPhase] = useState(0); // 0: State -> Agent, 1: Processing, 2: Action -> Env, 3: Processing
 
@@ -58,7 +58,7 @@ const RLLoopViz = () => {
   );
 };
 
-// 2. Multi-Armed Bandit with Mechanical Lever Animation
+// 2. Multi-Armed Bandit
 const BanditViz = () => {
   const [machines, setMachines] = useState([
     { id: 0, trueWinRate: 0.3, estimated: 0.5, pulls: 0 },
@@ -171,95 +171,127 @@ const BanditViz = () => {
   );
 };
 
-// 3. Active Grid World (Agent Traversing)
+// 3. Smooth Grid World Viz
 const GridWorldViz = () => {
-    // 4x4 Grid
-    const gridValues = [
+    // 4x4 Grid Definition
+    const grid = [
         ['S', 0, 0, 0],
         [0, 'X', 0, 'X'],
         [0, 0, 0, 'X'],
         [0, 'X', 0, 'G']
     ];
     
-    // Path the agent learns (coordinates [row, col])
+    // Policy Arrows for Visualization (approximate solution)
+    // 0: Up, 1: Right, 2: Down, 3: Left
+    const policy = [
+        ['→', '→', '↓', '↓'],
+        ['↓', '', '↓', ''],
+        ['↓', '→', '↓', ''],
+        ['→', '', '→', '★']
+    ];
+
+    // Learned Path
     const optimalPath = [
         {r:0, c:0}, {r:0, c:1}, {r:0, c:2}, // Right, Right, Right
         {r:1, c:2}, {r:2, c:2},             // Down, Down
         {r:3, c:2}, {r:3, c:3}              // Down, Right (Goal)
     ];
 
-    const [agentStep, setAgentStep] = useState(0);
+    const [stepIndex, setStepIndex] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() => {
         let interval: ReturnType<typeof setInterval>;
         if (isRunning) {
             interval = setInterval(() => {
-                setAgentStep(prev => {
+                setStepIndex(prev => {
                     if (prev >= optimalPath.length - 1) {
                         setIsRunning(false); // Stop at goal
                         return prev;
                     }
                     return prev + 1;
                 });
-            }, 600);
+            }, 800);
         }
         return () => clearInterval(interval);
     }, [isRunning]);
 
     const reset = () => {
         setIsRunning(false);
-        setAgentStep(0);
+        setStepIndex(0);
     };
 
-    const currentPos = optimalPath[agentStep];
+    const currentPos = optimalPath[stepIndex];
+    const currentAction = stepIndex < optimalPath.length - 1 
+        ? (optimalPath[stepIndex+1].r > currentPos.r ? "DOWN" : "RIGHT") 
+        : "DONE";
 
     return (
         <div className="flex gap-8 items-start">
-            <div className="relative p-2 bg-slate-900 border border-slate-800 rounded-lg shadow-lg">
-                <div className="grid grid-cols-4 gap-1">
-                    {gridValues.map((row, r) => row.map((cell, c) => {
-                        const isAgentHere = currentPos.r === r && currentPos.c === c;
-                        return (
-                            <div key={`${r}-${c}`} className={`
-                                w-12 h-12 flex items-center justify-center rounded border font-bold text-sm relative
-                                ${cell === 'S' ? 'bg-indigo-900/30 border-indigo-500/50 text-indigo-400' : 
-                                  cell === 'G' ? 'bg-emerald-900/30 border-emerald-500/50 text-emerald-400' :
-                                  cell === 'X' ? 'bg-rose-900/30 border-rose-500/50 text-rose-400' : 
-                                  'bg-slate-800 border-slate-700 text-slate-600'}
-                            `}>
-                                {cell === 0 ? '' : cell}
-                                
-                                {/* Agent */}
-                                {isAgentHere && (
-                                    <div className="absolute inset-0 m-1 bg-indigo-500 rounded shadow-[0_0_15px_rgba(99,102,241,0.8)] flex items-center justify-center transition-all duration-300">
-                                        <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    }))}
+            <div className="relative p-1 bg-slate-900 border border-slate-800 rounded-lg shadow-xl w-64 h-64">
+                {/* The Grid */}
+                <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-1">
+                    {grid.map((row, r) => row.map((cell, c) => (
+                        <div key={`${r}-${c}`} className={`
+                            relative flex items-center justify-center rounded border
+                            ${cell === 'S' ? 'bg-indigo-900/20 border-indigo-500/30' : 
+                              cell === 'G' ? 'bg-emerald-900/20 border-emerald-500/30' :
+                              cell === 'X' ? 'bg-rose-900/20 border-rose-500/30' : 
+                              'bg-slate-800/50 border-slate-700/50'}
+                        `}>
+                            {/* Cell Label */}
+                            {cell !== 0 && (
+                                <span className={`font-bold text-xs ${cell === 'X' ? 'text-rose-500' : 'text-slate-500'}`}>{cell}</span>
+                            )}
+                            
+                            {/* Policy Arrow (Faint) */}
+                            {cell !== 'X' && (
+                                <span className="absolute text-slate-600/30 text-lg font-bold select-none">{policy[r][c]}</span>
+                            )}
+                        </div>
+                    )))}
+                </div>
+
+                {/* The Agent (Absolute overlay for smooth movement) */}
+                <div 
+                    className="absolute w-[23%] h-[23%] bg-indigo-500 rounded-lg shadow-[0_0_15px_rgba(99,102,241,0.6)] flex items-center justify-center transition-all duration-700 ease-in-out z-10"
+                    style={{
+                        top: `${currentPos.r * 25 + 1}%`,
+                        left: `${currentPos.c * 25 + 1}%`
+                    }}
+                >
+                    <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
                 </div>
             </div>
 
             <div className="flex flex-col gap-4">
-                <div className="bg-slate-900 p-4 rounded border border-slate-800 w-48">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Q-Table Lookup</h4>
+                <div className="bg-slate-900 p-4 rounded border border-slate-800 w-48 shadow-lg">
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <Database size={12} /> Q-Table Lookup
+                    </h4>
                     <div className="text-sm font-mono text-slate-300">
                         State: <span className="text-indigo-400">({currentPos.r}, {currentPos.c})</span>
                     </div>
                     <div className="text-sm font-mono text-slate-300 mt-1">
-                        Best Action: <span className="text-emerald-400 font-bold">
-                            {agentStep < 2 ? "RIGHT" : (agentStep < 5 ? "DOWN" : (agentStep === 6 ? "DONE" : "RIGHT"))}
-                        </span>
+                        Best Action: <span className="text-emerald-400 font-bold">{currentAction}</span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-slate-800">
+                         <div className="flex justify-between text-[10px] text-slate-500">
+                            <span>Q(s, &uarr;): 0.1</span>
+                            <span>Q(s, &darr;): <span className="text-emerald-500 font-bold">0.8</span></span>
+                         </div>
+                         <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+                            <span>Q(s, &larr;): 0.0</span>
+                            <span>Q(s, &rarr;): 0.2</span>
+                         </div>
                     </div>
                 </div>
 
                 <div className="flex gap-2">
-                    <button onClick={() => setIsRunning(true)} disabled={isRunning || agentStep === 6} className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded disabled:opacity-50">
+                    <button onClick={() => setIsRunning(true)} disabled={isRunning || stepIndex === 6} className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded disabled:opacity-50 shadow-lg shadow-indigo-900/50">
                         <Play size={16} />
                     </button>
-                    <button onClick={reset} className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded">
+                    <button onClick={reset} className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded border border-slate-600">
                         <RotateCcw size={16} />
                     </button>
                 </div>
@@ -317,57 +349,116 @@ const ReplayBufferViz = () => {
     );
 };
 
-// 5. Actor-Critic Data Flow
+// 5. SVG Based Actor-Critic Data Flow
 const ActorCriticViz = () => {
-    const [pulse, setPulse] = useState(false);
-    
+    const [phase, setPhase] = useState(0);
+
     useEffect(() => {
         const interval = setInterval(() => {
-            setPulse(true);
-            setTimeout(() => setPulse(false), 1000);
-        }, 2000);
+            setPhase(prev => (prev + 1) % 150); // Loop 0 to 150 for steps
+        }, 30);
         return () => clearInterval(interval);
     }, []);
+    
+    // Geometry
+    const width = 500;
+    const height = 250;
+    
+    // Nodes
+    const envPos = { x: 80, y: 125 };
+    const actorPos = { x: 400, y: 70 };
+    const criticPos = { x: 400, y: 180 };
 
     return (
-        <div className="relative w-full h-64 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center overflow-hidden select-none">
-            {/* Environment */}
-            <div className="absolute left-8 flex flex-col items-center z-10">
-                <div className="w-16 h-16 bg-slate-800 border-2 border-slate-600 rounded-lg flex items-center justify-center shadow-lg">
-                    <Target className="text-slate-400" />
-                </div>
-                <span className="text-xs text-slate-500 mt-2 font-bold">Env</span>
-            </div>
+        <div className="w-full h-64 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden relative shadow-inner select-none">
+            <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}>
+                <defs>
+                    <linearGradient id="gradFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#6366f1" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#f43f5e" stopOpacity="1" />
+                    </linearGradient>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
+                    </marker>
+                </defs>
 
-            {/* Splitter */}
-            <div className="w-px h-24 bg-slate-700 absolute left-32 top-1/2 -translate-y-1/2"></div>
+                {/* --- PATHS --- */}
 
-            {/* Actor */}
-            <div className="absolute top-12 right-20 flex flex-col items-center z-10">
-                <div className={`w-16 h-16 border-2 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 ${pulse ? 'border-rose-500 bg-rose-900/20 shadow-[0_0_15px_rgba(244,63,94,0.4)]' : 'border-rose-900/50 bg-slate-800'}`}>
-                    <Shuffle className="text-rose-400" />
-                </div>
-                <span className="text-xs text-rose-400 mt-2 font-bold">Actor (&pi;)</span>
-            </div>
+                {/* Env -> Splitter */}
+                <path d={`M ${envPos.x + 30} ${envPos.y} L ${envPos.x + 100} ${envPos.y}`} stroke="#334155" strokeWidth="2" />
+                
+                {/* Splitter -> Actor (State) */}
+                <path d={`M ${envPos.x + 100} ${envPos.y} C ${envPos.x + 150} ${envPos.y}, ${actorPos.x - 100} ${actorPos.y}, ${actorPos.x - 40} ${actorPos.y}`} stroke="#334155" strokeWidth="2" markerEnd="url(#arrowhead)" />
+                
+                {/* Splitter -> Critic (State + Reward) */}
+                <path d={`M ${envPos.x + 100} ${envPos.y} C ${envPos.x + 150} ${envPos.y}, ${criticPos.x - 100} ${criticPos.y}, ${criticPos.x - 40} ${criticPos.y}`} stroke="#334155" strokeWidth="2" markerEnd="url(#arrowhead)" />
 
-            {/* Critic */}
-            <div className="absolute bottom-12 right-20 flex flex-col items-center z-10">
-                <div className={`w-16 h-16 border-2 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 ${pulse ? 'border-emerald-500 bg-emerald-900/20 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'border-emerald-900/50 bg-slate-800'}`}>
-                    <Activity className="text-emerald-400" />
-                </div>
-                <span className="text-xs text-emerald-400 mt-2 font-bold">Critic (V)</span>
-            </div>
+                {/* Critic -> Actor (Advantage) - Dashed verticalish */}
+                <path d={`M ${criticPos.x} ${criticPos.y - 40} L ${actorPos.x} ${actorPos.y + 40}`} stroke="#475569" strokeWidth="2" strokeDasharray="5 5" />
 
-            {/* Animated Particles */}
-            {/* State -> Actor/Critic */}
-            <div className={`absolute top-1/2 left-24 w-2 h-2 bg-indigo-400 rounded-full transition-all duration-1000 ${pulse ? 'translate-x-32 opacity-0' : 'translate-x-0 opacity-100'}`}></div>
+                {/* Actor -> Env (Action) - Loop back top */}
+                <path d={`M ${actorPos.x} ${actorPos.y - 40} C ${actorPos.x} 20, ${envPos.x} 20, ${envPos.x} ${envPos.y - 40}`} stroke="#334155" strokeWidth="2" markerEnd="url(#arrowhead)" strokeDasharray="5 5" />
+
+
+                {/* --- NODES --- */}
+
+                {/* Environment */}
+                <g transform={`translate(${envPos.x}, ${envPos.y})`}>
+                    <circle r="35" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+                    <Target size={24} x="-12" y="-12" className="text-emerald-400" />
+                    <text y="50" textAnchor="middle" fill="#94a3b8" fontSize="12" fontWeight="bold">Environment</text>
+                </g>
+
+                {/* Actor */}
+                <g transform={`translate(${actorPos.x}, ${actorPos.y})`}>
+                    <circle r="35" fill="#1e293b" stroke="#6366f1" strokeWidth="2" />
+                    <Shuffle size={24} x="-12" y="-12" className="text-indigo-400" />
+                    <text y="50" textAnchor="middle" fill="#818cf8" fontSize="12" fontWeight="bold">Actor (&pi;)</text>
+                </g>
+
+                {/* Critic */}
+                <g transform={`translate(${criticPos.x}, ${criticPos.y})`}>
+                    <circle r="35" fill="#1e293b" stroke="#f43f5e" strokeWidth="2" />
+                    <Activity size={24} x="-12" y="-12" className="text-rose-400" />
+                    <text y="50" textAnchor="middle" fill="#f472b6" fontSize="12" fontWeight="bold">Critic (V)</text>
+                </g>
+
+
+                {/* --- ANIMATIONS --- */}
+
+                {/* Particle: State (Blue) -> Actor */}
+                <circle r="4" fill="#6366f1">
+                    <animateMotion 
+                        dur="2s" 
+                        repeatCount="indefinite"
+                        path={`M ${envPos.x + 35} ${envPos.y} L ${envPos.x + 100} ${envPos.y} C ${envPos.x + 150} ${envPos.y}, ${actorPos.x - 100} ${actorPos.y}, ${actorPos.x - 40} ${actorPos.y}`}
+                    />
+                </circle>
+
+                {/* Particle: State+Reward (Green) -> Critic */}
+                <circle r="4" fill="#10b981">
+                    <animateMotion 
+                        dur="2s" 
+                        repeatCount="indefinite"
+                        path={`M ${envPos.x + 35} ${envPos.y} L ${envPos.x + 100} ${envPos.y} C ${envPos.x + 150} ${envPos.y}, ${criticPos.x - 100} ${criticPos.y}, ${criticPos.x - 40} ${criticPos.y}`}
+                    />
+                </circle>
+
+                 {/* Particle: Advantage (Red) -> Actor */}
+                 <circle r="4" fill="#f43f5e" opacity="0.8">
+                    <animateMotion 
+                        dur="1s"
+                        begin="1s"
+                        repeatCount="indefinite"
+                        path={`M ${criticPos.x} ${criticPos.y - 40} L ${actorPos.x} ${actorPos.y + 40}`}
+                    />
+                </circle>
+            </svg>
             
-            {/* Critic -> Actor (Advantage) */}
-            <div className={`absolute right-28 top-[60%] w-1 h-8 bg-gradient-to-t from-emerald-500 to-transparent transition-all duration-500 ${pulse ? 'opacity-100 translate-y-[-20px]' : 'opacity-0 translate-y-0'}`}></div>
-
-            <div className="absolute bottom-4 left-4 text-[10px] font-mono text-slate-500">
-                The Critic evaluates the state, telling the Actor how "good" the action was.
-            </div>
+            {/* Labels overlay */}
+            <div className="absolute top-24 left-44 text-[10px] text-indigo-300 font-mono">State</div>
+            <div className="absolute bottom-24 left-44 text-[10px] text-emerald-300 font-mono">Reward</div>
+            <div className="absolute top-1/2 right-24 -translate-y-1/2 text-[10px] text-rose-300 font-mono bg-slate-900 px-1">Advantage</div>
         </div>
     );
 };
