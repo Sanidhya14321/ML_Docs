@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Line, BarChart, Bar, Legend, ComposedChart } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 
@@ -18,14 +18,81 @@ const coefficientData = [
   { feature: 'F5', Linear: 2, Ridge: 1, Lasso: 0 }, // Lasso zeros out
 ];
 
-// Polynomial Data
-const polyData = Array.from({ length: 20 }, (_, i) => {
-  const x = i - 10;
-  // y = x^2 + noise
-  const y = x * x + (Math.random() * 15 - 7.5);
-  const curve = x * x;
-  return { x, y, curve };
-});
+const PolyViz = () => {
+  const [degree, setDegree] = useState(2);
+
+  // Generate noisy quadratic data
+  const baseData = useMemo(() => {
+      return Array.from({ length: 20 }, (_, i) => {
+        const x = (i / 19) * 10 - 5; // -5 to 5
+        const y = 0.5 * x * x - 2 + (Math.random() - 0.5) * 5;
+        return { x, y };
+      });
+  }, []);
+
+  // Simulate Polynomial Fit
+  const chartData = useMemo(() => {
+      return baseData.map(p => {
+          let pred = 0;
+          if (degree === 1) {
+              // Linear fit approx
+              pred = 0.5 * p.x + 2; 
+          } else if (degree === 2) {
+              // Quadratic fit (good)
+              pred = 0.5 * p.x * p.x - 2;
+          } else {
+              // Overfitting simulation (wiggly)
+              // Add high freq noise based on degree
+              pred = (0.5 * p.x * p.x - 2) + Math.sin(p.x * degree) * (degree * 0.2); 
+          }
+          return { ...p, curve: pred };
+      });
+  }, [baseData, degree]);
+
+  let label = "Balanced";
+  let color = "#f59e0b"; // Amber
+  if (degree === 1) {
+      label = "Underfitting (Too Simple)";
+      color = "#ef4444"; // Red
+  } else if (degree > 5) {
+      label = "Overfitting (Too Complex)";
+      color = "#818cf8"; // Indigo
+  }
+
+  return (
+      <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700">
+             <div className="w-1/2">
+                <label className="text-xs font-bold text-slate-400">Polynomial Degree: <span className="text-indigo-400 text-sm">{degree}</span></label>
+                <input 
+                  type="range" min="1" max="12" step="1" 
+                  value={degree} onChange={(e) => setDegree(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                />
+             </div>
+             <div className="text-xs font-mono font-bold px-3 py-1 rounded bg-slate-900 border border-slate-600" style={{ color }}>
+                {label}
+             </div>
+          </div>
+
+          <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
+            <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis type="number" dataKey="x" stroke="#94a3b8" />
+                <YAxis type="number" dataKey="y" stroke="#94a3b8" />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+                <Scatter name="Data" dataKey="y" fill="#94a3b8" opacity={0.6} />
+                <Line type="monotone" dataKey="curve" stroke={color} strokeWidth={3} dot={false} animationDuration={300} />
+                </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-xs text-center text-slate-500">
+             A high-degree polynomial tries to pass through every noise point, failing to generalize.
+          </p>
+      </div>
+  );
+};
 
 export const RegressionView: React.FC = () => {
   return (
@@ -50,21 +117,10 @@ predictions = model.predict(X_test)`}
         pros={['Simple to implement and interpret', 'Computationally efficient', 'Basis for many other methods']}
         cons={['Assumes linearity between variables', 'Sensitive to outliers', 'Prone to multicollinearity']}
         hyperparameters={[
-          {
-            name: 'fit_intercept',
-            description: 'Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations (i.e. data is expected to be centered).',
-            default: 'True',
-            range: 'True / False'
-          },
-          {
-            name: 'n_jobs',
-            description: 'The number of jobs to use for the computation. This will only provide a speedup for n_targets > 1 and sufficient large problems.',
-            default: 'None',
-            range: 'Integer'
-          }
+          { name: 'fit_intercept', description: 'Whether to calculate the intercept for this model.', default: 'True' }
         ]}
       >
-        <div className="h-64 w-full">
+        <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
@@ -97,21 +153,10 @@ lasso.fit(X_train, y_train)`}
         pros={['Reduces overfitting', 'Handles multicollinearity (Ridge)', 'Feature selection (Lasso)']}
         cons={['Requires tuning of hyperparameter lambda', 'Lasso may struggle with correlated features']}
         hyperparameters={[
-          {
-            name: 'alpha',
-            description: 'Regularization strength; must be a positive float. Regularization improves the conditioning of the problem and reduces the variance of the estimates.',
-            default: '1.0',
-            range: '[0, infinity)'
-          },
-          {
-            name: 'solver',
-            description: 'Solver to use in the computational routines.',
-            default: 'auto',
-            range: 'auto, svd, cholesky, lsqr, sparse_cg, sag, saga'
-          }
+          { name: 'alpha', description: 'Regularization strength. Large alpha implies simple model.', default: '1.0' }
         ]}
       >
-        <div className="h-64 w-full">
+        <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={coefficientData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
@@ -144,39 +189,10 @@ model.fit(X_poly, y)`}
         pros={['Captures non-linear relationships', 'Uses linear regression solver']}
         cons={['Prone to overfitting with high degrees', 'Computationally expensive for many features']}
         hyperparameters={[
-          {
-            name: 'degree',
-            description: 'The degree of the polynomial features. Higher degrees can capture more complex relationships but risk overfitting.',
-            default: '2',
-            range: 'Integer >= 1'
-          },
-          {
-            name: 'interaction_only',
-            description: 'If true, only interaction features are produced: features that are products of at most degree distinct input features.',
-            default: 'False',
-            range: 'True / False'
-          },
-          {
-            name: 'include_bias',
-            description: 'If True (default), then include a bias column, the feature in which all polynomial powers are zero.',
-            default: 'True',
-            range: 'True / False'
-          }
+          { name: 'degree', description: 'The degree of the polynomial features. Higher degrees can capture more complex relationships but risk overfitting.', default: '2', range: 'Integer >= 1' }
         ]}
       >
-        <div className="h-64 w-full">
-           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={polyData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis type="number" dataKey="x" stroke="#94a3b8" />
-              <YAxis type="number" dataKey="y" stroke="#94a3b8" />
-              <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-              <Scatter name="Data" dataKey="y" fill="#94a3b8" opacity={0.5} />
-              <Line type="monotone" dataKey="curve" stroke="#f59e0b" strokeWidth={3} dot={false} />
-            </ComposedChart>
-          </ResponsiveContainer>
-          <p className="text-xs text-center text-slate-500 mt-2">Quadratic Curve Fitting (Degree 2) to non-linear data.</p>
-        </div>
+        <PolyViz />
       </AlgorithmCard>
     </div>
   );

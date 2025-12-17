@@ -1,60 +1,159 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ScatterChart, Scatter, ReferenceDot, ComposedChart, Cell, LabelList, AreaChart, Area } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 
-// Data for Sigmoid
+// --- DATA ---
+
 const sigmoidData = Array.from({ length: 41 }, (_, i) => {
   const x = (i - 20) / 2;
   const y = 1 / (1 + Math.exp(-x));
   return { x, y };
 });
 
-// Data for KNN
-// Refined dataset to clearly show neighbors
-const knnData = [
-  { id: 1, x: 12, y: 15, class: 'A', fill: '#ef4444' }, // Neighbor 1
-  { id: 2, x: 10, y: 10, class: 'A', fill: '#ef4444' }, // Neighbor 2
-  { id: 3, x: 8, y: 12, class: 'A', fill: '#ef4444' },  // Neighbor 3 (if k=3, depends on query)
-  { id: 4, x: 25, y: 25, class: 'B', fill: '#3b82f6' },
-  { id: 5, x: 22, y: 28, class: 'B', fill: '#3b82f6' },
-  { id: 6, x: 28, y: 22, class: 'B', fill: '#3b82f6' },
+const knnPoints = [
+  { id: 1, x: 35, y: 35, class: 'A', fill: '#ef4444' }, 
+  { id: 2, x: 40, y: 30, class: 'A', fill: '#ef4444' }, 
+  { id: 3, x: 30, y: 40, class: 'A', fill: '#ef4444' },  
+  { id: 4, x: 25, y: 35, class: 'A', fill: '#ef4444' },
+  { id: 5, x: 60, y: 60, class: 'B', fill: '#3b82f6' },
+  { id: 6, x: 65, y: 55, class: 'B', fill: '#3b82f6' },
+  { id: 7, x: 55, y: 65, class: 'B', fill: '#3b82f6' },
+  { id: 8, x: 70, y: 60, class: 'B', fill: '#3b82f6' },
+  { id: 9, x: 45, y: 55, class: 'B', fill: '#3b82f6' }, // Outlierish
+  { id: 10, x: 20, y: 25, class: 'A', fill: '#ef4444' }
 ];
 
-const queryPoint = { x: 14, y: 14 };
+const queryPoint = { x: 48, y: 48 };
 
-// Calculate distances to identify neighbors (Simulation for K=3)
-// Distances from (14, 14):
-// 1. (12, 15): sqrt(4 + 1) = 2.23
-// 2. (10, 10): sqrt(16 + 16) = 5.65
-// 3. (8, 12): sqrt(36 + 4) = 6.32
-// 4. (25, 25): sqrt(121 + 121) = 15.5
-// So neighbors are indices 0, 1, 2.
-
-const neighbors = [knnData[0], knnData[1], knnData[2]];
-
-// Data for SVM (Linearly separable)
+// SVM Data
 const svmData = [
-  { x: 1, y: 2, class: 'A' }, { x: 2, y: 1, class: 'A' }, { x: 3, y: 3, class: 'A' },
-  { x: 7, y: 8, class: 'B' }, { x: 8, y: 7, class: 'B' }, { x: 9, y: 9, class: 'B' },
+  { x: 2, y: 3, class: 'A', isSupport: false }, 
+  { x: 3, y: 2, class: 'A', isSupport: true }, // Support
+  { x: 1, y: 1, class: 'A', isSupport: false },
+  { x: 7, y: 8, class: 'B', isSupport: false }, 
+  { x: 6, y: 9, class: 'B', isSupport: true }, // Support
+  { x: 8, y: 7, class: 'B', isSupport: false },
 ];
-// Hyperplane: y = -x + 10 (approx)
-const svmLine = [{ x: 0, y: 10 }, { x: 10, y: 0 }];
-const svmMargin1 = [{ x: 0, y: 8 }, { x: 8, y: 0 }];
-const svmMargin2 = [{ x: 2, y: 10 }, { x: 10, y: 2 }];
+// Hyperplane approx: y = x + 1. Margin approx width 2
+const svmLine = [{x: 0, y: 1}, {x: 10, y: 11}]; 
+const svmMarginA = [{x: 0, y: -1}, {x: 10, y: 9}]; // Below
+const svmMarginB = [{x: 0, y: 3}, {x: 10, y: 13}]; // Above
 
-// Data for Naive Bayes (Gaussian Distributions)
 const naiveBayesData = Array.from({ length: 50 }, (_, i) => {
   const x = (i / 50) * 10;
-  // Class A: Mean 3, Std 1.5
-  const probA = (1 / (1.5 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 3) / 1.5, 2));
-  // Class B: Mean 7, Std 1.5
-  const probB = (1 / (1.5 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 7) / 1.5, 2));
+  const probA = (1 / (1.2 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 3) / 1.2, 2));
+  const probB = (1 / (1.2 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 7) / 1.2, 2));
   return { x, probA, probB };
 });
 
-// Custom CSS Tree Component
+// --- SUB-COMPONENTS ---
+
+const KNNViz = () => {
+  const [k, setK] = useState(3);
+
+  const { neighbors, radius } = useMemo(() => {
+    const sorted = [...knnPoints].map(p => ({
+        ...p,
+        dist: Math.sqrt(Math.pow(p.x - queryPoint.x, 2) + Math.pow(p.y - queryPoint.y, 2))
+    })).sort((a, b) => a.dist - b.dist);
+    
+    const nearest = sorted.slice(0, k);
+    const maxDist = nearest[nearest.length - 1].dist;
+    
+    return { neighbors: nearest, radius: maxDist + 2 }; // +2 padding
+  }, [k]);
+
+  const classACount = neighbors.filter(n => n.class === 'A').length;
+  const classBCount = neighbors.filter(n => n.class === 'B').length;
+  const predictedClass = classACount > classBCount ? 'A (Red)' : 'B (Blue)';
+
+  return (
+    <div className="flex flex-col gap-4">
+       <div className="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700">
+          <div className="flex items-center gap-4">
+             <label className="text-xs font-bold text-slate-400">Neighbors (k): <span className="text-indigo-400 text-sm">{k}</span></label>
+             <input 
+               type="range" min="1" max="9" step="2" 
+               value={k} onChange={(e) => setK(Number(e.target.value))}
+               className="w-32 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+             />
+          </div>
+          <div className="text-xs font-mono">
+             Prediction: <span className={classACount > classBCount ? "text-red-400 font-bold" : "text-blue-400 font-bold"}>{predictedClass}</span>
+          </div>
+       </div>
+
+       <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2 relative">
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis type="number" dataKey="x" domain={[0, 100]} hide />
+              <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
+              <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+              
+              {/* Radius Circle */}
+              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={radius * 2.5} fill="#fbbf24" fillOpacity={0.1} stroke="#fbbf24" strokeDasharray="3 3" />
+
+              {/* Neighbors Connections */}
+              {neighbors.map((n, i) => (
+                 <ReferenceLine key={i} segment={[queryPoint, {x: n.x, y: n.y}]} stroke="#fbbf24" strokeOpacity={0.5} />
+              ))}
+
+              {/* Data Points */}
+              <Scatter name="Data" data={knnPoints}>
+                  {knnPoints.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} stroke={neighbors.find(n => n.id === entry.id) ? "#fbbf24" : "none"} strokeWidth={2} />
+                  ))}
+              </Scatter>
+
+              {/* Query Point */}
+              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={6} fill="#ffffff" stroke="#fbbf24" strokeWidth={2} />
+            </ScatterChart>
+          </ResponsiveContainer>
+       </div>
+       <p className="text-xs text-center text-slate-500">
+          The algorithm classifies the White point based on the majority vote of the {k} nearest neighbors inside the yellow circle.
+       </p>
+    </div>
+  );
+};
+
+const SVMViz = () => (
+    <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
+        <ResponsiveContainer width="100%" height="100%">
+        <ComposedChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <XAxis type="number" dataKey="x" domain={[0, 10]} hide />
+            <YAxis type="number" dataKey="y" domain={[0, 10]} hide />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+            
+            {/* Margins */}
+            <Line data={svmMarginA} dataKey="y" stroke="#94a3b8" strokeDasharray="3 3" dot={false} strokeWidth={1} />
+            <Line data={svmMarginB} dataKey="y" stroke="#94a3b8" strokeDasharray="3 3" dot={false} strokeWidth={1} />
+            
+            {/* Hyperplane */}
+            <Line data={svmLine} dataKey="y" stroke="#ffffff" strokeWidth={2} dot={false} />
+
+            {/* Support Vectors Highlight */}
+            {svmData.filter(d => d.isSupport).map((d, i) => (
+                <ReferenceDot key={i} x={d.x} y={d.y} r={10} fill="none" stroke="#fbbf24" strokeWidth={2} />
+            ))}
+
+            <Scatter data={svmData}>
+                {svmData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.class === 'A' ? '#ef4444' : '#3b82f6'} />
+                ))}
+            </Scatter>
+        </ComposedChart>
+        </ResponsiveContainer>
+        <p className="text-xs text-center text-slate-500 mt-2">
+            <span className="text-yellow-400 font-bold">O</span> Support Vectors define the margin boundaries. The white line is the optimal hyperplane.
+        </p>
+    </div>
+);
+
 const DecisionTreeViz = () => (
-  <div className="flex flex-col items-center w-full py-6 select-none">
+  <div className="flex flex-col items-center w-full py-6 select-none bg-slate-900 rounded-lg border border-slate-800">
     {/* Root Node */}
     <div className="border-2 border-indigo-500 bg-slate-800 text-indigo-100 rounded px-4 py-2 text-sm font-mono font-bold z-10 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
       Age &gt; 50?
@@ -74,8 +173,9 @@ const DecisionTreeViz = () => (
       
       {/* Left Branch (Decision Node) */}
       <div className="flex flex-col items-center -mt-4">
-        <div className="border border-slate-600 bg-slate-800 text-slate-300 rounded px-3 py-1 text-xs font-mono mb-2 z-10">
+        <div className="border border-slate-600 bg-slate-800 text-slate-300 rounded px-3 py-1 text-xs font-mono mb-2 z-10 relative">
           Cholesterol &gt; 240?
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-[9px] text-emerald-400 px-1">Yes</div>
         </div>
         
         {/* Link 2 */}
@@ -94,20 +194,19 @@ const DecisionTreeViz = () => (
                  <div className="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500 flex items-center justify-center text-[10px] text-rose-300 font-bold shadow-[0_0_10px_rgba(244,63,94,0.2)]">
                     High
                  </div>
-                 <span className="text-[9px] text-slate-500 mt-1 uppercase tracking-wider">Risk</span>
              </div>
              {/* Leaf Low */}
              <div className="flex flex-col items-center -mt-4">
                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500 flex items-center justify-center text-[10px] text-emerald-300 font-bold shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                     Low
                  </div>
-                 <span className="text-[9px] text-slate-500 mt-1 uppercase tracking-wider">Safe</span>
              </div>
         </div>
       </div>
 
       {/* Right Branch (Leaf Node) */}
-      <div className="flex flex-col items-center -mt-4">
+      <div className="flex flex-col items-center -mt-4 relative">
+         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[9px] text-rose-400 px-1">No</div>
          <div className="border border-emerald-500 bg-emerald-900/30 text-emerald-200 rounded px-3 py-1 text-xs font-mono shadow-[0_0_10px_rgba(16,185,129,0.1)]">
             Low Risk
          </div>
@@ -142,38 +241,22 @@ probs = clf.predict_proba(X_test)`}
         pros={['Probabilistic interpretation', 'Low variance', 'Efficient to train']}
         cons={['Assumes linear decision boundary', 'Not suitable for complex non-linear problems']}
         hyperparameters={[
-          {
-            name: 'C',
-            description: 'Inverse of regularization strength. Smaller values (e.g., 0.01) increase regularization intensity (reducing overfitting), while larger values (e.g., 100) reduce regularization (fitting training data more closely).',
-            default: '1.0',
-            range: '(0, infinity)'
-          },
-          {
-            name: 'penalty',
-            description: 'Specifies the norm used in penalization. \'l1\' creates sparse models (feature selection), while \'l2\' shrinks all coefficients efficiently.',
-            default: 'l2',
-            range: 'l1, l2, elasticnet, none'
-          },
-          {
-            name: 'solver',
-            description: 'The algorithm for optimization. Use \'liblinear\' for small datasets, and \'sag\' or \'saga\' for faster convergence on large datasets.',
-            default: 'lbfgs',
-            range: 'liblinear, newton-cg, lbfgs, sag, saga'
-          }
+          { name: 'C', description: 'Inverse of regularization strength. Smaller values (e.g., 0.01) increase regularization.', default: '1.0' },
+          { name: 'penalty', description: 'Specifies the norm used in penalization (l1, l2).', default: 'l2' }
         ]}
       >
-        <div className="h-64 w-full">
+        <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={sigmoidData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="x" stroke="#94a3b8" type="number" domain={[-10, 10]} />
               <YAxis stroke="#94a3b8" domain={[0, 1]} />
               <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-              <ReferenceLine y={0.5} stroke="#ef4444" strokeDasharray="3 3" />
+              <ReferenceLine y={0.5} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Decision Threshold (0.5)', fill: '#ef4444', fontSize: 10 }} />
               <Line type="monotone" dataKey="y" stroke="#818cf8" strokeWidth={3} dot={false} />
             </LineChart>
           </ResponsiveContainer>
-          <p className="text-xs text-center text-slate-500 mt-2">Sigmoid Function: Mapping inputs to Probabilities</p>
+          <p className="text-xs text-center text-slate-500 mt-2">Sigmoid: Maps input (-&infin;, +&infin;) to Probability (0, 1)</p>
         </div>
       </AlgorithmCard>
 
@@ -190,69 +273,11 @@ pred = knn.predict(X_test)`}
         pros={['Simple and effective', 'No training phase (Lazy)', 'Naturally handles multi-class']}
         cons={['Computationally expensive at prediction time', 'Sensitive to scale of data', 'Struggles with high dimensionality']}
         hyperparameters={[
-          {
-            name: 'n_neighbors',
-            description: 'Number of neighbors to use for k_neighbors queries.',
-            default: '5',
-            range: 'Integer'
-          },
-          {
-            name: 'weights',
-            description: 'Weight function used in prediction. Uniform means all points carry equal weight; distance means closer points have more influence.',
-            default: 'uniform',
-            range: 'uniform, distance'
-          },
-          {
-            name: 'metric',
-            description: 'The distance metric to use for the tree.',
-            default: 'minkowski',
-            range: 'euclidean, manhattan, chebyshev, minkowski'
-          }
+          { name: 'n_neighbors', description: 'Number of neighbors to use.', default: '5', range: 'Integer' },
+          { name: 'weights', description: 'Weight function used in prediction (uniform/distance).', default: 'uniform' }
         ]}
       >
-         <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis type="number" dataKey="x" stroke="#94a3b8" domain={[0, 40]} />
-              <YAxis type="number" dataKey="y" stroke="#94a3b8" domain={[0, 40]} />
-              <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-              
-              {/* Highlight Neighbors with Halo */}
-              <Scatter data={neighbors} shape="circle" fill="transparent" stroke="#fbbf24" strokeWidth={2}>
-                 <LabelList dataKey="x" content={() => null} />
-                 {neighbors.map((entry, index) => (
-                    // This creates a glowing ring around neighbors
-                    <ReferenceDot key={`halo-${index}`} x={entry.x} y={entry.y} r={8} stroke="#fbbf24" fill="none" strokeDasharray="2 2" />
-                 ))}
-              </Scatter>
-
-              {/* Data Points */}
-              <Scatter name="Data" data={knnData} fill="#8884d8">
-                  {knnData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-              </Scatter>
-
-              {/* Connection Lines to Neighbors */}
-              {neighbors.map((neighbor, i) => (
-                <ReferenceLine 
-                    key={`link-${i}`} 
-                    segment={[{ x: queryPoint.x, y: queryPoint.y }, { x: neighbor.x, y: neighbor.y }]} 
-                    stroke="#fbbf24" 
-                    strokeWidth={1.5}
-                    strokeDasharray="4 4"
-                    opacity={0.8}
-                />
-              ))}
-
-              {/* Query Point */}
-              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={6} fill="#ffffff" stroke="#fbbf24" strokeWidth={2} />
-              
-            </ScatterChart>
-          </ResponsiveContainer>
-          <p className="text-xs text-center text-slate-500 mt-2">Classifying white point based on 3 nearest neighbors (connected)</p>
-        </div>
+         <KNNViz />
       </AlgorithmCard>
 
       <AlgorithmCard
@@ -268,46 +293,11 @@ pred = svm.predict(X_test)`}
         pros={['Effective in high dimensions', 'Robust to outliers (with soft margin)', 'Versatile kernels']}
         cons={['Memory intensive', 'Hard to interpret probability', 'Sensitive to noise with large C']}
         hyperparameters={[
-          {
-            name: 'C',
-            description: 'Regularization parameter. Controls trade-off between smooth decision boundary and classifying training points correctly. Lower C allows more misclassifications (softer margin).',
-            default: '1.0',
-            range: '[0, infinity)'
-          },
-          {
-            name: 'kernel',
-            description: 'Specifies the kernel type used to map data into higher dimensions. The "rbf" kernel is effective for non-linear data.',
-            default: 'rbf',
-            range: 'linear, poly, rbf, sigmoid'
-          },
-          {
-            name: 'gamma',
-            description: 'Kernel coefficient. Defines how far the influence of a single training example reaches. High gamma leads to complex, tight boundaries (overfitting risk).',
-            default: 'scale',
-            range: 'scale, auto, float'
-          }
+          { name: 'C', description: 'Regularization parameter. Lower C allows more misclassifications (softer margin).', default: '1.0' },
+          { name: 'kernel', description: 'Specifies the kernel type (linear, poly, rbf).', default: 'rbf' }
         ]}
       >
-         <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis type="number" dataKey="x" stroke="#94a3b8" domain={[0, 10]} />
-              <YAxis type="number" dataKey="y" stroke="#94a3b8" domain={[0, 10]} />
-              <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-              
-              <Scatter name="Class A" data={svmData.slice(0, 3)} fill="#ef4444" />
-              <Scatter name="Class B" data={svmData.slice(3, 6)} fill="#3b82f6" />
-              
-              {/* Hyperplane */}
-              <Line data={svmLine} dataKey="y" stroke="#ffffff" strokeWidth={2} dot={false} activeDot={false} />
-              {/* Margins */}
-              <Line data={svmMargin1} dataKey="y" stroke="#94a3b8" strokeDasharray="3 3" dot={false} activeDot={false} />
-              <Line data={svmMargin2} dataKey="y" stroke="#94a3b8" strokeDasharray="3 3" dot={false} activeDot={false} />
-            </ComposedChart>
-          </ResponsiveContainer>
-          <p className="text-xs text-center text-slate-500 mt-2">Maximal Margin Hyperplane</p>
-        </div>
+         <SVMViz />
       </AlgorithmCard>
 
       <AlgorithmCard
@@ -322,22 +312,8 @@ nb.fit(X_train, y_train)
 pred = nb.predict(X_test)`}
         pros={['Extremely fast', 'Works well with small data', 'Good for text classification']}
         cons={['Independence assumption rarely holds', 'Zero probability problem for unseen features']}
-        hyperparameters={[
-          {
-            name: 'var_smoothing',
-            description: 'Portion of the largest variance of all features that is added to variances for calculation stability.',
-            default: '1e-9',
-            range: 'Float'
-          },
-          {
-            name: 'priors',
-            description: 'Prior probabilities of the classes. If specified, the priors are not adjusted according to the data.',
-            default: 'None',
-            range: 'Array-like'
-          }
-        ]}
       >
-        <div className="h-64 w-full">
+        <div className="h-64 w-full bg-slate-900 rounded-lg border border-slate-800 p-2">
           <ResponsiveContainer width="100%" height="100%">
              <AreaChart data={naiveBayesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
@@ -355,9 +331,10 @@ pred = nb.predict(X_test)`}
                 <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
                 <Area type="monotone" dataKey="probA" stroke="#ef4444" fillOpacity={1} fill="url(#colorProbA)" name="Class A Dist" />
                 <Area type="monotone" dataKey="probB" stroke="#3b82f6" fillOpacity={1} fill="url(#colorProbB)" name="Class B Dist" />
+                <ReferenceLine x={5} stroke="#ffffff" strokeDasharray="3 3" label={{ value: 'Decision Boundary', fill: '#fff', fontSize: 10, position: 'top' }} />
              </AreaChart>
           </ResponsiveContainer>
-          <p className="text-xs text-center text-slate-500 mt-2">Modeling classes as Gaussian Probabilistic Distributions.</p>
+          <p className="text-xs text-center text-slate-500 mt-2">Class Probability Distributions (Gaussian)</p>
         </div>
       </AlgorithmCard>
 
@@ -374,24 +351,8 @@ pred = dt.predict(X_test)`}
         pros={['Easy to interpret/visualize', 'Requires little data preparation', 'Captures non-linear patterns']}
         cons={['Prone to overfitting (high variance)', 'Unstable (small data changes change tree)']}
         hyperparameters={[
-           {
-             name: 'criterion',
-             description: 'The function to measure the quality of a split.',
-             default: 'gini',
-             range: 'gini, entropy, log_loss'
-           },
-           {
-             name: 'max_depth',
-             description: 'The maximum depth of the tree. If None, then nodes are expanded until all leaves are pure.',
-             default: 'None',
-             range: 'Integer'
-           },
-           {
-             name: 'min_samples_split',
-             description: 'The minimum number of samples required to split an internal node.',
-             default: '2',
-             range: 'Integer or Float'
-           }
+           { name: 'max_depth', description: 'The maximum depth of the tree.', default: 'None', range: 'Integer' },
+           { name: 'min_samples_split', description: 'Minimum number of samples required to split an internal node.', default: '2' }
         ]}
       >
         <DecisionTreeViz />
