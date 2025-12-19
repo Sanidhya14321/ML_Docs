@@ -7,7 +7,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({
     time: i,
     actual: Math.sin(i * 0.5),
-    predicted: Math.sin(i * 0.5 - 0.5) // lagged prediction
+    predicted: Math.sin(i * 0.5 - 0.5) 
 }));
 
 // Data for Embeddings Viz
@@ -20,14 +20,12 @@ const embeddingData = [
 
 const ConvolutionViz = () => (
     <div className="flex items-center justify-center gap-4 py-8 select-none">
-        {/* Input Grid */}
         <div className="grid grid-cols-4 gap-1 p-1 bg-slate-800 border border-slate-700">
              {Array.from({length: 16}).map((_,i) => (
                  <div key={i} className={`w-4 h-4 md:w-6 md:h-6 ${[5,6,9,10].includes(i) ? 'bg-indigo-500' : 'bg-slate-700'}`}></div>
              ))}
         </div>
         <div className="text-slate-500 font-mono text-xl">×</div>
-        {/* Kernel */}
         <div className="grid grid-cols-2 gap-1 p-1 bg-indigo-900 border border-indigo-500">
             <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">1</div>
             <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">0</div>
@@ -35,7 +33,6 @@ const ConvolutionViz = () => (
             <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">1</div>
         </div>
         <div className="text-slate-500 font-mono text-xl">=</div>
-        {/* Output Grid */}
         <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800 border border-slate-700">
              {Array.from({length: 9}).map((_,i) => (
                  <div key={i} className={`w-4 h-4 md:w-6 md:h-6 ${i === 4 ? 'bg-emerald-500' : 'bg-slate-700'}`}></div>
@@ -44,29 +41,63 @@ const ConvolutionViz = () => (
     </div>
 );
 
-const AttentionViz = () => (
-    <div className="flex flex-col items-center py-4">
-        <div className="flex gap-2 mb-2">
-            {['The', 'cat', 'sat', 'on'].map((word, i) => (
-                <div key={i} className="text-xs text-slate-400 w-8 text-center">{word}</div>
-            ))}
+const AttentionViz = () => {
+    const words = ['The', 'cat', 'sat', 'on'];
+    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
+    // Dynamic attention weights based on hover
+    // In a real model, this is computed. Here we simulate the focus.
+    const getWeights = (idx: number) => {
+        const base = [0.1, 0.1, 0.1, 0.1];
+        base[idx] = 0.7; // Self focus
+        if (idx === 1) base[2] = 0.2; // Cat -> Sat
+        if (idx === 2) base[1] = 0.2; // Sat -> Cat
+        return base;
+    };
+
+    const currentWeights = hoverIndex !== null ? getWeights(hoverIndex) : [0.5, 0.3, 0.1, 0.1];
+
+    return (
+        <div className="flex flex-col items-center py-6 gap-6">
+            <div className="flex gap-4">
+                {words.map((word, i) => (
+                    <div 
+                        key={i} 
+                        onMouseEnter={() => setHoverIndex(i)}
+                        onMouseLeave={() => setHoverIndex(null)}
+                        className={`
+                            px-3 py-2 rounded-lg border font-mono text-sm cursor-default transition-all duration-300
+                            ${hoverIndex === i ? 'bg-indigo-500 border-indigo-400 text-white scale-110' : 'bg-slate-900 border-slate-700 text-slate-400'}
+                        `}
+                    >
+                        {word}
+                    </div>
+                ))}
+            </div>
+            
+            <div className="flex flex-col items-center gap-2">
+                <div className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">Context Weighting</div>
+                <div className="flex gap-4 items-end h-24">
+                    {currentWeights.map((w, i) => (
+                        <div key={i} className="flex flex-col items-center gap-1">
+                            <div 
+                                className="w-10 bg-indigo-500/40 border border-indigo-500/60 rounded-t transition-all duration-500 shadow-[0_0_15px_rgba(99,102,241,0.2)]" 
+                                style={{ height: `${w * 100}%` }}
+                            ></div>
+                            <span className="text-[8px] text-slate-600 font-mono">{(w * 100).toFixed(0)}%</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            
+            <p className="text-[9px] text-slate-600 font-mono text-center max-w-xs uppercase tracking-widest leading-relaxed">
+                {hoverIndex !== null 
+                    ? `Showing how the model focuses on other words when processing "${words[hoverIndex]}"`
+                    : "Hover over a word to see its attention map"}
+            </p>
         </div>
-        <div className="grid grid-cols-4 gap-1">
-            {/* Heatmap Grid */}
-            {[
-                1.0, 0.0, 0.0, 0.0,
-                0.1, 0.8, 0.1, 0.0,
-                0.0, 0.2, 0.7, 0.1,
-                0.0, 0.0, 0.1, 0.9
-            ].map((val, i) => (
-                <div key={i} className="w-8 h-8 bg-indigo-500 border border-slate-900" style={{ opacity: val }}></div>
-            ))}
-        </div>
-        <div className="flex gap-2 mt-2">
-             <div className="text-xs text-slate-500">Self-Attention Matrix</div>
-        </div>
-    </div>
-);
+    );
+};
 
 const EmbeddingsViz = () => (
     <div className="h-64 w-full">
@@ -75,84 +106,53 @@ const EmbeddingsViz = () => (
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                 <XAxis type="number" dataKey="x" hide domain={[0, 8]} />
                 <YAxis type="number" dataKey="y" hide domain={[0, 8]} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', borderRadius: '8px' }} />
                 
-                {/* Vectors */}
-                {/* Man -> Woman */}
-                <ReferenceLine segment={[{x: 2, y: 2}, {x: 2, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" markerEnd="url(#arrow)" />
-                {/* King -> Queen */}
-                <ReferenceLine segment={[{x: 6, y: 2}, {x: 6, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" markerEnd="url(#arrow)" />
-                {/* Man -> King */}
+                <ReferenceLine segment={[{x: 2, y: 2}, {x: 2, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" />
+                <ReferenceLine segment={[{x: 6, y: 2}, {x: 6, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" />
                 <ReferenceLine segment={[{x: 2, y: 2}, {x: 6, y: 2}]} stroke="#475569" strokeDasharray="2 2" />
 
-                <defs>
-                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
-                    </marker>
-                </defs>
-
                 <Scatter data={embeddingData} shape="circle">
-                    <LabelList dataKey="label" position="top" fill="#cbd5e1" fontSize={12} offset={10} />
-                    {embeddingData.map((entry, index) => (
-                         <ReferenceLine key={index} /> // Dummy to fix type issues if needed, mostly handled by Scatter
-                    ))}
+                    <LabelList dataKey="label" position="top" fill="#cbd5e1" fontSize={11} offset={10} fontWeight="bold" />
                 </Scatter>
             </ScatterChart>
         </ResponsiveContainer>
-        <p className="text-xs text-center text-slate-500 mt-2">
-            Vector Arithmetic: <em>King - Man + Woman &approx; Queen</em>. Semantic relationships are preserved as geometric distances.
-        </p>
     </div>
 );
 
 const BackpropViz = () => (
-    <div className="flex flex-col gap-4 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
-        <div className="flex justify-between items-center text-xs font-mono text-slate-400 border-b border-slate-700 pb-2">
-             <span>Forward Pass &rarr;</span>
-             <span>Backward Pass (Gradients) &larr;</span>
+    <div className="flex flex-col gap-4 p-5 bg-slate-900/50 rounded-2xl border border-slate-800/50">
+        <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 pb-3">
+             <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> Forward</span>
+             <span className="flex items-center gap-1">Backward <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div></span>
         </div>
-        <div className="flex justify-between items-center gap-2">
-            {/* Input */}
+        <div className="flex justify-between items-center gap-2 py-2">
             <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-indigo-500 flex items-center justify-center bg-indigo-900/20 text-indigo-300 font-bold">x</div>
-                <span className="text-[10px] mt-1 text-slate-500">Input</span>
+                <div className="w-10 h-10 rounded-full border-2 border-indigo-500 flex items-center justify-center bg-indigo-900/20 text-indigo-300 font-bold shadow-lg shadow-indigo-900/20">x</div>
+                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">In</span>
             </div>
             
-            {/* Connection 1 */}
-            <div className="flex-1 h-px bg-slate-600 relative group">
-                <div className="absolute top-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-slate-400">w1</div>
-                <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">&part;L/&part;w1</div>
+            <div className="flex-1 h-[2px] bg-slate-800 relative group overflow-hidden">
+                <div className="absolute inset-0 bg-indigo-500/20 animate-pulse"></div>
             </div>
 
-            {/* Hidden */}
             <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center bg-slate-800 text-slate-300 font-bold">h</div>
-                <span className="text-[10px] mt-1 text-slate-500">Hidden</span>
+                <div className="w-10 h-10 rounded-full border-2 border-slate-600 flex items-center justify-center bg-slate-800 text-slate-300 font-bold">h</div>
+                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">Hidden</span>
             </div>
 
-             {/* Connection 2 */}
-             <div className="flex-1 h-px bg-slate-600 relative group">
-                <div className="absolute top-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-slate-400">w2</div>
-                <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 text-[10px] text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity">&part;L/&part;w2</div>
+             <div className="flex-1 h-[2px] bg-slate-800 relative group overflow-hidden">
+                <div className="absolute inset-0 bg-rose-500/20 animate-pulse"></div>
             </div>
 
-            {/* Output */}
             <div className="flex flex-col items-center">
                 <div className="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center bg-emerald-900/20 text-emerald-300 font-bold">y&#770;</div>
-                <span className="text-[10px] mt-1 text-slate-500">Pred</span>
-            </div>
-
-            <div className="w-8 text-center text-slate-500 text-xs">vs</div>
-
-            {/* Target */}
-             <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded border border-slate-500 flex items-center justify-center bg-slate-800 text-white font-bold">y</div>
-                <span className="text-[10px] mt-1 text-slate-500">Target</span>
+                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">Pred</span>
             </div>
         </div>
-        <div className="bg-slate-900 p-3 rounded text-[10px] font-mono text-slate-400 border border-slate-700">
-            <span className="text-rose-400 font-bold">Chain Rule:</span> <br/>
-            &part;L/&part;w1 = (&part;L/&part;y&#770;) * (&part;y&#770;/&part;h) * (&part;h/&part;w1)
+        <div className="bg-slate-950 p-4 rounded-xl text-[10px] font-mono text-slate-500 border border-slate-800 leading-relaxed italic">
+            <span className="text-rose-400 font-bold not-italic">Backprop Rule:</span> <br/>
+            Chain gradients backwards to update weights using calculus.
         </div>
     </div>
 );
@@ -165,7 +165,7 @@ const BPTTViz = () => {
         const interval = setInterval(() => {
             setStep(prev => {
                 if (phase === 'forward') {
-                    if (prev >= 3) { // 3 steps forward (0, 1, 2)
+                    if (prev >= 3) { 
                         setPhase('backward');
                         return 2;
                     }
@@ -183,68 +183,39 @@ const BPTTViz = () => {
     }, [phase]);
 
     return (
-        <div className="w-full bg-slate-900 rounded-lg border border-slate-800 p-4 relative overflow-hidden">
-            <div className="absolute top-2 right-4 text-[10px] font-mono font-bold uppercase tracking-wider">
-                Mode: <span className={phase === 'forward' ? 'text-indigo-400' : 'text-rose-400'}>{phase === 'forward' ? 'Forward Propagation' : 'Backprop Through Time'}</span>
+        <div className="w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-6 relative overflow-hidden">
+            <div className="absolute top-3 right-4 text-[9px] font-mono font-black uppercase tracking-widest bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                Mode: <span className={phase === 'forward' ? 'text-indigo-400' : 'text-rose-400'}>{phase === 'forward' ? 'Inference' : 'Learning (BPTT)'}</span>
             </div>
             
-            <div className="flex justify-around items-center mt-6">
+            <div className="flex justify-around items-center mt-8">
                 {[0, 1, 2].map((t) => {
                     const isActive = phase === 'forward' ? step >= t : step <= t;
                     const isGradient = phase === 'backward' && step <= t;
 
                     return (
                         <div key={t} className="flex flex-col items-center gap-2 relative group">
-                             {/* Time Label */}
-                             <div className="absolute -top-6 text-[10px] text-slate-500 font-mono">t={t+1}</div>
-
-                             {/* Output Node */}
-                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110' : isActive ? 'border-emerald-500 bg-emerald-900/30 text-emerald-300' : 'border-slate-700 bg-slate-800 text-slate-600'}`}>
-                                y&#770;
+                             <div className="absolute -top-7 text-[8px] text-slate-600 font-mono font-bold tracking-widest">T={t}</div>
+                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110' : isActive ? 'border-emerald-500 bg-emerald-900/30 text-emerald-300' : 'border-slate-800 bg-slate-900 text-slate-700'}`}>
+                                Y
                              </div>
-
-                             {/* Vertical Connection */}
-                             <div className={`w-0.5 h-6 transition-colors duration-500 ${isGradient ? 'bg-rose-500' : isActive ? 'bg-slate-500' : 'bg-slate-800'}`}></div>
-
-                             {/* Hidden Node */}
-                             <div className={`w-10 h-10 rounded border-2 flex items-center justify-center text-xs font-bold transition-all duration-500 z-10 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110 shadow-[0_0_10px_rgba(244,63,94,0.4)]' : isActive ? 'border-indigo-500 bg-indigo-900/30 text-indigo-300' : 'border-slate-700 bg-slate-800 text-slate-600'}`}>
-                                h
+                             <div className={`w-[2px] h-6 transition-colors duration-500 ${isGradient ? 'bg-rose-500' : isActive ? 'bg-slate-700' : 'bg-slate-900'}`}></div>
+                             <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center text-xs font-bold transition-all duration-500 z-10 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110 shadow-[0_0_20px_rgba(244,63,94,0.3)]' : isActive ? 'border-indigo-500 bg-indigo-900/20 text-indigo-300' : 'border-slate-800 bg-slate-900 text-slate-700'}`}>
+                                H
                              </div>
-
-                             {/* Vertical Connection */}
-                             <div className={`w-0.5 h-6 transition-colors duration-500 ${isActive ? 'bg-slate-500' : 'bg-slate-800'}`}></div>
-
-                             {/* Input Node */}
-                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isActive ? 'border-slate-400 bg-slate-700 text-white' : 'border-slate-800 bg-slate-900 text-slate-600'}`}>
-                                x
+                             <div className={`w-[2px] h-6 transition-colors duration-500 ${isActive ? 'bg-slate-700' : 'bg-slate-900'}`}></div>
+                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isActive ? 'border-slate-500 bg-slate-800 text-white' : 'border-slate-900 bg-slate-950 text-slate-800'}`}>
+                                X
                              </div>
-
-                             {/* Horizontal Recurrent Connection (Right Arrow) */}
                              {t < 2 && (
-                                 <div className="absolute top-[3.2rem] left-8 w-12 h-8 flex items-center justify-center">
-                                     {/* Forward Line */}
-                                     <div className={`absolute w-full h-0.5 transition-colors duration-500 ${phase === 'forward' && step > t ? 'bg-indigo-500' : 'bg-slate-800'}`}></div>
-                                     {/* Backward Line (Gradient) */}
-                                     <div className={`absolute w-full h-0.5 transition-all duration-500 ${phase === 'backward' && step <= t ? 'bg-rose-500 translate-y-1 opacity-100' : 'opacity-0'}`}></div>
-                                     
-                                     {/* Arrow Heads */}
-                                     <div className={`absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-l-4 transition-colors duration-500 ${phase === 'forward' && step > t ? 'border-l-indigo-500' : 'border-l-slate-800'}`}></div>
-                                     <div className={`absolute left-0 top-1/2 -translate-y-[1px] w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-rose-500 transition-opacity duration-500 ${phase === 'backward' && step <= t ? 'opacity-100' : 'opacity-0'}`}></div>
+                                 <div className="absolute top-[3.5rem] left-9 w-12 h-8 flex items-center justify-center">
+                                     <div className={`absolute w-full h-[2px] transition-colors duration-500 ${phase === 'forward' && step > t ? 'bg-indigo-500' : 'bg-slate-900'}`}></div>
+                                     <div className={`absolute w-full h-[2px] transition-all duration-500 ${phase === 'backward' && step <= t ? 'bg-rose-500 translate-y-1 opacity-100' : 'opacity-0'}`}></div>
                                  </div>
                              )}
                         </div>
                     );
                 })}
-            </div>
-            
-            {/* Legend */}
-            <div className="flex justify-center gap-6 mt-6 text-[10px] text-slate-500">
-                <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div> Forward (State)
-                </div>
-                <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-rose-500 rounded-full"></div> Backward (Gradient)
-                </div>
             </div>
         </div>
     );
@@ -252,56 +223,35 @@ const BPTTViz = () => {
 
 export const DeepLearningView: React.FC = () => {
   return (
-    <div className="space-y-8 animate-fade-in">
-      <header className="mb-12">
-        <h1 className="text-4xl font-serif font-bold text-white mb-4">Deep Learning</h1>
-        <p className="text-slate-400 text-lg max-w-3xl">
-          A subset of machine learning based on artificial neural networks with representation learning. It allows computational models composed of multiple processing layers to learn representations of data with multiple levels of abstraction.
+    <div className="space-y-12 animate-fade-in pb-20">
+      <header className="mb-12 border-b border-slate-800 pb-8">
+        <h1 className="text-5xl font-serif font-bold text-white mb-4">Deep Learning</h1>
+        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
+          Harnessing the power of multi-layered artificial neural networks. Deep learning identifies complex hierarchies of features within massive datasets to solve tasks once thought impossible for machines.
         </p>
       </header>
 
       <AlgorithmCard
         id="mlp"
-        title="Multilayer Perceptrons (MLP)"
-        theory="The classical neural network consisting of an input layer, one or more hidden layers, and an output layer. Nodes are fully connected. It learns non-linear function approximations via backpropagation."
+        title="Multilayer Perceptrons"
+        complexity="Intermediate"
+        theory="The fundamental neural architecture. It stacks fully-connected layers, applying non-linear activation functions (like ReLU) at each stage. Through the backpropagation algorithm, it learns to map raw inputs into sophisticated high-dimensional feature representations."
         math={<span>a<sup>[l]</sup> = &sigma;(W<sup>[l]</sup> a<sup>[l-1]</sup> + b<sup>[l]</sup>)</span>}
-        mathLabel="Forward Propagation"
+        mathLabel="Forward Pass"
         code={`from tensorflow.keras import layers, models
 model = models.Sequential([
     layers.Dense(64, activation='relu', input_shape=(10,)),
     layers.Dense(1, activation='sigmoid')
 ])`}
-        pros={['Universal function approximator', 'Handles non-linear data', 'Flexible architecture']}
-        cons={['Black box nature', 'Requires large data', 'Prone to overfitting']}
-        hyperparameters={[
-          {
-            name: 'hidden_layer_sizes',
-            description: 'The ith element represents the number of neurons in the ith hidden layer.',
-            default: '(100,)',
-            range: 'Tuple of integers'
-          },
-          {
-            name: 'activation',
-            description: 'Activation function for the hidden layer.',
-            default: 'relu',
-            range: 'identity, logistic, tanh, relu'
-          },
-          {
-            name: 'solver',
-            description: 'The solver for weight optimization.',
-            default: 'adam',
-            range: 'lbfgs, sgd, adam'
-          }
-        ]}
+        pros={['Universal function approximator', 'Scales with data', 'Foundational for all deep models']}
+        cons={['Requires vast amounts of labeled data', 'Hyperparameter tuning is difficult', 'Difficult to explain decision logic']}
       >
         <NeuralNetworkViz />
-        <div className="mt-8">
-            <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-4">Training Mechanism: Backpropagation</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <p className="text-slate-400 text-sm leading-relaxed">
-                    MLPs learn by minimizing a loss function <em>L</em>. <strong className="text-slate-200">Backpropagation</strong> is the algorithm used to compute the gradient of the loss function with respect to the weights. 
-                    It works by applying the <strong className="text-slate-200">Chain Rule</strong> of calculus, computing gradients layer by layer from the output back to the input.
-                    These gradients tell the optimizer (like Gradient Descent) how to adjust the weights to reduce the error.
+        <div className="mt-12">
+            <h4 className="text-[10px] font-black text-rose-400 uppercase tracking-[0.3em] mb-6">Learning Process: Backpropagation</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <p className="text-slate-500 text-sm leading-relaxed font-light">
+                    Networks learn by minimizing error. <strong className="text-slate-300">Backpropagation</strong> utilizes the Chain Rule to distribute error gradients from the output layer back through every weight in the network, informing precisely how to nudge each parameter to improve future predictions.
                 </p>
                 <BackpropViz />
             </div>
@@ -310,126 +260,49 @@ model = models.Sequential([
 
       <AlgorithmCard
         id="cnn"
-        title="Convolutional Neural Networks (CNN)"
-        theory="Specialized for processing grid-like data (e.g., images). Uses Convolutional layers to apply filters (kernels) that automatically learn spatial hierarchies of features, followed by Pooling layers to downsample."
-        math={<span>(I * K)(i, j) = &Sigma;<sub>m</sub> &Sigma;<sub>n</sub> I(m, n) K(i-m, j-n)</span>}
+        title="Convolutional Networks"
+        complexity="Intermediate"
+        theory="Specialized for grid-structured data like images. CNNs use convolutional kernels to extract spatial features while preserving local relationships. They are highly efficient due to parameter sharing and spatial pooling mechanisms."
+        math={<span>(I * K)(i, j) = &Sigma; &Sigma; I(m, n) K(i-m, j-n)</span>}
         mathLabel="Convolution Operation"
         code={`model = models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    layers.Conv2D(32, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
-    layers.Flatten(),
-    layers.Dense(10, activation='softmax')
+    layers.Flatten()
 ])`}
-        pros={['Parameter sharing (efficient)', 'Translation invariance', 'State-of-the-art for vision']}
-        cons={['Requires fixed input size', 'Computationally heavy training', 'Loss of spatial resolution (pooling)']}
-        hyperparameters={[
-          {
-            name: 'filters',
-            description: 'Integer, the dimensionality of the output space (i.e. the number of output filters in the convolution).',
-            default: '32',
-            range: 'Integer'
-          },
-          {
-            name: 'kernel_size',
-            description: 'An integer or tuple/list of 2 integers, specifying the height and width of the 2D convolution window.',
-            default: '(3, 3)',
-            range: 'Integer or Tuple'
-          },
-          {
-            name: 'strides',
-            description: 'An integer or tuple/list of 2 integers, specifying the strides of the convolution along the height and width.',
-            default: '(1, 1)',
-            range: 'Integer or Tuple'
-          }
-        ]}
+        pros={['Translation invariance', 'Automatic hierarchical feature extraction', 'Highly efficient for visual data']}
+        cons={['High compute requirement', 'Loss of fine-grained spatial information through pooling', 'Adversarial vulnerability']}
       >
         <ConvolutionViz />
-        <p className="text-xs text-center text-slate-500 mt-2">Filter sliding over input feature map to create output map.</p>
       </AlgorithmCard>
 
       <AlgorithmCard
         id="rnn"
-        title="Recurrent Neural Networks (RNN/LSTM)"
-        theory="Designed for sequential data. They have 'memory' that captures information about what has been calculated so far. LSTMs (Long Short-Term Memory) solve the vanishing gradient problem of standard RNNs."
+        title="Recurrent Networks (LSTM)"
+        complexity="Advanced"
+        theory="Designed for sequential data processing. RNNs maintain an internal hidden state that acts as memory across time-steps. LSTMs (Long Short-Term Memory) refine this with specialized 'gates' that control information flow, solving long-range dependency issues."
         math={<span>h<sub>t</sub> = &sigma;(W<sub>hh</sub> h<sub>t-1</sub> + W<sub>xh</sub> x<sub>t</sub>)</span>}
-        mathLabel="Hidden State Update"
+        mathLabel="Hidden Update"
         code={`model = models.Sequential([
-    layers.LSTM(128, input_shape=(None, 10)),
-    layers.Dense(1)
+    layers.LSTM(128, input_shape=(None, 10))
 ])`}
-        pros={['Handles variable length sequences', 'Captures temporal dependencies', 'Good for NLP/Time-series']}
-        cons={['Slow to train (sequential)', 'Vanishing gradient (Vanilla RNN)', 'Short-term memory limitations']}
-        hyperparameters={[
-          {
-            name: 'units',
-            description: 'Positive integer, dimensionality of the output space (hidden state size).',
-            default: '50',
-            range: 'Integer'
-          },
-          {
-            name: 'return_sequences',
-            description: 'Whether to return the last output in the output sequence, or the full sequence.',
-            default: 'False',
-            range: 'True / False'
-          },
-          {
-            name: 'dropout',
-            description: 'Float between 0 and 1. Fraction of the units to drop for the linear transformation of the inputs.',
-            default: '0.0',
-            range: '[0, 1)'
-          }
-        ]}
+        pros={['Handles variable-length inputs', 'Captures temporal dependencies', 'Standard for audio/time-series']}
+        cons={['Slow to train (non-parallelizable)', 'Vanishing gradient issues in vanilla versions', 'Memory limitations for very long sequences']}
       >
-         {/* Backprop Through Time Viz */}
-         <div className="mb-8">
-             <BPTTViz />
-         </div>
-
-         <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-               <LineChart data={timeSeriesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="time" hide />
-                  <YAxis hide />
-                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-                  <Line type="monotone" dataKey="actual" stroke="#818cf8" strokeWidth={2} dot={false} name="Actual" />
-                  <Line type="monotone" dataKey="predicted" stroke="#f472b6" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Predicted" />
-               </LineChart>
-            </ResponsiveContainer>
-            <p className="text-xs text-center text-slate-500 mt-2">Sequence Prediction: Learning time-series patterns.</p>
-         </div>
+         <BPTTViz />
       </AlgorithmCard>
 
       <AlgorithmCard
         id="embeddings"
         title="Embeddings"
-        theory="Embeddings are dense vector representations of discrete variables (like words or users). Unlike one-hot encoding, embeddings capture semantic relationships—similar items are closer in the vector space."
-        math={<span>J(&theta;) = <sup>1</sup>&frasl;<sub>T</sub> &Sigma;<sub>t=1</sub><sup>T</sup> &Sigma;<sub>-c &le; j &le; c, j &ne; 0</sub> <span className="not-italic">log</span> p(w<sub>t+j</sub> | w<sub>t</sub>)</span>}
-        mathLabel="Skip-Gram Objective (Word2Vec)"
+        complexity="Intermediate"
+        theory="Learned dense representations of discrete items. Unlike one-hot encoding, embeddings place similar items closer together in a continuous vector space, allowing models to learn semantic relationships mathematically."
+        math={<span>L = E[ log P(w<sub>context</sub> | w<sub>target</sub>) ]</span>}
+        mathLabel="Word2Vec Objective"
         code={`from tensorflow.keras.layers import Embedding
-
-# Input: Integers (indices), Output: Vectors
-# Vocab size: 10,000, Vector dim: 300
-embedding_layer = Embedding(input_dim=10000, output_dim=300)
-
-# Lookup vector for word index 5
-vector = embedding_layer(5)`}
-        pros={['Captures semantic meaning', 'Reduces dimensionality compared to one-hot', 'Transferable (pre-trained embeddings)']}
-        cons={['Requires large datasets to learn good representations', 'Static (traditional embeddings ignore context)', 'Bias amplification']}
-        hyperparameters={[
-          {
-            name: 'output_dim',
-            description: 'Dimension of the dense embedding. Higher dimension captures more nuances but requires more data.',
-            default: '100',
-            range: 'Integer'
-          },
-          {
-            name: 'input_dim',
-            description: 'Size of the vocabulary, i.e., maximum integer index + 1.',
-            default: 'None',
-            range: 'Integer'
-          }
-        ]}
+layer = Embedding(input_dim=10000, output_dim=300)`}
+        pros={['Dramatic dimensionality reduction', 'Captures semantic meaning', 'Transferable via pre-trained models']}
+        cons={['Learns biases from training corpora', 'Static embeddings ignore context (e.g., "bank")']}
       >
         <EmbeddingsViz />
       </AlgorithmCard>
@@ -437,37 +310,16 @@ vector = embedding_layer(5)`}
       <AlgorithmCard
         id="transformers"
         title="Transformers"
-        theory="The modern architecture for NLP. Abandoning recurrence, it relies entirely on an attention mechanism (Self-Attention) to draw global dependencies between input and output. It enables massive parallelization."
-        math={<span><span className="not-italic">Attention</span>(Q, K, V) = <span className="not-italic">softmax</span>(<sup>QK<sup><span className="not-italic">T</span></sup></sup>&frasl;<sub>&radic;d<sub>k</sub></sub>)V</span>}
+        complexity="Advanced"
+        theory="The modern standard for large-scale modeling. It utilizes a Self-Attention mechanism to draw global dependencies regardless of distance in the sequence. This enables massive parallelization and state-of-the-art performance in LLMs."
+        math={<span>Attn(Q, K, V) = softmax(<sup>QK<sup>T</sup></sup>&frasl;<sub>&radic;d<sub>k</sub></sub>)V</span>}
         mathLabel="Scaled Dot-Product Attention"
-        code={`# Pseudocode for a Transformer Block
-def transformer_block(x):
-    attn = MultiHeadAttention(x, x, x)
-    x = LayerNorm(x + attn)
-    ffn = FeedForward(x)
-    return LayerNorm(x + ffn)`}
-        pros={['Parallel training', 'Captures long-range dependencies', 'Foundation of LLMs (GPT/BERT)']}
-        cons={['Quadratic complexity with sequence length', 'Data hungry', 'High compute requirements']}
-        hyperparameters={[
-          {
-            name: 'num_heads',
-            description: 'Number of attention heads. Allows the model to jointly attend to information from different representation subspaces.',
-            default: '8',
-            range: 'Integer'
-          },
-          {
-            name: 'd_model',
-            description: 'The dimension of the embedding vector. Typically 512, 768, etc.',
-            default: '512',
-            range: 'Integer'
-          },
-          {
-            name: 'num_layers',
-            description: 'Number of encoder/decoder layers (blocks) in the stack.',
-            default: '6',
-            range: 'Integer'
-          }
-        ]}
+        code={`# Attention mechanism logic
+def attention(q, k, v):
+    scores = matmul(q, k.T) / sqrt(dk)
+    return matmul(softmax(scores), v)`}
+        pros={['Massive parallel training capability', 'State-of-the-art across nearly all NLP benchmarks', 'Excellent long-range memory']}
+        cons={['Quadratic compute cost with sequence length', 'Extreme data appetite', 'Complex implementation']}
       >
         <AttentionViz />
       </AlgorithmCard>

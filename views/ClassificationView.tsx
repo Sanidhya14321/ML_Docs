@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ScatterChart, Scatter, ReferenceDot, ComposedChart, Cell, AreaChart, Area, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ScatterChart, Scatter, ReferenceDot, ComposedChart, Cell, AreaChart, Area } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 
 // --- DATA ---
@@ -60,31 +60,31 @@ const KNNViz = () => {
 
   return (
     <div className="flex flex-col gap-4">
-       <div className="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700">
-          <div className="flex items-center gap-4">
-             <label className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Neighbors (k): <span className="text-indigo-400 text-sm ml-1">{k}</span></label>
+       <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+          <div className="flex items-center gap-6">
+             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Neighbors (k): <span className="text-indigo-400 text-sm ml-2">{k}</span></label>
              <input 
                type="range" min="1" max="9" step="2" 
                value={k} onChange={(e) => setK(Number(e.target.value))}
-               className="w-32 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+               className="w-32 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
              />
           </div>
-          <div className="text-xs font-mono">
+          <div className="text-[10px] font-mono uppercase tracking-widest bg-slate-900 px-3 py-1 rounded-full border border-slate-700">
              Result: <span className={classACount > classBCount ? "text-red-400 font-bold" : "text-blue-400 font-bold"}>{predictedClass}</span>
           </div>
        </div>
 
-       <div className="h-64 w-full bg-slate-950 rounded-lg border border-slate-800 p-2 relative shadow-inner">
+       <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative shadow-inner overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis type="number" dataKey="x" domain={[0, 100]} hide />
               <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
               
-              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={radius * 2.5} fill="#fbbf24" fillOpacity={0.05} stroke="#fbbf24" strokeDasharray="3 3" />
+              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={radius * 2.5} fill="#fbbf24" fillOpacity={0.03} stroke="#fbbf24" strokeDasharray="3 3" strokeOpacity={0.4} />
 
               {neighbors.map((n, i) => (
-                 <ReferenceLine key={i} segment={[queryPoint, {x: n.x, y: n.y}]} stroke="#fbbf24" strokeOpacity={0.3} />
+                 <ReferenceLine key={i} segment={[queryPoint, {x: n.x, y: n.y}]} stroke="#fbbf24" strokeOpacity={0.2} strokeWidth={1} />
               ))}
 
               <Scatter name="Data" data={knnPoints}>
@@ -115,114 +115,160 @@ const NaiveBayesViz = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700">
-                <label className="text-xs font-bold text-slate-400 uppercase">Class Separation: <span className="text-indigo-400">{overlap.toFixed(1)}</span></label>
+            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Class Separation: <span className="text-indigo-400 ml-2">{overlap.toFixed(1)}</span></label>
                 <input 
                     type="range" min="0" max="8" step="0.5" 
                     value={overlap} onChange={(e) => setOverlap(parseFloat(e.target.value))}
-                    className="w-40 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-40 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                 />
             </div>
-            <div className="h-64 w-full bg-slate-950 rounded-lg border border-slate-800 p-2">
+            <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorNB_A" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
+                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
                                 <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
                             </linearGradient>
                             <linearGradient id="colorNB_B" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
                                 <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
                         <XAxis dataKey="x" hide />
                         <YAxis hide />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px' }} />
                         <Area type="monotone" dataKey="probA" stroke="#ef4444" fillOpacity={1} fill="url(#colorNB_A)" name="P(x|C1)" />
                         <Area type="monotone" dataKey="probB" stroke="#3b82f6" fillOpacity={1} fill="url(#colorNB_B)" name="P(x|C2)" />
-                        <ReferenceLine x={3 + overlap/2} stroke="#ffffff" strokeDasharray="3 3" label={{ value: 'Decision Boundary', fill: '#fff', fontSize: 10, position: 'top' }} />
+                        <ReferenceLine x={3 + overlap/2} stroke="#ffffff" strokeDasharray="3 3" strokeOpacity={0.5} label={{ value: 'Boundary', fill: '#fff', fontSize: 9, position: 'top' }} />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
-            <p className="text-[10px] text-slate-500 text-center uppercase tracking-widest italic">Modeling conditional probabilities with Gaussian Likelihoods</p>
         </div>
     );
 };
 
-const DecisionTreeViz = () => (
-  <div className="flex flex-col items-center w-full py-8 select-none bg-slate-950 rounded-lg border border-slate-800 shadow-inner">
-    <div className="border-2 border-indigo-500 bg-slate-900 text-indigo-100 rounded-lg px-6 py-3 text-sm font-mono font-bold z-10 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
-      Entropy: 0.98 | Split: Feature X &gt; 5.2
+const DecisionTreeViz = () => {
+  // SVG Tree layout
+  const width = 400;
+  const height = 240;
+  const nodes = [
+    { x: 200, y: 40, label: 'Entropy: 0.98\nFeature X > 5.2', color: 'indigo' },
+    { x: 100, y: 120, label: 'Feature Y ≤ 2.1', color: 'indigo' },
+    { x: 300, y: 120, label: 'Pure Leaf', color: 'emerald' },
+    { x: 50, y: 200, label: 'Class A', color: 'rose' },
+    { x: 150, y: 200, label: 'Class B', color: 'emerald' },
+  ];
+
+  const links = [
+    { from: 0, to: 1 },
+    { from: 0, to: 2 },
+    { from: 1, to: 3 },
+    { from: 1, to: 4 },
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full py-8 bg-slate-950 rounded-2xl border border-slate-800/50 shadow-inner overflow-hidden select-none">
+       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="max-w-md w-full">
+          {/* Links */}
+          {links.map((link, i) => {
+             const from = nodes[link.from];
+             const to = nodes[link.to];
+             return (
+               <path 
+                 key={i} 
+                 d={`M ${from.x} ${from.y} C ${from.x} ${(from.y + to.y) / 2}, ${to.x} ${(from.y + to.y) / 2}, ${to.x} ${to.y}`}
+                 stroke="#334155"
+                 strokeWidth="2"
+                 fill="none"
+                 strokeDasharray="4 2"
+               />
+             );
+          })}
+
+          {/* Nodes */}
+          {nodes.map((node, i) => {
+             const isLeaf = i >= 2;
+             const colorMap = {
+               indigo: { bg: '#1e1b4b', border: '#6366f1', text: '#818cf8' },
+               emerald: { bg: '#064e3b', border: '#10b981', text: '#34d399' },
+               rose: { bg: '#4c0519', border: '#f43f5e', text: '#fb7185' }
+             };
+             const theme = colorMap[node.color as keyof typeof colorMap];
+
+             return (
+               <g key={i} transform={`translate(${node.x}, ${node.y})`}>
+                  <rect 
+                    x={isLeaf ? -30 : -50} 
+                    y={isLeaf ? -15 : -25} 
+                    width={isLeaf ? 60 : 100} 
+                    height={isLeaf ? 30 : 50} 
+                    rx="8" 
+                    fill={theme.bg} 
+                    stroke={theme.border} 
+                    strokeWidth="2"
+                    className="transition-all hover:scale-110 cursor-help"
+                  />
+                  {node.label.split('\n').map((line, lineIdx) => (
+                    <text 
+                      key={lineIdx}
+                      y={isLeaf ? 5 : (lineIdx === 0 ? -2 : 12)} 
+                      textAnchor="middle" 
+                      fill={theme.text} 
+                      fontSize={isLeaf ? "10" : "8"} 
+                      fontWeight="bold"
+                      className="pointer-events-none uppercase font-mono tracking-tighter"
+                    >
+                      {line}
+                    </text>
+                  ))}
+               </g>
+             );
+          })}
+       </svg>
+       <p className="text-[9px] text-slate-600 mt-6 uppercase tracking-[0.3em] font-mono">Recursive Binary Splitting</p>
     </div>
-    <div className="h-10 w-px bg-slate-700"></div>
-    <div className="w-64 h-px bg-slate-700 relative">
-      <div className="absolute left-0 top-0 h-6 w-px bg-slate-700"></div>
-      <div className="absolute right-0 top-0 h-6 w-px bg-slate-700"></div>
-    </div>
-    <div className="flex justify-between w-80 mt-6">
-      <div className="flex flex-col items-center group">
-        <div className="border border-indigo-400/50 bg-slate-900 text-indigo-200 rounded px-4 py-2 text-xs font-mono shadow-sm group-hover:border-indigo-400 transition-colors">
-          Feature Y &le; 2.1
-        </div>
-        <div className="h-6 w-px bg-slate-700"></div>
-        <div className="w-24 h-px bg-slate-700 relative">
-             <div className="absolute left-0 top-0 h-4 w-px bg-slate-700"></div>
-             <div className="absolute right-0 top-0 h-4 w-px bg-slate-700"></div>
-        </div>
-        <div className="flex justify-between w-32 mt-4">
-             <div className="w-10 h-10 rounded bg-rose-500/20 border border-rose-500 flex items-center justify-center text-[10px] text-rose-300 font-bold shadow-[0_0_15px_rgba(244,63,94,0.2)]">Class A</div>
-             <div className="w-10 h-10 rounded bg-emerald-500/20 border border-emerald-500 flex items-center justify-center text-[10px] text-emerald-300 font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]">Class B</div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center">
-        <div className="w-20 h-20 rounded-full border-4 border-indigo-500/20 bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 shadow-lg border-dashed">
-            <span className="text-xl font-bold">B</span>
-            <span className="text-[8px] uppercase font-mono">Pure Leaf</span>
-        </div>
-        <span className="text-[10px] text-slate-500 mt-2 font-mono">Confidence: 100%</span>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 // --- MAIN VIEW ---
 
 export const ClassificationView: React.FC = () => {
   return (
-    <div className="space-y-12 animate-fade-in">
-      <header className="mb-12">
+    <div className="space-y-12 animate-fade-in pb-20">
+      <header className="mb-12 border-b border-slate-800 pb-8">
         <h1 className="text-5xl font-serif font-bold text-white mb-4">Supervised: Classification</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed">
-          The art of assigning objects to discrete categories. Classification models learn complex decision boundaries in feature space to predict class membership for new data.
+        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
+          The task of predicting a discrete class label. Models learn to find the optimal decision boundary that generalizes well to unseen samples in complex feature spaces.
         </p>
       </header>
 
       <AlgorithmCard
         id="logistic-regression"
         title="Logistic Regression"
-        theory="Despite its name, it's a fundamental classification algorithm. It models the probability that an input belongs to a specific class using the sigmoid function, which maps inputs to a range between 0 and 1."
+        complexity="Fundamental"
+        theory="The cornerstone of classification. It estimates probabilities using a logistic (sigmoid) function. While it is a linear model, it outputs a probabilistic score between 0 and 1, usually thresholded at 0.5 for binary classification."
         math={<span>P(y=1|x) = &sigma;(w&sdot;x + b) = <sup>1</sup>&frasl;<sub>1 + e<sup>-(w&sdot;x + b)</sup></sub></span>}
-        mathLabel="Logistic (Sigmoid) Activation"
+        mathLabel="Logistic Activation"
         code={`from sklearn.linear_model import LogisticRegression
 clf = LogisticRegression(C=1.0)
-clf.fit(X_train, y_train)
-probabilities = clf.predict_proba(X_test)`}
-        pros={['Fast to train', 'Output has a probabilistic interpretation', 'Provides feature weights']}
-        cons={['Assumes linear relationship', 'Vulnerable to multicollinearity']}
+clf.fit(X_train, y_train)`}
+        pros={['Excellent baseline model', 'Interpretability via coefficients', 'Computationally very efficient']}
+        cons={['Assumes linear decision boundary', 'Struggles with complex interactions without manual feature engineering']}
         hyperparameters={[
-          { name: 'C', description: 'Inverse of regularization strength.', default: '1.0' },
-          { name: 'penalty', description: 'Regularization type (l1, l2).', default: 'l2' }
+          { name: 'C', description: 'Inverse of regularization strength; smaller values specify stronger regularization.', default: '1.0' },
+          { name: 'penalty', description: 'Used to specify the norm used in the penalization (l1, l2).', default: 'l2' }
         ]}
       >
-        <div className="h-64 w-full bg-slate-950 rounded-lg border border-slate-800 p-2">
+        <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={sigmoidData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="x" stroke="#475569" type="number" domain={[-10, 10]} hide />
-              <YAxis stroke="#475569" domain={[0, 1]} />
+              <YAxis stroke="#475569" domain={[0, 1]} fontSize={10} />
               <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
-              <ReferenceLine y={0.5} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Decision Threshold', fill: '#ef4444', fontSize: 10 }} />
+              <ReferenceLine y={0.5} stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Threshold', fill: '#ef4444', fontSize: 9 }} />
               <Line type="monotone" dataKey="y" stroke="#818cf8" strokeWidth={4} dot={false} animationDuration={1000} />
             </LineChart>
           </ResponsiveContainer>
@@ -232,18 +278,18 @@ probabilities = clf.predict_proba(X_test)`}
       <AlgorithmCard
         id="knn"
         title="K-Nearest Neighbors (KNN)"
-        theory="A simple but powerful lazy learner. It doesn't build a model; instead, it looks at the 'k' closest data points to a new observation and assigns it the most frequent class among them."
+        complexity="Fundamental"
+        theory="A non-parametric, lazy learner. It doesn't find a global function; instead, it stores the training data and classifies new points by taking a majority vote of their nearest 'k' neighbors."
         math={<span>d(p, q) = &radic;&Sigma; (p<sub>i</sub> - q<sub>i</sub>)<sup>2</sup></span>}
-        mathLabel="Euclidean Distance Metric"
+        mathLabel="Euclidean Distance"
         code={`from sklearn.neighbors import KNeighborsClassifier
 knn = KNeighborsClassifier(n_neighbors=5)
-knn.fit(X_train, y_train)
-predictions = knn.predict(X_test)`}
-        pros={['No training phase required', 'Naturally multi-class', 'Effective for complex datasets']}
-        cons={['Slow at prediction time', 'Highly sensitive to feature scaling', 'Memory intensive']}
+knn.fit(X_train, y_train)`}
+        pros={['No training phase', 'Adapts quickly to new data', 'Intuitive decision logic']}
+        cons={['Slow at inference time (must scan all data)', 'Curse of Dimensionality', 'Sensitive to outliers']}
         hyperparameters={[
-          { name: 'n_neighbors', description: 'Number of neighbors (k).', default: '5' },
-          { name: 'metric', description: 'Distance calculation method.', default: 'minkowski' }
+          { name: 'n_neighbors', description: 'Number of neighbors to consider.', default: '5' },
+          { name: 'metric', description: 'Distance function used for the tree.', default: 'minkowski' }
         ]}
       >
          <KNNViz />
@@ -252,16 +298,16 @@ predictions = knn.predict(X_test)`}
       <AlgorithmCard
         id="svm"
         title="Support Vector Machines (SVM)"
-        theory="SVM finds the optimal hyperplane that maximizes the margin between classes. For data that isn't linearly separable, it uses the Kernel Trick to map data into higher dimensions."
+        complexity="Intermediate"
+        theory="SVM finds the hyperplane that separates classes with the maximum margin. Using kernels, it can solve non-linear problems by projecting data into higher dimensions where a linear separation exists."
         math={<span>max <sup>2</sup>&frasl;<sub>||w||</sub> s.t. y<sub>i</sub>(w&sdot;x<sub>i</sub> - b) &ge; 1</span>}
-        mathLabel="Margin Maximization Objective"
+        mathLabel="Margin Optimization"
         code={`from sklearn.svm import SVC
-svm = SVC(kernel='rbf', C=1.0)
-svm.fit(X_train, y_train)`}
-        pros={['High accuracy in high dimensions', 'Robust to outliers', 'Versatile kernels']}
-        cons={['High training time on large data', 'Hyperparameters are hard to tune']}
+svm = SVC(kernel='rbf', C=1.0)`}
+        pros={['Effective in high dimensions', 'Memory efficient (uses support vectors)', 'Versatile via kernel trick']}
+        cons={['Doesn\'t directly provide probability estimates', 'Slow on large datasets', 'Hard to interpret']}
       >
-        <div className="h-64 w-full bg-slate-950 rounded-lg border border-slate-800 p-2">
+        <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
             <ResponsiveContainer width="100%" height="100%">
             <ComposedChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -271,7 +317,7 @@ svm.fit(X_train, y_train)`}
                 <Line data={svmMarginB} dataKey="y" stroke="#475569" strokeDasharray="3 3" dot={false} strokeWidth={1} />
                 <Line data={svmLine} dataKey="y" stroke="#ffffff" strokeWidth={2} dot={false} />
                 {svmData.filter(d => d.isSupport).map((d, i) => (
-                    <ReferenceDot key={i} x={d.x} y={d.y} r={10} fill="none" stroke="#fbbf24" strokeWidth={2} />
+                    <ReferenceDot key={i} x={d.x} y={d.y} r={10} fill="none" stroke="#fbbf24" strokeWidth={2} strokeOpacity={0.6} />
                 ))}
                 <Scatter data={svmData}>
                     {svmData.map((entry, index) => (
@@ -286,14 +332,14 @@ svm.fit(X_train, y_train)`}
       <AlgorithmCard
         id="naive-bayes"
         title="Naive Bayes"
-        theory="Based on Bayes' Theorem, it calculates the probability of each class given the input features, assuming features are independent of each other (the 'naive' assumption)."
+        complexity="Fundamental"
+        theory="A probabilistic classifier based on Bayes' Theorem. It makes the 'naive' assumption of conditional independence between every pair of features, allowing for extremely fast computation and high scalability."
         math={<span>P(C|x) = <sup>P(x|C)P(C)</sup>&frasl;<sub>P(x)</sub></span>}
-        mathLabel="Bayes' Rule"
+        mathLabel="Bayesian Inference"
         code={`from sklearn.naive_bayes import GaussianNB
-nb = GaussianNB()
-nb.fit(X_train, y_train)`}
-        pros={['Extremely fast', 'Scales well with features', 'Performs well on text']}
-        cons={['Independence assumption is often false', 'Zero frequency problem']}
+nb = GaussianNB().fit(X_train, y_train)`}
+        pros={['Extremely fast and scalable', 'Works well with small datasets', 'Excellent for text (Spam detection)']}
+        cons={['Strong independence assumption rarely holds', 'Zero-frequency problem for unseen categories']}
       >
         <NaiveBayesViz />
       </AlgorithmCard>
@@ -301,14 +347,14 @@ nb.fit(X_train, y_train)`}
       <AlgorithmCard
         id="decision-trees"
         title="Decision Trees"
-        theory="A flowchart-like structure where each internal node represents a 'test' on an attribute, each branch represents the outcome of the test, and each leaf node represents a class label."
+        complexity="Intermediate"
+        theory="Models decisions through a branching tree structure. It greedily splits the data at each node to maximize information gain or minimize impurity metrics like Gini or Entropy."
         math={<span>Gini = 1 - &Sigma; (p<sub>i</sub>)<sup>2</sup></span>}
-        mathLabel="Gini Impurity Metric"
+        mathLabel="Impurity Metric"
         code={`from sklearn.tree import DecisionTreeClassifier
-dt = DecisionTreeClassifier(max_depth=3)
-dt.fit(X_train, y_train)`}
-        pros={['Human-interpretable', 'Handles non-linear data', 'No scaling required']}
-        cons={['Highly prone to overfitting', 'Unstable (small data changes change tree)']}
+dt = DecisionTreeClassifier(max_depth=5)`}
+        pros={['White-box interpretability', 'Requires zero data scaling', 'Implicit feature selection']}
+        cons={['Highly prone to overfitting', 'Unstable: small data changes yield different trees', 'Sensitive to imbalanced data']}
       >
         <DecisionTreeViz />
       </AlgorithmCard>
