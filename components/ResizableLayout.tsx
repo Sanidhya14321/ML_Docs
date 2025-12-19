@@ -6,12 +6,14 @@ interface ResizableLayoutProps {
   left: React.ReactNode;
   right: React.ReactNode;
   initialLeftWidth?: number; // Percentage
+  isMobile?: boolean;
 }
 
 export const ResizableLayout: React.FC<ResizableLayoutProps> = ({ 
   left, 
   right, 
-  initialLeftWidth = 40 
+  initialLeftWidth = 40,
+  isMobile = false
 }) => {
   const [leftWidth, setLeftWidth] = useState(initialLeftWidth);
   const [isDragging, setIsDragging] = useState(false);
@@ -50,6 +52,21 @@ export const ResizableLayout: React.FC<ResizableLayoutProps> = ({
     };
   }, [isDragging]);
 
+  // Mobile Layout: Vertical Stack
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full w-full overflow-hidden bg-[#020617]">
+         <div className="h-1/2 overflow-y-auto border-b border-slate-800 relative z-10">
+            {left}
+         </div>
+         <div className="h-1/2 overflow-hidden bg-[#1e1e1e] relative z-0">
+            {right}
+         </div>
+      </div>
+    );
+  }
+
+  // Desktop Layout: Resizable Horizontal Split
   return (
     <div ref={containerRef} className="flex h-full w-full overflow-hidden relative">
       {/* Left Pane */}

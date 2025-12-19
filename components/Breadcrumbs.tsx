@@ -27,7 +27,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems,
   if (!breadcrumbPath) return null;
 
   return (
-    <nav className="flex items-center gap-2 mb-8 text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wide overflow-x-auto whitespace-nowrap scrollbar-hide">
+    <nav className="flex items-center gap-2 text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wide overflow-x-auto whitespace-nowrap scrollbar-hide mask-linear-fade">
       <button 
         onClick={() => onNavigate(ViewSection.FOUNDATIONS)}
         className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"

@@ -23,11 +23,20 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
 
   const [code, setCode] = useState(initialCode);
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
+  const [isMobile, setIsMobile] = useState(false);
   
   // Hooks
   const { logs, isRunning, runCode, clearLogs } = useCodeRunner();
   const { markAsCompleted, isCompleted } = useCourseProgress();
   const completed = isCompleted(topicId);
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Reset code when topic changes
   useEffect(() => {
@@ -35,11 +44,10 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     clearLogs();
   }, [topicId, initialCode, clearLogs]);
 
-  // Auto-complete logic: Watch logs for "Success" system messages
+  // Auto-complete logic
   useEffect(() => {
     if (!isRunning && logs.length > 0) {
        const lastLog = logs[logs.length - 1];
-       // Heuristic: If the last system message mentions execution time, it was a success in our runner logic
        if (lastLog.type === 'system' && lastLog.content.includes('Execution completed')) {
            markAsCompleted(topicId);
        }
@@ -47,7 +55,16 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   }, [isRunning, logs, topicId, markAsCompleted]);
 
   const handleRun = () => {
-    setActiveTab('console');
+    if (isMobile) {
+        // On mobile, if we run, maybe auto-switch tab to console if they are separate tabs?
+        // But here we use ResizableLayout which shows both if split, or we might need tabs for the right pane?
+        // Wait, ResizableLayout splits Left (Docs) vs Right (Code+Console).
+        // On mobile, it stacks Docs (Top) vs Right (Bottom).
+        // The Right pane HAS tabs (Editor vs Console).
+        setActiveTab('console');
+    } else {
+        setActiveTab('console');
+    }
     runCode(code);
   };
 
@@ -61,22 +78,22 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
       {/* Lab Header */}
       <header className="h-14 border-b border-slate-800 bg-[#020617] flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-4">
-           <button onClick={onBack} className="text-xs font-mono text-slate-500 hover:text-white transition-colors">← Exit Lab</button>
-           <div className="h-4 w-px bg-slate-800" />
+           <button onClick={onBack} className="text-xs font-mono text-slate-500 hover:text-white transition-colors">← Exit</button>
+           <div className="h-4 w-px bg-slate-800 hidden sm:block" />
            <span className="text-sm font-bold text-slate-200 flex items-center gap-2">
               <Terminal size={14} className="text-indigo-400" />
-              Interactive Workspace
+              <span className="hidden sm:inline">Interactive Workspace</span>
            </span>
-           <span className="text-xs text-slate-600 font-mono hidden sm:inline">{topic?.title || topicId}</span>
+           <span className="text-xs text-slate-600 font-mono hidden md:inline truncate max-w-[200px]">{topic?.title || topicId}</span>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <AnimatePresence>
             {completed && (
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.8 }} 
                     animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center gap-2 text-emerald-400 text-xs font-bold mr-4 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20"
+                    className="hidden sm:flex items-center gap-2 text-emerald-400 text-xs font-bold mr-4 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20"
                 >
                     <CheckCircle size={12} /> Completed
                 </motion.div>
@@ -85,7 +102,7 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
 
           {topic?.labConfig?.hints && topic.labConfig.hints.length > 0 && (
              <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md hover:bg-amber-500/20 transition-colors">
-                <Lightbulb size={12} /> Hints
+                <Lightbulb size={12} /> <span className="hidden sm:inline">Hints</span>
              </button>
           )}
           <button 
@@ -102,7 +119,7 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
             className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold rounded-md transition-all shadow-lg shadow-indigo-900/20"
           >
             {isRunning ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-            {isRunning ? 'Running...' : 'Run Code'}
+            {isRunning ? 'Running...' : 'Run'}
           </button>
         </div>
       </header>
@@ -110,6 +127,7 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
       {/* Main Workspace */}
       <div className="flex-1 overflow-hidden">
         <ResizableLayout
+          isMobile={isMobile}
           initialLeftWidth={35}
           left={
             <div className="bg-[#020617] min-h-full p-6 pb-20">
