@@ -6,7 +6,9 @@ import { CodeEditor } from './CodeEditor';
 import { LabConsole } from './LabConsole';
 import { useCodeRunner } from '../hooks/useCodeRunner';
 import { getTopicById } from '../lib/contentHelpers';
-import { Play, RotateCcw, Terminal, FileCode, Loader2, Lightbulb } from 'lucide-react';
+import { useCourseProgress } from '../hooks/useCourseProgress';
+import { Play, RotateCcw, Terminal, FileCode, Loader2, Lightbulb, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LabWorkspaceProps {
   topicId: string;
@@ -22,14 +24,27 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   const [code, setCode] = useState(initialCode);
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
   
-  // Use custom hook for execution logic
+  // Hooks
   const { logs, isRunning, runCode, clearLogs } = useCodeRunner();
+  const { markAsCompleted, isCompleted } = useCourseProgress();
+  const completed = isCompleted(topicId);
 
   // Reset code when topic changes
   useEffect(() => {
     setCode(initialCode);
     clearLogs();
   }, [topicId, initialCode, clearLogs]);
+
+  // Auto-complete logic: Watch logs for "Success" system messages
+  useEffect(() => {
+    if (!isRunning && logs.length > 0) {
+       const lastLog = logs[logs.length - 1];
+       // Heuristic: If the last system message mentions execution time, it was a success in our runner logic
+       if (lastLog.type === 'system' && lastLog.content.includes('Execution completed')) {
+           markAsCompleted(topicId);
+       }
+    }
+  }, [isRunning, logs, topicId, markAsCompleted]);
 
   const handleRun = () => {
     setActiveTab('console');
@@ -56,6 +71,18 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
         </div>
         
         <div className="flex items-center gap-3">
+          <AnimatePresence>
+            {completed && (
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }} 
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-2 text-emerald-400 text-xs font-bold mr-4 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20"
+                >
+                    <CheckCircle size={12} /> Completed
+                </motion.div>
+            )}
+          </AnimatePresence>
+
           {topic?.labConfig?.hints && topic.labConfig.hints.length > 0 && (
              <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md hover:bg-amber-500/20 transition-colors">
                 <Lightbulb size={12} /> Hints

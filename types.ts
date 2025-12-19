@@ -2,6 +2,7 @@
 import React from 'react';
 
 export enum ViewSection {
+  DASHBOARD = 'dashboard',
   FOUNDATIONS = 'foundations',
   OPTIMIZATION = 'optimization',
   REGRESSION = 'regression',
@@ -33,12 +34,25 @@ export interface ModelMetrics {
 
 // --- NEW DATA BACKBONE TYPES ---
 
-export type ContentType = 'doc' | 'lab';
+export type ContentType = 'doc' | 'lab' | 'quiz';
 
 export interface LabConfig {
   initialCode: string;
   solution: string;
   hints: string[];
+}
+
+export interface Question {
+  id: string;
+  text: string;
+  options: string[];
+  correctIndex: number;
+  explanation?: string;
+}
+
+export interface QuizConfig {
+  questions: Question[];
+  passingScore?: number; // percentage, default 70
 }
 
 export interface Topic {
@@ -47,6 +61,7 @@ export interface Topic {
   type: ContentType;
   description?: string;
   labConfig?: LabConfig;
+  quizConfig?: QuizConfig;
 }
 
 export interface Chapter {

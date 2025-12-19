@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Circle, FileText, Terminal, FolderOpen } from 'lucide-react';
+import { ChevronRight, ChevronDown, Circle, FileText, Terminal, FolderOpen, Award } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
 import { Module, Chapter, Topic } from '../types';
 
@@ -13,6 +13,14 @@ interface SidebarProps {
 const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path: string) => void }> = ({ topic, currentPath, onNavigate }) => {
   const isActive = currentPath === topic.id;
   
+  const getIcon = () => {
+    switch (topic.type) {
+      case 'lab': return <Terminal size={12} />;
+      case 'quiz': return <Award size={12} />;
+      default: return <FileText size={12} />;
+    }
+  };
+
   return (
     <button
       onClick={() => onNavigate(topic.id)}
@@ -30,7 +38,7 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
       )}
       
       <span className={`${isActive ? "text-indigo-400" : "text-slate-600 group-hover:text-slate-400"}`}>
-        {topic.type === 'lab' ? <Terminal size={12} /> : <FileText size={12} />}
+        {getIcon()}
       </span>
       <span className="truncate">{topic.title}</span>
     </button>

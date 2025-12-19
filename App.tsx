@@ -11,18 +11,23 @@ import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
 import { DocViewer } from './components/DocViewer';
 import { LabWorkspace } from './components/LabWorkspace';
+import { Dashboard } from './components/Dashboard';
+import { QuizView } from './components/QuizView'; // Import QuizView
 import { SitemapView } from './views/SitemapView';
 import { getTopicById } from './lib/contentHelpers';
-import { NAV_ITEMS } from './lib/navigation-data'; // Kept for Sitemap/Breadcrumbs backward compat if needed, otherwise could be removed
+import { NAV_ITEMS } from './lib/navigation-data';
+import { useCourseProgress } from './hooks/useCourseProgress';
 import { 
   Menu, X, Search, Command, BrainCircuit
 } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [currentPath, setCurrentPath] = useState<string>(ViewSection.FOUNDATIONS);
+  const [currentPath, setCurrentPath] = useState<string>(ViewSection.DASHBOARD);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState<string>('');
+  
+  const { setLastActiveTopic } = useCourseProgress();
 
   // Scroll Progress Logic
   const { scrollYProgress } = useScroll();
@@ -44,28 +49,39 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '');
-      const path = hash || ViewSection.FOUNDATIONS;
+      const path = hash || ViewSection.DASHBOARD;
       setCurrentPath(path);
       
-      // Determine label based on new registry or legacy
-      const topicId = path.startsWith('lab/') ? path.replace('lab/', '') : path;
-      const topic = getTopicById(topicId);
-      setActiveLabel(topic?.title || 'Documentation');
+      // Update Active Label and Progress Tracking
+      if (path === ViewSection.DASHBOARD) {
+        setActiveLabel('Dashboard');
+      } else {
+        const topicId = path.startsWith('lab/') ? path.replace('lab/', '') : path;
+        const topic = getTopicById(topicId);
+        setActiveLabel(topic?.title || 'Documentation');
+        
+        // Track last active for resume functionality
+        if (topic) {
+           setLastActiveTopic(topic.id);
+        }
+      }
     };
     
     window.addEventListener('hashchange', handleHashChange);
-    if (window.location.hash) handleHashChange(); 
-    else {
-        // Initial load
-        handleHashChange();
-    }
+    // Initial load
+    handleHashChange();
+    
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [setLastActiveTopic]);
 
   const navigateTo = (path: string) => {
+    // Prevent redundant navigation
+    if (path === currentPath) return;
+    
     window.location.hash = `#/${path}`;
     setCurrentPath(path);
     setIsMobileMenuOpen(false);
+    
     // Only scroll to top if not entering lab mode (labs handle their own scroll)
     if (!path.startsWith('lab/')) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -75,12 +91,20 @@ const App: React.FC = () => {
   // Determine State
   const isLabMode = currentPath.startsWith('lab/');
   const labTopicId = isLabMode ? currentPath.replace('lab/', '') : '';
+  const currentTopic = getTopicById(currentPath);
+  const isQuizMode = currentTopic?.type === 'quiz';
 
   // Determine Content
   let contentElement: React.ReactNode;
   
   if (isLabMode) {
      contentElement = <LabWorkspace topicId={labTopicId} onBack={() => navigateTo(labTopicId)} />;
+  }
+  else if (isQuizMode) {
+     contentElement = <QuizView topicId={currentPath} onBack={() => navigateTo(ViewSection.DASHBOARD)} onComplete={() => navigateTo(ViewSection.DASHBOARD)} />;
+  }
+  else if (currentPath === ViewSection.DASHBOARD) {
+     contentElement = <Dashboard onNavigate={navigateTo} />;
   }
   else if (CONTENT_REGISTRY[currentPath]) {
       const InteractiveComponent = CONTENT_REGISTRY[currentPath];
@@ -90,6 +114,7 @@ const App: React.FC = () => {
       contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
   }
   else {
+      // Fallback for doc pages
       contentElement = <DocViewer topicId={currentPath} title={activeLabel} />;
   }
 
@@ -124,15 +149,18 @@ const App: React.FC = () => {
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
           <div className="p-6 border-b border-slate-800/50">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
+            <button 
+              onClick={() => navigateTo(ViewSection.DASHBOARD)}
+              className="flex items-center gap-3 mb-6 w-full text-left group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform">
                 <BrainCircuit size={18} className="text-white" />
               </div>
               <div>
                 <h1 className="font-serif font-black text-lg text-white tracking-tighter">AI Codex</h1>
-                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v3.0.0</p>
+                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v3.2.0</p>
               </div>
-            </div>
+            </button>
             
             <button 
               onClick={() => setIsSearchOpen(true)}
@@ -164,7 +192,9 @@ const App: React.FC = () => {
           <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
 
           <div className="max-w-[1000px] mx-auto p-8 md:p-12 lg:p-16 relative z-10 min-h-screen">
-             <Breadcrumbs currentPath={currentPath} navItems={NAV_ITEMS} onNavigate={navigateTo} />
+             {!isQuizMode && currentPath !== ViewSection.DASHBOARD && (
+                 <Breadcrumbs currentPath={currentPath} navItems={NAV_ITEMS} onNavigate={navigateTo} />
+             )}
              
              <Suspense fallback={<LoadingOverlay />}>
               <AnimatePresence mode="wait">

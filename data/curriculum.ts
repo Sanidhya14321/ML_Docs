@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical } from 'lucide-react';
 import { Module } from '../types';
@@ -33,6 +34,37 @@ export const CURRICULUM: Module[] = [
               initialCode: `import numpy as np\n\n# 1. Create a 3x3 Identity Matrix\nI = \n\n# 2. Create a vector v = [1, 2, 3]\nv = \n\n# 3. Compute dot product of v and itself\ndot_prod = \n\nprint(f"Identity:\\n{I}")\nprint(f"Dot Product: {dot_prod}")`,
               solution: `import numpy as np\nI = np.eye(3)\nv = np.array([1, 2, 3])\ndot_prod = np.dot(v, v)\nprint(f"Identity:\\n{I}")\nprint(f"Dot Product: {dot_prod}")`,
               hints: ['Use np.eye() for identity', 'Use np.dot() or @ operator']
+            }
+          },
+          {
+            id: 'linear-algebra-quiz',
+            title: 'Checkpoint: Linear Algebra',
+            type: 'quiz',
+            description: 'Verify your understanding of vectors, matrices, and NumPy operations.',
+            quizConfig: {
+              questions: [
+                {
+                  id: 'q1',
+                  text: 'What is the result of the dot product between v=[1, 2] and u=[3, 4]?',
+                  options: ['10', '11', '7', '[3, 8]'],
+                  correctIndex: 1,
+                  explanation: 'The dot product is (1*3) + (2*4) = 3 + 8 = 11.'
+                },
+                {
+                  id: 'q2',
+                  text: 'Which NumPy function creates an Identity Matrix?',
+                  options: ['np.identity()', 'np.eye()', 'np.ones()', 'np.diag()'],
+                  correctIndex: 1,
+                  explanation: 'np.eye(n) creates an n x n identity matrix.'
+                },
+                {
+                  id: 'q3',
+                  text: 'If matrix A is shape (3, 2) and B is shape (2, 4), what is the shape of A @ B?',
+                  options: ['(3, 4)', '(2, 2)', '(3, 2)', 'Error'],
+                  correctIndex: 0,
+                  explanation: 'Matrix multiplication (m, n) x (n, p) results in (m, p).'
+                }
+              ]
             }
           }
         ]
