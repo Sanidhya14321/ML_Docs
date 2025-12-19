@@ -1,138 +1,132 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
 export const NeuralNetworkViz: React.FC = () => {
-  // Sequence: 0=Input->Hidden, 1=Hidden Activation, 2=Hidden->Output, 3=Output Activation
+  // Sequence: 0=Forward Pass, 1=Loss Calculation, 2=Backprop
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-        setActiveStep(prev => (prev + 1) % 4);
-    }, 1000);
+        setActiveStep(prev => (prev + 1) % 3);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  // Geometry Configuration
   const width = 600;
   const height = 300;
-  const layerX = [100, 300, 500]; // X coordinates for Input, Hidden, Output
+  const layerX = [80, 240, 400, 540]; // Input, H1, H2, Output
   
-  // Node positions Y
   const inputNodes = [80, 150, 220];
-  const hiddenNodes = [60, 120, 180, 240];
-  const outputNodes = [100, 200];
+  const h1Nodes = [50, 100, 150, 200, 250];
+  const h2Nodes = [70, 130, 190, 250];
+  const outputNodes = [110, 190];
 
-  // Generate SVG Paths for connections
-  const connections1 = useMemo(() => {
+  const createConnections = (nodesLeft: number[], nodesRight: number[], xLeft: number, xRight: number) => {
     const paths = [];
-    for (let i = 0; i < inputNodes.length; i++) {
-        for (let j = 0; j < hiddenNodes.length; j++) {
+    for (let i = 0; i < nodesLeft.length; i++) {
+        for (let j = 0; j < nodesRight.length; j++) {
+            // Randomish "weight" for visualization
+            const weight = 0.2 + Math.random() * 0.8;
             paths.push({
-                d: `M ${layerX[0]} ${inputNodes[i]} C ${layerX[0] + 100} ${inputNodes[i]}, ${layerX[1] - 100} ${hiddenNodes[j]}, ${layerX[1]} ${hiddenNodes[j]}`,
-                key: `i${i}-h${j}`
+                d: `M ${xLeft} ${nodesLeft[i]} C ${xLeft + (xRight - xLeft)/2} ${nodesLeft[i]}, ${xLeft + (xRight - xLeft)/2} ${nodesRight[j]}, ${xRight} ${nodesRight[j]}`,
+                weight,
+                key: `${xLeft}-${i}-${j}`
             });
         }
     }
     return paths;
-  }, []);
+  };
 
-  const connections2 = useMemo(() => {
-    const paths = [];
-    for (let i = 0; i < hiddenNodes.length; i++) {
-        for (let j = 0; j < outputNodes.length; j++) {
-            paths.push({
-                d: `M ${layerX[1]} ${hiddenNodes[i]} C ${layerX[1] + 100} ${hiddenNodes[i]}, ${layerX[2] - 100} ${outputNodes[j]}, ${layerX[2]} ${outputNodes[j]}`,
-                key: `h${i}-o${j}`
-            });
-        }
-    }
-    return paths;
-  }, []);
+  const c1 = useMemo(() => createConnections(inputNodes, h1Nodes, layerX[0], layerX[1]), []);
+  const c2 = useMemo(() => createConnections(h1Nodes, h2Nodes, layerX[1], layerX[2]), []);
+  const c3 = useMemo(() => createConnections(h2Nodes, outputNodes, layerX[2], layerX[3]), []);
 
   return (
-    <div className="w-full h-64 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center relative overflow-hidden shadow-inner select-none">
+    <div className="w-full h-80 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden shadow-inner select-none">
        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full">
           <defs>
-            <linearGradient id="gradInput" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.2" />
+            <filter id="nodeGlow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <linearGradient id="forwardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#818cf8" />
             </linearGradient>
-            <linearGradient id="gradOutput" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0.8" />
+            <linearGradient id="backGrad" x1="100%" y1="0%" x2="0%" y2="0%">
+                <stop offset="0%" stopColor="#f43f5e" />
+                <stop offset="100%" stopColor="#fb7185" />
             </linearGradient>
           </defs>
 
-          {/* Layer 1 Connections (Input -> Hidden) */}
-          {connections1.map((path) => (
-              <g key={path.key}>
-                  {/* Background Line */}
-                  <path d={path.d} stroke="#334155" strokeWidth="1" fill="none" />
-                  {/* Active Pulse Line */}
-                  <path 
-                    d={path.d} 
-                    stroke="url(#gradInput)" 
-                    strokeWidth={activeStep === 0 ? 3 : 0} 
-                    fill="none"
-                    strokeDasharray="10 5"
-                    className={activeStep === 0 ? "animate-[flow_0.5s_linear_infinite]" : ""}
-                    style={{ opacity: activeStep === 0 ? 1 : 0, transition: 'opacity 0.2s' }}
-                  />
+          {/* Connections Layer */}
+          {[c1, c2, c3].map((layer, lIdx) => (
+              <g key={lIdx}>
+                  {layer.map((conn) => (
+                      <path 
+                        key={conn.key} 
+                        d={conn.d} 
+                        stroke="#1e293b" 
+                        strokeWidth={conn.weight * 2} 
+                        fill="none" 
+                        className="transition-all duration-1000"
+                        strokeOpacity={activeStep === 0 ? 0.8 : 0.3}
+                      />
+                  ))}
+                  {/* Active Flow */}
+                  {activeStep === 0 && layer.map((conn) => (
+                      <path 
+                        key={`${conn.key}-active`}
+                        d={conn.d} 
+                        stroke="url(#forwardGrad)" 
+                        strokeWidth={conn.weight * 2} 
+                        fill="none" 
+                        strokeDasharray="4 8"
+                        className="animate-[flow_1s_linear_infinite]"
+                        strokeOpacity={0.6}
+                      />
+                  ))}
+                  {activeStep === 2 && layer.map((conn) => (
+                      <path 
+                        key={`${conn.key}-back`}
+                        d={conn.d} 
+                        stroke="url(#backGrad)" 
+                        strokeWidth={conn.weight * 1.5} 
+                        fill="none" 
+                        strokeDasharray="4 8"
+                        className="animate-[flow_1s_linear_infinite]"
+                        style={{ animationDirection: 'reverse' }}
+                        strokeOpacity={0.5}
+                      />
+                  ))}
               </g>
           ))}
 
-          {/* Layer 2 Connections (Hidden -> Output) */}
-          {connections2.map((path) => (
-              <g key={path.key}>
-                  <path d={path.d} stroke="#334155" strokeWidth="1" fill="none" />
-                  <path 
-                    d={path.d} 
-                    stroke="url(#gradOutput)" 
-                    strokeWidth={activeStep === 2 ? 3 : 0} 
-                    fill="none"
-                    strokeDasharray="10 5"
-                    className={activeStep === 2 ? "animate-[flow_0.5s_linear_infinite]" : ""}
-                    style={{ opacity: activeStep === 2 ? 1 : 0, transition: 'opacity 0.2s' }}
-                  />
+          {/* Nodes Layer */}
+          {[inputNodes, h1Nodes, h2Nodes, outputNodes].map((layer, lIdx) => (
+              <g key={lIdx}>
+                  {layer.map((y, nIdx) => (
+                      <circle 
+                        key={nIdx} 
+                        cx={layerX[lIdx]} 
+                        cy={y} 
+                        r={lIdx === 0 || lIdx === 3 ? 10 : 8} 
+                        fill="#0f172a" 
+                        stroke={activeStep === 0 ? (lIdx === 0 ? '#6366f1' : '#334155') : activeStep === 2 ? '#f43f5e' : '#1e293b'} 
+                        strokeWidth="2" 
+                        filter={activeStep === 0 && lIdx === 0 ? "url(#nodeGlow)" : ""}
+                      />
+                  ))}
               </g>
           ))}
 
-          {/* Input Nodes */}
-          {inputNodes.map((y, i) => (
-              <g key={`in-${i}`} transform={`translate(${layerX[0]}, ${y})`}>
-                  <circle r="12" fill="#0f172a" stroke={activeStep === 0 || activeStep === 3 ? "#6366f1" : "#475569"} strokeWidth="2" className="transition-colors duration-300" />
-                  <text x="0" y="4" textAnchor="middle" fontSize="10" fill="#cbd5e1" fontFamily="monospace">x{i+1}</text>
-                  {/* Glow effect */}
-                  {activeStep === 0 && <circle r="16" fill="none" stroke="#6366f1" strokeOpacity="0.5" className="animate-ping" />}
-              </g>
-          ))}
-
-          {/* Hidden Nodes */}
-          {hiddenNodes.map((y, i) => (
-              <g key={`hid-${i}`} transform={`translate(${layerX[1]}, ${y})`}>
-                  <circle 
-                    r="10" 
-                    fill={activeStep >= 1 && activeStep <= 2 ? "#e2e8f0" : "#0f172a"} 
-                    stroke={activeStep >= 1 && activeStep <= 2 ? "#ffffff" : "#475569"} 
-                    strokeWidth="2" 
-                    className="transition-all duration-300" 
-                  />
-                  {activeStep === 1 && <circle r="14" fill="none" stroke="#e2e8f0" strokeOpacity="0.5" className="animate-ping" />}
-              </g>
-          ))}
-
-          {/* Output Nodes */}
-          {outputNodes.map((y, i) => (
-              <g key={`out-${i}`} transform={`translate(${layerX[2]}, ${y})`}>
-                  <circle r="12" fill="#0f172a" stroke={activeStep === 3 ? "#10b981" : "#475569"} strokeWidth="2" className="transition-colors duration-300" />
-                  <text x="0" y="4" textAnchor="middle" fontSize="10" fill="#cbd5e1" fontFamily="monospace">y{i+1}</text>
-                  {activeStep === 3 && <circle r="16" fill="none" stroke="#10b981" strokeOpacity="0.5" className="animate-ping" />}
-              </g>
-          ))}
-
-          {/* Labels */}
-          <text x={layerX[0]} y="40" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">INPUT</text>
-          <text x={layerX[1]} y="30" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">HIDDEN</text>
-          <text x={layerX[2]} y="40" textAnchor="middle" fill="#64748b" fontSize="10" fontWeight="bold" letterSpacing="2">OUTPUT</text>
+          {/* Legend / Status Overlay */}
+          <g transform="translate(20, 20)">
+             <rect width="120" height="40" rx="4" fill="#0f172a" stroke="#1e293b" />
+             <text x="10" y="25" fill="#94a3b8" fontSize="10" fontWeight="bold" fontClassName="font-mono">
+                {activeStep === 0 ? "FORWARD PASS..." : activeStep === 1 ? "CALC ERROR" : "BACKPROPAGATING"}
+             </text>
+             <circle cx="105" cy="21" r="4" fill={activeStep === 0 ? "#6366f1" : activeStep === 1 ? "#fbbf24" : "#f43f5e"} className="animate-pulse" />
+          </g>
        </svg>
     </div>
   );
