@@ -1,15 +1,17 @@
 
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, BarChart, Tag, Share2, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, BarChart, Tag, Share2, ArrowRight, FlaskConical } from 'lucide-react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
 import { Callout } from './Callout';
 import { LatexRenderer } from './LatexRenderer';
+import { DocPagination } from './DocPagination';
 
 interface DocViewerProps {
   topicId: string;
   title: string;
+  isCompact?: boolean; // New prop for Lab Mode
 }
 
 // Helper to generate context-aware mock content
@@ -28,55 +30,76 @@ const getMockData = (id: string, title: string) => {
   };
 };
 
-export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title }) => {
+export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact = false }) => {
   const content = useMemo(() => getMockData(topicId, title), [topicId, title]);
   const tags = topicId.split('/').filter(t => t !== 'cat-math' && t !== 'cat-ml');
 
   return (
-    <div className="pb-24 max-w-4xl mx-auto">
-      {/* 1. Header Section */}
-      <header className="mb-12 border-b border-slate-800 pb-8">
-        <div className="flex justify-between items-start mb-6">
-           <div className="flex gap-2">
-              {tags.map((tag, i) => (
-                <span key={i} className="text-[10px] font-mono font-bold uppercase px-2 py-1 rounded bg-slate-900 border border-slate-800 text-indigo-400">
-                  #{tag}
-                </span>
-              ))}
-           </div>
-           <button className="p-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-colors">
-              <Share2 size={16} />
-           </button>
-        </div>
+    <div className={`mx-auto ${isCompact ? 'max-w-none px-2' : 'max-w-4xl pb-24'}`}>
+      {/* 1. Header Section - Hidden in Compact Mode */}
+      {!isCompact && (
+        <header className="mb-12 border-b border-slate-800 pb-8">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex gap-2">
+                {tags.map((tag, i) => (
+                  <span key={i} className="text-[10px] font-mono font-bold uppercase px-2 py-1 rounded bg-slate-900 border border-slate-800 text-indigo-400">
+                    #{tag}
+                  </span>
+                ))}
+            </div>
+            <button className="p-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-colors">
+                <Share2 size={16} />
+            </button>
+          </div>
 
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight">
-          {title}
-        </h1>
-        <p className="text-xl text-slate-400 font-light leading-relaxed mb-8">
-          {content.description}
-        </p>
-        
-        <div className="flex flex-wrap items-center gap-6 text-xs font-mono text-slate-500 uppercase tracking-widest">
-           <div className="flex items-center gap-2">
-              <Calendar size={14} /> Updated Today
-           </div>
-           <div className="flex items-center gap-2">
-              <Clock size={14} /> 12 min read
-           </div>
-           <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/20 text-indigo-400 bg-indigo-500/10">
-              <BarChart size={14} /> Intermediate
-           </div>
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight">
+            {title}
+          </h1>
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-wrap items-center gap-6 text-xs font-mono text-slate-500 uppercase tracking-widest">
+              <div className="flex items-center gap-2">
+                  <Calendar size={14} /> Updated Today
+              </div>
+              <div className="flex items-center gap-2">
+                  <Clock size={14} /> 12 min read
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/20 text-indigo-400 bg-indigo-500/10">
+                  <BarChart size={14} /> Intermediate
+              </div>
+            </div>
+
+            {/* Start Lab Button */}
+            <a 
+              href={`#lab/${topicId}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-indigo-900/40 transition-all hover:scale-105"
+            >
+              <FlaskConical size={16} /> Start Lab
+            </a>
+          </div>
+          
+          <p className="text-xl text-slate-400 font-light leading-relaxed mt-8">
+            {content.description}
+          </p>
+        </header>
+      )}
+
+      {/* Compact Header for Lab Mode */}
+      {isCompact && (
+        <div className="mb-8 pb-4 border-b border-slate-800/50">
+           <h2 className="text-2xl font-serif font-bold text-white mb-2">{title}</h2>
+           <p className="text-sm text-slate-400 leading-relaxed">{content.description}</p>
         </div>
-      </header>
+      )}
       
       {/* 2. Main Content Area */}
-      <div className="prose prose-invert prose-lg max-w-none">
+      <div className={`prose prose-invert ${isCompact ? 'prose-sm max-w-none' : 'prose-lg max-w-none'}`}>
          <Callout type="note" title="Learning Objectives">
             In this module, we will deconstruct the core mechanics of <strong>{title}</strong>. 
             By the end, you will understand the mathematical derivation and how to implement a production-ready version from scratch.
          </Callout>
 
-         <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-200 mt-12 mb-6">
+         <h2 className="flex items-center gap-3 text-xl md:text-2xl font-bold text-slate-200 mt-12 mb-6">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm">01</span>
             Theoretical Foundation
          </h2>
@@ -85,7 +108,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title }) => {
             Understanding the gradients involved is crucial for debugging convergence issues in practice.
          </p>
 
-         <MathBlock label="Core Equation">
+         <MathBlock label="Core Equation" type={isCompact ? "inline" : "block"}>
             <LatexRenderer formula={content.math} displayMode={true} />
          </MathBlock>
 
@@ -94,7 +117,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title }) => {
             We can verify this property by examining the asymptotic behavior as <LatexRenderer formula="n \to \infty" />.
          </p>
 
-         <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-200 mt-12 mb-6">
+         <h2 className="flex items-center gap-3 text-xl md:text-2xl font-bold text-slate-200 mt-12 mb-6">
             <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm">02</span>
             Implementation Strategy
          </h2>
@@ -112,25 +135,33 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title }) => {
             When deploying this to production, ensure you handle edge cases where input vectors might be sparse or non-normalized, as this can lead to numerical instability.
          </Callout>
 
-         <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-200 mt-12 mb-6">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 text-sm">03</span>
-            Real-World Application
-         </h2>
-         <p className="text-slate-400 leading-relaxed">
-            In industry, {title} is frequently used in high-throughput environments. 
-            The trade-off between latency and accuracy usually favors this approach when resources are constrained.
-         </p>
-         
-         <div className="mt-12 p-1 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-            <div className="bg-slate-950 rounded-xl p-8 text-center">
-                <h3 className="text-xl font-bold text-white mb-4">Ready to test your knowledge?</h3>
-                <p className="text-slate-400 mb-6">Explore the interactive lab to see {title} in action against a real dataset.</p>
-                <button className="px-6 py-3 bg-white text-slate-950 font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 mx-auto">
-                   Go to Lab <ArrowRight size={16} />
-                </button>
-            </div>
-         </div>
+         {/* Extra content only shown in full view */}
+         {!isCompact && (
+           <>
+             <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-200 mt-12 mb-6">
+                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 text-sm">03</span>
+                Real-World Application
+             </h2>
+             <p className="text-slate-400 leading-relaxed">
+                In industry, {title} is frequently used in high-throughput environments. 
+                The trade-off between latency and accuracy usually favors this approach when resources are constrained.
+             </p>
+             
+             <div className="mt-12 p-1 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                <div className="bg-slate-950 rounded-xl p-8 text-center">
+                    <h3 className="text-xl font-bold text-white mb-4">Ready to test your knowledge?</h3>
+                    <p className="text-slate-400 mb-6">Explore the interactive lab to see {title} in action against a real dataset.</p>
+                    <a href={`#lab/${topicId}`} className="px-6 py-3 bg-white text-slate-950 font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 mx-auto w-fit">
+                       Go to Lab <ArrowRight size={16} />
+                    </a>
+                </div>
+             </div>
+           </>
+         )}
       </div>
+
+      {/* 3. Footer Navigation - Hidden in Compact Mode */}
+      {!isCompact && <DocPagination currentPath={topicId} />}
     </div>
   );
 };

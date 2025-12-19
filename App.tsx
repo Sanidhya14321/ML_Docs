@@ -10,7 +10,8 @@ import { TableOfContents } from './components/TableOfContents';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
-import { DocViewer } from './components/DocViewer'; // Import DocViewer
+import { DocViewer } from './components/DocViewer';
+import { LabWorkspace } from './components/LabWorkspace'; // Import LabWorkspace
 import { SitemapView } from './views/SitemapView';
 import { 
   Menu, X, Search, Command, BrainCircuit
@@ -56,14 +57,16 @@ const App: React.FC = () => {
       const hash = window.location.hash.replace('#/', '');
       const path = hash || ViewSection.FOUNDATIONS;
       setCurrentPath(path);
-      const label = findLabel(NAV_ITEMS, path);
+      
+      // If we are in lab mode, get the underlying topic ID for the label
+      const topicId = path.startsWith('lab/') ? path.replace('lab/', '') : path;
+      const label = findLabel(NAV_ITEMS, topicId);
       setActiveLabel(label || 'Documentation');
     };
     
     window.addEventListener('hashchange', handleHashChange);
     if (window.location.hash) handleHashChange(); 
     else {
-        // Init label
         const initLabel = findLabel(NAV_ITEMS, ViewSection.FOUNDATIONS);
         setActiveLabel(initLabel);
     }
@@ -74,36 +77,51 @@ const App: React.FC = () => {
     window.location.hash = `#/${path}`;
     setCurrentPath(path);
     setIsMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Only scroll to top if not entering lab mode (labs handle their own scroll)
+    if (!path.startsWith('lab/')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  // Determine which component to render
+  // Determine State
+  const isLabMode = currentPath.startsWith('lab/');
+  const labTopicId = isLabMode ? currentPath.replace('lab/', '') : '';
+
+  // Determine Content
   let contentElement: React.ReactNode;
   
-  // 1. Check Registry (Interactive Modules)
-  if (CONTENT_REGISTRY[currentPath]) {
+  if (isLabMode) {
+     contentElement = <LabWorkspace topicId={labTopicId} onBack={() => navigateTo(labTopicId)} />;
+  }
+  else if (CONTENT_REGISTRY[currentPath]) {
       const InteractiveComponent = CONTENT_REGISTRY[currentPath];
       contentElement = <InteractiveComponent />;
   } 
-  // 2. Check Sitemap Route
   else if (currentPath === ViewSection.SITEMAP) {
       contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
   }
-  // 3. Fallback to Generic Doc Viewer (The Engine)
   else {
       contentElement = <DocViewer topicId={currentPath} title={activeLabel} />;
   }
 
+  // If in Lab Mode, we render a minimal layout
+  if (isLabMode) {
+      return (
+        <div className="h-screen bg-[#020617] text-slate-200 overflow-hidden font-sans">
+             {contentElement}
+        </div>
+      );
+  }
+
+  // Standard Layout
   return (
     <div className="h-screen bg-[#020617] text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30">
       
-      {/* 1. Global Reading Progress Bar */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-[110] origin-left shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
         style={{ scaleX }} 
       />
 
-      {/* 2. Mobile Header */}
       <div className="md:hidden fixed top-0 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 z-50 flex items-center justify-between p-4">
         <span className="font-serif font-bold text-white tracking-tight">AI<span className="text-indigo-500">.</span>Codex</span>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 rounded-lg bg-slate-800 text-slate-300">
@@ -111,15 +129,11 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* 3. Main Layout Grid */}
       <div className="flex h-full pt-16 md:pt-0">
-        
-        {/* LEFT COLUMN: Sidebar Navigation */}
         <aside className={`
           fixed md:relative z-40 h-full w-72 bg-slate-950/50 backdrop-blur-xl border-r border-slate-800/50 flex flex-col transition-transform duration-300
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
-          {/* Sidebar Header */}
           <div className="p-6 border-b border-slate-800/50">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
@@ -146,29 +160,23 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          {/* Sidebar Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
             <Sidebar items={NAV_ITEMS} currentPath={currentPath} onNavigate={navigateTo} />
           </div>
 
-          {/* Sidebar Footer */}
           <div className="p-4 border-t border-slate-800/50 text-[10px] text-slate-600 flex justify-between">
              <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-400 transition-colors">Site Map</button>
              <span>© 2024 AI Codex</span>
           </div>
         </aside>
 
-        {/* CENTER COLUMN: Main Content */}
         <main className="flex-1 h-full overflow-y-auto scroll-smooth bg-[#020617] relative custom-scrollbar">
-          {/* Background Ambience */}
           <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
 
           <div className="max-w-[1000px] mx-auto p-8 md:p-12 lg:p-16 relative z-10 min-h-screen">
-             {/* Breadcrumbs */}
              <Breadcrumbs currentPath={currentPath} navItems={NAV_ITEMS} onNavigate={navigateTo} />
              
-             {/* Content Area with Fade Up Transition */}
              <Suspense fallback={<LoadingOverlay />}>
               <AnimatePresence mode="wait">
                 <motion.div 
@@ -185,11 +193,9 @@ const App: React.FC = () => {
           </div>
         </main>
 
-        {/* RIGHT COLUMN: Table of Contents (Desktop Only) */}
         <aside className="hidden xl:block w-64 border-l border-slate-800/50 bg-[#020617]/50 backdrop-blur-sm p-8 h-full overflow-y-auto">
            {CONTENT_REGISTRY[currentPath] && <TableOfContents />}
         </aside>
-
       </div>
 
       <BackToTop />

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronRight, Home } from 'lucide-react';
+import { Home } from 'lucide-react';
 import { ViewSection, NavigationItem } from '../types';
 
 interface BreadcrumbsProps {
@@ -27,21 +27,23 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems,
   if (!breadcrumbPath) return null;
 
   return (
-    <nav className="flex items-center gap-2 mb-8 text-[10px] font-mono font-medium text-slate-500 uppercase tracking-wide overflow-x-auto whitespace-nowrap">
+    <nav className="flex items-center gap-2 mb-8 text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wide overflow-x-auto whitespace-nowrap scrollbar-hide">
       <button 
         onClick={() => onNavigate(ViewSection.FOUNDATIONS)}
-        className="hover:text-indigo-400 transition-colors flex items-center gap-1"
+        className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"
       >
-        <Home size={10} /> Home
+        <Home size={12} />
+        <span className="hidden sm:inline">Home</span>
       </button>
+      
       {breadcrumbPath.map((item, idx) => (
         <React.Fragment key={item.id}>
-            <ChevronRight size={10} className="text-slate-700" />
+            <span className="text-slate-700 select-none">/</span>
             <button
                 onClick={() => onNavigate(item.id)}
                 disabled={idx === breadcrumbPath.length - 1}
                 className={`
-                    transition-colors
+                    transition-colors truncate max-w-[150px]
                     ${idx === breadcrumbPath.length - 1 ? 'text-indigo-400 font-bold cursor-default' : 'hover:text-slate-300'}
                 `}
             >
