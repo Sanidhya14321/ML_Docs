@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { Play, RotateCcw, FastForward } from 'lucide-react';
+import { Play, RotateCcw, FastForward, Cpu } from 'lucide-react';
 
 const data = Array.from({ length: 20 }, (_, i) => ({
   epoch: i,
   loss: 10 * Math.exp(-0.3 * i) + Math.random() * 0.5
 }));
-
-// --- SUDOKU LOGIC & VIZ ---
 
 const INITIAL_BOARD = [
   [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -25,7 +23,7 @@ const INITIAL_BOARD = [
 const SudokuViz: React.FC = () => {
   const [board, setBoard] = useState<number[][]>(JSON.parse(JSON.stringify(INITIAL_BOARD)));
   const [solving, setSolving] = useState(false);
-  const [speed, setSpeed] = useState(10); // ms delay
+  const [speed, setSpeed] = useState(10);
   const stopRef = useRef(false);
 
   const resetBoard = () => {
@@ -48,7 +46,6 @@ const SudokuViz: React.FC = () => {
     if (solving) return;
     setSolving(true);
     stopRef.current = false;
-    
     const b = JSON.parse(JSON.stringify(board));
     await solveStep(b);
     setSolving(false);
@@ -56,20 +53,16 @@ const SudokuViz: React.FC = () => {
 
   const solveStep = async (b: number[][]): Promise<boolean> => {
     if (stopRef.current) return false;
-
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (b[row][col] === 0) {
           for (let num = 1; num <= 9; num++) {
             if (isValid(b, row, col, num)) {
               b[row][col] = num;
-              setBoard([...b.map(r => [...r])]); // Update UI
-              
+              setBoard([...b.map(r => [...r])]);
               if (speed > 0) await new Promise(r => setTimeout(r, speed));
-              
               if (await solveStep(b)) return true;
-              
-              b[row][col] = 0; // Backtrack
+              b[row][col] = 0;
               setBoard([...b.map(r => [...r])]);
             }
           }
@@ -82,173 +75,94 @@ const SudokuViz: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Responsive Controls */}
       <div className="flex flex-wrap gap-4 mb-6 justify-center w-full">
-        <button 
-          onClick={solve} 
-          disabled={solving}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded font-bold text-sm transition-colors shadow-lg shadow-indigo-900/50"
-        >
-          <Play size={16} /> Start Backtracking
-        </button>
-        <button 
-          onClick={resetBoard} 
-          className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-bold text-sm transition-colors border border-slate-600"
-        >
-          <RotateCcw size={16} /> Reset
-        </button>
-        <div className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded border border-slate-800">
-           <FastForward size={16} className="text-slate-400" />
-           <select 
-             value={speed} 
-             onChange={(e) => setSpeed(Number(e.target.value))}
-             disabled={solving}
-             className="bg-transparent text-slate-300 text-xs font-mono outline-none cursor-pointer"
-           >
-             <option value={100}>Slow</option>
-             <option value={10}>Fast</option>
-             <option value={0}>Instant</option>
-           </select>
+        <button onClick={solve} disabled={solving} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-indigo-900/50"><Play size={14} /> Start Solver</button>
+        <button onClick={resetBoard} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold text-sm transition-all border border-slate-700"><RotateCcw size={14} /> Reset</button>
+      </div>
+      <div className="w-full max-w-[360px] aspect-square bg-slate-900 p-2 rounded-2xl border border-slate-800 shadow-2xl">
+        <div className="w-full h-full grid grid-cols-9 grid-rows-9 gap-px bg-slate-800">
+          {board.map((row, rIdx) => row.map((cell, cIdx) => (
+            <div key={`${rIdx}-${cIdx}`} className={`relative flex items-center justify-center bg-slate-950 ${(cIdx + 1) % 3 === 0 && cIdx !== 8 ? 'border-r-2 border-r-slate-800' : ''} ${(rIdx + 1) % 3 === 0 && rIdx !== 8 ? 'border-b-2 border-b-slate-800' : ''}`}>
+              <span className={`font-mono text-sm font-bold ${INITIAL_BOARD[rIdx][cIdx] !== 0 ? 'text-slate-600' : 'text-indigo-400'}`}>{cell !== 0 ? cell : ''}</span>
+            </div>
+          )))}
         </div>
       </div>
-
-      {/* Responsive Sudoku Grid Container */}
-      <div className="w-full max-w-[400px] aspect-square bg-slate-800 p-1 md:p-2 rounded-lg shadow-2xl border border-slate-700">
-        <div className="w-full h-full grid grid-cols-9 grid-rows-9 gap-px bg-slate-600 border-2 border-slate-900">
-          {board.map((row, rIdx) => (
-            row.map((cell, cIdx) => {
-              // Calculate borders for 3x3 subgrids
-              const borderRight = (cIdx + 1) % 3 === 0 && cIdx !== 8 ? 'border-r-2 border-r-slate-900' : '';
-              const borderBottom = (rIdx + 1) % 3 === 0 && rIdx !== 8 ? 'border-b-2 border-b-slate-900' : '';
-              
-              const isInitial = INITIAL_BOARD[rIdx][cIdx] !== 0;
-
-              return (
-                <div 
-                  key={`${rIdx}-${cIdx}`}
-                  className={`
-                    relative flex items-center justify-center 
-                    bg-slate-900 
-                    ${borderRight} ${borderBottom}
-                    hover:bg-slate-800 transition-colors duration-75
-                  `}
-                >
-                  <span className={`
-                    font-mono font-bold select-none
-                    ${isInitial ? 'text-slate-400' : 'text-indigo-400 animate-pulse'}
-                    text-base sm:text-lg md:text-xl lg:text-2xl
-                  `}>
-                    {cell !== 0 ? cell : ''}
-                  </span>
-                </div>
-              );
-            })
-          ))}
-        </div>
-      </div>
-      <p className="text-xs text-slate-500 mt-4 text-center max-w-md">
-        The algorithm tries a number, moves to the next cell, and <strong className="text-indigo-400">backtracks</strong> (returns to 0) if it hits a dead end.
-      </p>
     </div>
   );
 };
 
 export const OptimizationView: React.FC = () => {
   return (
-    <div className="space-y-8 animate-fade-in">
-      <header>
-        <h1 className="text-4xl font-serif font-bold text-white mb-2">Optimization</h1>
-        <p className="text-slate-400 text-lg">The engine of modern machine learning that iteratively minimizes error.</p>
+    <div className="space-y-16">
+      <header id="optimization-header" className="border-b border-slate-800 pb-12">
+        <h1 className="text-6xl font-serif font-bold text-white mb-6">Optimization</h1>
+        <p className="text-slate-400 text-xl font-light leading-relaxed max-w-2xl">
+          The mathematical core of machine learning. Optimization algorithms find the minimal error state, transforming "training" into a rigorous search for truth.
+        </p>
       </header>
 
-      <AlgorithmCard
-        id="gradient-descent"
-        title="Gradient Descent"
-        theory="Gradient Descent is an iterative optimization algorithm for finding a local minimum of a differentiable function. To find a local minimum, we take steps proportional to the negative of the gradient (or approximate gradient) of the function at the current point."
-        math={<span>&theta;<sub>new</sub> = <span className="not-italic">&theta;<sub>old</sub></span> - &alpha; &nabla;J(&theta;)</span>}
-        mathLabel="Update Rule"
-        code={`def gradient_descent(X, y, theta, learning_rate, iterations):
-    m = len(y)
-    cost_history = np.zeros(iterations)
-    
-    for i in range(iterations):
-        prediction = np.dot(X, theta)
-        theta = theta - (1/m) * learning_rate * (X.T.dot(prediction - y))
-        cost_history[i] = compute_cost(X, y, theta)
+      <section id="calculus-engine">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600/10 flex items-center justify-center text-indigo-400">
+             <Cpu size={20} />
+          </div>
+          <h2 id="gradient-descent-title" className="text-3xl font-bold text-white tracking-tight">The Descent Engine</h2>
+        </div>
         
-    return theta, cost_history`}
-        pros={['Simple to implement', 'Computationally efficient for simple convex problems', 'Basis for advanced optimizers (Adam, RMSprop)']}
-        cons={['Can get stuck in local minima', 'Sensitive to learning rate choice', 'Slow convergence near minimum']}
-        hyperparameters={[
-          {
-            name: 'learning_rate (alpha)',
-            description: 'Determines the step size at each iteration while moving toward a minimum of a loss function. Too small: slow convergence. Too large: overshooting.',
-            default: '0.01',
-            range: '(0, 1)'
-          },
-          {
-            name: 'epochs',
-            description: 'The number of times the algorithm will run through the entire training dataset.',
-            default: '100',
-            range: 'Integer'
-          },
-          {
-            name: 'batch_size',
-            description: 'Number of training examples used in one iteration. 1 = Stochastic GD, M = Mini-batch, N = Batch GD.',
-            default: '32',
-            range: 'Integer'
-          }
-        ]}
-      >
-        <div className="h-64 w-full">
+        <AlgorithmCard
+          id="gradient-descent"
+          title="Gradient Descent"
+          complexity="Fundamental"
+          theory="A first-order iterative optimization algorithm for finding the minimum of a cost function. It moves downhill in the direction of the steepest decrease—calculated via the negative of the gradient."
+          math={<span>&theta;<sub>t+1</sub> = &theta;<sub>t</sub> - &eta; &nabla;J(&theta;<sub>t</sub>)</span>}
+          mathLabel="Parameter Update Vector"
+          code={`def update_weights(w, g, lr):
+    return w - lr * g`}
+          pros={['Globally optimal for convex spaces', 'Scalable to millions of parameters', 'The engine of modern AI']}
+          cons={['Sensitive to learning rate', 'Can oscillate in ravines', 'Vanishing gradients in deep paths']}
+        >
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="epoch" stroke="#94a3b8" label={{ value: 'Epoch', position: 'insideBottom', offset: -5, fill: '#64748b' }} />
-                <YAxis stroke="#94a3b8" label={{ value: 'Loss', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }}
-                  itemStyle={{ color: '#818cf8' }}
-                />
-                <Line type="monotone" dataKey="loss" stroke="#818cf8" strokeWidth={3} dot={false} activeDot={{ r: 8 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="epoch" hide />
+                <YAxis hide />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
+                <Line type="monotone" dataKey="loss" stroke="#6366f1" strokeWidth={4} dot={false} />
               </LineChart>
             </ResponsiveContainer>
-            <p className="text-xs text-center text-slate-500 mt-2">Loss decreasing over epochs.</p>
+          </div>
+        </AlgorithmCard>
+      </section>
+
+      <section id="csp-logic">
+         <div className="flex items-center gap-3 mb-10">
+          <div className="w-10 h-10 rounded-xl bg-amber-600/10 flex items-center justify-center text-amber-400">
+             <RotateCcw size={20} />
+          </div>
+          <h2 id="backtracking-title" className="text-3xl font-bold text-white tracking-tight">Search & Constraints</h2>
         </div>
-      </AlgorithmCard>
-
-      <AlgorithmCard
-        id="constraint-satisfaction"
-        title="Constraint Satisfaction (Backtracking)"
-        theory="Backtracking is a general algorithm for finding all (or some) solutions to computational problems, notably Constraint Satisfaction Problems (CSPs), that incrementally builds candidates to the solutions, and abandons a candidate ('backtracks') as soon as it determines that the candidate cannot possibly be completed to a valid solution."
-        math={<span>Solve(P): if P is full return true; else &forall; v &in; Domain: if valid(v) &rarr; Solve(P+v)</span>}
-        mathLabel="Recursive Search Logic"
-        code={`def solve(board):
-    row, col = find_empty(board)
-    if row is None: return True # Solved
-
-    for num in range(1, 10):
-        if is_valid(board, num, (row, col)):
-            board[row][col] = num
-            
-            if solve(board): return True
-            
-            board[row][col] = 0 # Backtrack
-
-    return False`}
-        pros={['Guaranteed to find a solution (if one exists)', 'More efficient than Brute Force', 'Simple recursive implementation']}
-        cons={['Exponential time complexity O(m^n)', 'Can be very slow for large/complex inputs', 'Not an optimization algorithm (just satisfiability)']}
-        hyperparameters={[
-          {
-            name: 'heuristic',
-            description: 'Strategy to choose which variable to assign next (e.g., Minimum Remaining Values).',
-            default: 'None',
-            range: 'MRV, Degree, LCV'
-          }
-        ]}
-      >
-        <SudokuViz />
-      </AlgorithmCard>
+        <AlgorithmCard
+          id="backtracking"
+          title="Backtracking (CSPs)"
+          complexity="Intermediate"
+          theory="A general algorithm for finding solutions to constraint satisfaction problems. It incrementally builds candidates and abandons them ('backtracks') as soon as it determines they cannot possibly be completed to a valid solution."
+          math={<span>&forall; v &in; D: valid(v) &rArr; Solve(P &cup; v)</span>}
+          mathLabel="Recursive Search Invariant"
+          code={`def backtrack(state):
+    if is_complete(state): return True
+    for val in possible_moves():
+        if is_valid(val):
+            apply(val)
+            if backtrack(state): return True
+            undo(val) # Backtrack`}
+          pros={['Finds all possible solutions', 'Systematic pruning', 'Guaranteed completion']}
+          cons={['Exponential worst-case complexity', 'High recursion depth']}
+        >
+          <SudokuViz />
+        </AlgorithmCard>
+      </section>
     </div>
   );
 };

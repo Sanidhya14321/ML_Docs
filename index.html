@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Machine Learning Mastery Hub</title>
+    <title>AI Mastery Hub | The Technical Codex</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- KaTeX for Mathematics -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script>
       tailwind.config = {
         theme: {
@@ -30,11 +32,20 @@
             animation: {
               'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'flow': 'flow 1.5s linear infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+              'float': 'float 6s ease-in-out infinite',
             },
             keyframes: {
               flow: {
                 '0%': { strokeDashoffset: '24' },
                 '100%': { strokeDashoffset: '0' },
+              },
+              shimmer: {
+                '100%': { transform: 'translateX(100%)' }
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
               }
             }
           }
@@ -42,36 +53,28 @@
       }
     </script>
     <style>
-      /* Custom scrollbar for academic feel */
-      ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #020617; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155; 
-        border-radius: 5px;
-        border: 2px solid #020617;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #475569; 
-      }
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: #020617; }
+      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #334155; }
       
-      /* Academic Math Typography */
-      .math-serif {
-        font-family: 'Times New Roman', serif;
-        font-style: italic;
-      }
-      .math-serif sup, .math-serif sub {
-        font-style: normal;
+      .math-serif { font-family: 'Times New Roman', serif; }
+      html { scroll-behavior: smooth; }
+      
+      .glass-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      /* Global Smooth Scroll */
-      html {
-        scroll-behavior: smooth;
+      /* Custom Selection Color */
+      ::selection {
+        background: rgba(99, 102, 241, 0.3);
+        color: white;
       }
+
+      /* LaTeX Overrides */
+      .katex { font-size: 1.1em !important; color: #e2e8f0; }
     </style>
   <script type="importmap">
 {
@@ -80,7 +83,9 @@
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.0"
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.0.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^0.21.0"
   }
 }
 </script>

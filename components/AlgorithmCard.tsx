@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
-import { Check, X, Sliders, Info } from 'lucide-react';
+import { Check, X, Info, Sparkles, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface Hyperparameter {
   name: string;
@@ -24,6 +25,15 @@ interface AlgorithmCardProps {
   children?: React.ReactNode;
 }
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { type: "spring", stiffness: 200, damping: 20 } 
+  }
+};
+
 export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   id,
   title,
@@ -37,6 +47,8 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   hyperparameters,
   children
 }) => {
+  const [showAI, setShowAI] = useState(false);
+
   const complexityColors = {
     'Fundamental': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     'Intermediate': 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
@@ -44,103 +56,140 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   };
 
   return (
-    <div id={id} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden mb-12 shadow-2xl scroll-mt-24 transition-all hover:border-slate-700/50 group">
-      <div className="p-6 border-b border-slate-800 bg-slate-850 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-serif font-bold text-white tracking-wide">{title}</h2>
+    <motion.div 
+      id={id} 
+      variants={itemVariants}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl overflow-hidden mb-16 shadow-2xl scroll-mt-24 transition-all hover:border-indigo-500/30 group/card"
+    >
+      <div className="p-8 border-b border-slate-800 bg-slate-900/30 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover/card:scale-110 transition-transform duration-500">
+             <Info size={24} />
+          </div>
+          <div>
+            <h2 className="text-3xl font-serif font-bold text-white tracking-wide group-hover/card:text-indigo-300 transition-colors">{title}</h2>
+            <div className="flex items-center gap-2 mt-1">
+               <div className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${complexityColors[complexity]}`}>
+                {complexity}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${complexityColors[complexity]}`}>
-          {complexity}
-        </div>
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowAI(!showAI)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${showAI ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'}`}
+        >
+          <Sparkles size={14} className={showAI ? "animate-pulse" : ""} />
+          AI Explanation
+        </motion.button>
       </div>
       
-      <div className="p-6 md:p-8 space-y-8">
-        {/* Theory Section */}
+      <div className="p-8 md:p-10 space-y-10">
         <div className="relative">
-          <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+          <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
             <Info size={14} /> Theoretical Foundations
           </h3>
           <p className="text-slate-400 leading-relaxed text-lg font-light">{theory}</p>
         </div>
 
-        {/* Visualization Area */}
+        <AnimatePresence>
+          {showAI && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="p-6 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 mb-8 relative">
+                 <div className="absolute -top-3 left-6 px-3 py-1 bg-indigo-600 text-[10px] font-black rounded-lg uppercase tracking-widest">Intuitive Insight</div>
+                 <p className="text-indigo-300 text-sm italic leading-relaxed">
+                   Think of {title} not just as a mathematical operation, but as a way to find patterns in chaos. 
+                   {complexity === 'Fundamental' ? ' It is like looking for the most basic building blocks of a puzzle.' : ' It is like building a complex network of logic where each step refines the overall understanding.'}
+                 </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {children && (
-          <div className="my-6 bg-slate-950 rounded-2xl border border-slate-800/50 p-6 shadow-inner relative group/viz">
-             <div className="absolute top-3 right-4 text-[8px] font-mono text-slate-700 uppercase tracking-widest">Interactive Component</div>
-             {children}
+          <div className="my-10 bg-slate-950/80 rounded-3xl border border-slate-800 p-8 shadow-inner relative group/viz overflow-hidden">
+             <div className="absolute top-4 right-6 text-[9px] font-mono text-slate-600 uppercase tracking-[0.3em]">Live Interaction Layer</div>
+             <div className="relative z-10">
+              {children}
+             </div>
+             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
           </div>
         )}
 
-        {/* Math Section */}
-        <div className="transform transition-transform hover:scale-[1.01]">
-           <MathBlock label={mathLabel || "Core Formula"}>
-             {math}
-           </MathBlock>
-        </div>
-
-        {/* Code Section */}
-        <div className="group/code">
-          <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-3">Implementation</h3>
-          <CodeBlock code={code} />
-        </div>
-
-        {/* Hyperparameters Section */}
-        {hyperparameters && hyperparameters.length > 0 && (
-          <div>
-            <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-              <Sliders size={14} /> Control Parameters
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {hyperparameters.map((param, idx) => (
-                <div key={idx} className="bg-slate-950/40 p-4 rounded-xl border border-slate-800/50 hover:border-indigo-500/30 transition-all hover:bg-slate-950/60">
-                   <div className="flex justify-between items-center mb-2">
-                     <code className="text-xs font-mono font-bold text-indigo-300 bg-indigo-900/20 px-2 py-1 rounded">{param.name}</code>
-                     {param.default && <span className="text-[9px] text-slate-500 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800/50 uppercase">Default: {param.default}</span>}
-                   </div>
-                   <p className="text-xs text-slate-500 leading-relaxed mb-2">{param.description}</p>
-                   {param.range && (
-                     <div className="text-[9px] text-slate-600 font-mono flex items-center gap-1">
-                       <span className="w-1 h-1 rounded-full bg-indigo-500/40"></span>
-                       Domain: <span className="text-slate-500 italic">{param.range}</span>
-                     </div>
-                   )}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-5 space-y-8">
+            <MathBlock label={mathLabel || "Core Equation"}>
+              {math}
+            </MathBlock>
+            
+            <div className="space-y-6">
+              <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">The Scorecard</h3>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="bg-emerald-500/5 p-5 rounded-2xl border border-emerald-500/10">
+                  <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-emerald-400 mb-3">
+                    <Check size={14} /> Strengths
+                  </h4>
+                  <ul className="space-y-2">
+                    {pros.map((pro, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-slate-400">
+                        <span className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                        {pro}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+                
+                <div className="bg-rose-500/5 p-5 rounded-2xl border border-rose-500/10">
+                  <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-rose-400 mb-3">
+                    <X size={14} /> Weaknesses
+                  </h4>
+                  <ul className="space-y-2">
+                    {cons.map((con, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-slate-400">
+                        <span className="w-1 h-1 rounded-full bg-rose-500 mt-1.5 flex-shrink-0" />
+                        {con}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Pros & Cons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-emerald-500/5 p-6 rounded-2xl border border-emerald-500/10 transition-colors hover:border-emerald-500/20">
-            <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-emerald-400 mb-4">
-              <Check size={14} /> Advantages
-            </h4>
-            <ul className="space-y-3">
-              {pros.map((pro, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-sm text-slate-400 font-light">
-                  <span className="w-1 h-1 rounded-full bg-emerald-500 mt-2 flex-shrink-0" />
-                  {pro}
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="bg-rose-500/5 p-6 rounded-2xl border border-rose-500/10 transition-colors hover:border-rose-500/20">
-            <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-rose-400 mb-4">
-              <X size={14} /> Limitations
-            </h4>
-            <ul className="space-y-3">
-              {cons.map((con, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-sm text-slate-400 font-light">
-                  <span className="w-1 h-1 rounded-full bg-rose-500 mt-2 flex-shrink-0" />
-                  {con}
-                </li>
-              ))}
-            </ul>
+          <div className="lg:col-span-7">
+            <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">Implementation Reference</h3>
+            <CodeBlock code={code} />
+            
+            {hyperparameters && hyperparameters.length > 0 && (
+              <div className="mt-8">
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Key Parameters</h4>
+                <div className="space-y-3">
+                  {hyperparameters.map((param, idx) => (
+                    <div key={idx} className="bg-slate-800/30 p-4 rounded-xl border border-slate-800 flex justify-between items-center group/param hover:border-slate-700 transition-colors">
+                      <div className="flex-1">
+                        <code className="text-xs font-mono font-bold text-indigo-400">{param.name}</code>
+                        <p className="text-[10px] text-slate-500 mt-1">{param.description}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] text-slate-600 uppercase font-mono tracking-tighter">Default</div>
+                        <div className="text-xs text-slate-300 font-mono">{param.default || 'N/A'}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

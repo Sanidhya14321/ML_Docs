@@ -1,15 +1,17 @@
+
 import React from 'react';
 
 export enum ViewSection {
-  FOUNDATIONS = 'Foundations',
-  REGRESSION = 'Regression',
-  CLASSIFICATION = 'Classification',
-  ENSEMBLE = 'Ensemble Methods',
-  UNSUPERVISED = 'Unsupervised',
-  DEEP_LEARNING = 'Deep Learning',
-  REINFORCEMENT = 'Reinforcement Learning',
-  MODEL_COMPARISON = 'Model Battleground',
-  PROJECT_LAB = 'Project Lab'
+  FOUNDATIONS = 'foundations',
+  OPTIMIZATION = 'optimization',
+  REGRESSION = 'regression',
+  CLASSIFICATION = 'classification',
+  ENSEMBLE = 'ensemble',
+  UNSUPERVISED = 'unsupervised',
+  DEEP_LEARNING = 'deep-learning',
+  REINFORCEMENT = 'reinforcement',
+  MODEL_COMPARISON = 'battleground',
+  PROJECT_LAB = 'lab'
 }
 
 export enum MLModelType {
@@ -32,5 +34,6 @@ export interface NavigationItem {
   id: ViewSection;
   label: string;
   icon: React.ReactNode;
+  category: 'Core' | 'Supervised' | 'Advanced' | 'Lab';
   subItems?: { id: string; label: string }[];
 }
