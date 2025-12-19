@@ -10,7 +10,7 @@ import { TableOfContents } from './components/TableOfContents';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
-import { UnderConstruction } from './components/UnderConstruction';
+import { DocViewer } from './components/DocViewer'; // Import DocViewer
 import { SitemapView } from './views/SitemapView';
 import { 
   Menu, X, Search, Command, BrainCircuit
@@ -54,16 +54,18 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '');
-      setCurrentPath(hash || ViewSection.FOUNDATIONS);
-      const label = findLabel(NAV_ITEMS, hash || ViewSection.FOUNDATIONS);
-      setActiveLabel(label);
+      const path = hash || ViewSection.FOUNDATIONS;
+      setCurrentPath(path);
+      const label = findLabel(NAV_ITEMS, path);
+      setActiveLabel(label || 'Documentation');
     };
     
     window.addEventListener('hashchange', handleHashChange);
     if (window.location.hash) handleHashChange(); 
     else {
         // Init label
-        setActiveLabel(findLabel(NAV_ITEMS, ViewSection.FOUNDATIONS));
+        const initLabel = findLabel(NAV_ITEMS, ViewSection.FOUNDATIONS);
+        setActiveLabel(initLabel);
     }
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -76,19 +78,20 @@ const App: React.FC = () => {
   };
 
   // Determine which component to render
-  let ActiveComponent: React.FC | null = null;
+  let contentElement: React.ReactNode;
   
-  // 1. Check Registry
+  // 1. Check Registry (Interactive Modules)
   if (CONTENT_REGISTRY[currentPath]) {
-      ActiveComponent = CONTENT_REGISTRY[currentPath];
+      const InteractiveComponent = CONTENT_REGISTRY[currentPath];
+      contentElement = <InteractiveComponent />;
   } 
   // 2. Check Sitemap Route
   else if (currentPath === ViewSection.SITEMAP) {
-      ActiveComponent = () => <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
+      contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
   }
-  // 3. Fallback to Under Construction
+  // 3. Fallback to Generic Doc Viewer (The Engine)
   else {
-      ActiveComponent = () => <UnderConstruction title={activeLabel} />;
+      contentElement = <DocViewer topicId={currentPath} title={activeLabel} />;
   }
 
   return (
@@ -175,7 +178,7 @@ const App: React.FC = () => {
                   exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} 
                 >
-                  {ActiveComponent && <ActiveComponent />}
+                  {contentElement}
                 </motion.div>
               </AnimatePresence>
             </Suspense>
