@@ -2,6 +2,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { ViewSection, NavigationItem } from './types';
 import { CONTENT_REGISTRY } from './content/registry';
+import { NAV_ITEMS } from './lib/navigation-data';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import { SearchModal } from './components/SearchModal';
@@ -9,35 +10,17 @@ import { TableOfContents } from './components/TableOfContents';
 import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
+import { UnderConstruction } from './components/UnderConstruction';
+import { SitemapView } from './views/SitemapView';
 import { 
-  BookOpen, TrendingUp, GitBranch, Network, BrainCircuit, FlaskConical, Menu, X, Layers, Gamepad2, Swords, Zap, Search, Command
+  Menu, X, Search, Command, BrainCircuit
 } from 'lucide-react';
-
-const NAV_ITEMS: NavigationItem[] = [
-  { id: ViewSection.FOUNDATIONS, label: 'Math Foundations', icon: <BookOpen size={16} />, category: 'Core' },
-  { id: ViewSection.OPTIMIZATION, label: 'The Optimization Engine', icon: <Zap size={16} />, category: 'Core' },
-  { id: ViewSection.REGRESSION, label: 'Regression', icon: <TrendingUp size={16} />, category: 'Supervised' },
-  { id: ViewSection.CLASSIFICATION, label: 'Classification', icon: <GitBranch size={16} />, category: 'Supervised' },
-  { id: ViewSection.ENSEMBLE, label: 'Ensemble Learning', icon: <Layers size={16} />, category: 'Supervised' },
-  { id: ViewSection.UNSUPERVISED, label: 'Unsupervised Logic', icon: <Network size={16} />, category: 'Advanced' },
-  { 
-    id: ViewSection.DEEP_LEARNING, 
-    label: 'Deep Neural Networks', 
-    icon: <BrainCircuit size={16} />, 
-    category: 'Advanced',
-    items: [
-        { id: 'deep-learning/attention-mechanism', label: 'The Attention Mechanism' } 
-    ]
-  },
-  { id: ViewSection.REINFORCEMENT, label: 'Reinforcement Learning', icon: <Gamepad2 size={16} />, category: 'Advanced' },
-  { id: ViewSection.MODEL_COMPARISON, label: 'Algorithm Battleground', icon: <Swords size={16} />, category: 'Lab' },
-  { id: ViewSection.PROJECT_LAB, label: 'Clinical Case Lab', icon: <FlaskConical size={16} />, category: 'Lab' },
-];
 
 const App: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(ViewSection.FOUNDATIONS);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeLabel, setActiveLabel] = useState<string>('');
 
   // Scroll Progress Logic
   const { scrollYProgress } = useScroll();
@@ -55,17 +38,33 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Helper to find label recursively
+  const findLabel = (items: NavigationItem[], id: string): string => {
+    for (const item of items) {
+        if (item.id === id) return item.label;
+        if (item.items) {
+            const found = findLabel(item.items, id);
+            if (found) return found;
+        }
+    }
+    return '';
+  };
+
   // Routing Logic
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '');
-      if (CONTENT_REGISTRY[hash] || Object.values(ViewSection).includes(hash as any)) {
-          setCurrentPath(hash || ViewSection.FOUNDATIONS);
-      }
+      setCurrentPath(hash || ViewSection.FOUNDATIONS);
+      const label = findLabel(NAV_ITEMS, hash || ViewSection.FOUNDATIONS);
+      setActiveLabel(label);
     };
     
     window.addEventListener('hashchange', handleHashChange);
     if (window.location.hash) handleHashChange(); 
+    else {
+        // Init label
+        setActiveLabel(findLabel(NAV_ITEMS, ViewSection.FOUNDATIONS));
+    }
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
@@ -76,7 +75,21 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const ActiveComponent = CONTENT_REGISTRY[currentPath] || CONTENT_REGISTRY[ViewSection.FOUNDATIONS];
+  // Determine which component to render
+  let ActiveComponent: React.FC | null = null;
+  
+  // 1. Check Registry
+  if (CONTENT_REGISTRY[currentPath]) {
+      ActiveComponent = CONTENT_REGISTRY[currentPath];
+  } 
+  // 2. Check Sitemap Route
+  else if (currentPath === ViewSection.SITEMAP) {
+      ActiveComponent = () => <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
+  }
+  // 3. Fallback to Under Construction
+  else {
+      ActiveComponent = () => <UnderConstruction title={activeLabel} />;
+  }
 
   return (
     <div className="h-screen bg-[#020617] text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30">
@@ -134,6 +147,12 @@ const App: React.FC = () => {
           <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
             <Sidebar items={NAV_ITEMS} currentPath={currentPath} onNavigate={navigateTo} />
           </div>
+
+          {/* Sidebar Footer */}
+          <div className="p-4 border-t border-slate-800/50 text-[10px] text-slate-600 flex justify-between">
+             <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-400 transition-colors">Site Map</button>
+             <span>© 2024 AI Codex</span>
+          </div>
         </aside>
 
         {/* CENTER COLUMN: Main Content */}
@@ -154,7 +173,7 @@ const App: React.FC = () => {
                   initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} // Custom ease for "delight"
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} 
                 >
                   {ActiveComponent && <ActiveComponent />}
                 </motion.div>
@@ -165,7 +184,7 @@ const App: React.FC = () => {
 
         {/* RIGHT COLUMN: Table of Contents (Desktop Only) */}
         <aside className="hidden xl:block w-64 border-l border-slate-800/50 bg-[#020617]/50 backdrop-blur-sm p-8 h-full overflow-y-auto">
-           <TableOfContents />
+           {CONTENT_REGISTRY[currentPath] && <TableOfContents />}
         </aside>
 
       </div>

@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
 import { Check, X, Info, Sparkles, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 export interface Hyperparameter {
   name: string;
@@ -25,7 +26,7 @@ interface AlgorithmCardProps {
   children?: React.ReactNode;
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   show: { 
     opacity: 1, 

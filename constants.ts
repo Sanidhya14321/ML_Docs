@@ -1,4 +1,6 @@
+
 import { MLModelType, ModelMetrics } from './types';
+import { Variants } from 'framer-motion';
 
 export const MEDICAL_MODEL_DATA: Record<MLModelType, ModelMetrics> = {
   [MLModelType.LOGISTIC_REGRESSION]: {
@@ -28,7 +30,7 @@ export const MEDICAL_MODEL_DATA: Record<MLModelType, ModelMetrics> = {
   }
 };
 
-export const MOTION_VARIANTS = {
+export const MOTION_VARIANTS: { container: Variants; item: Variants } = {
   container: {
     hidden: { opacity: 0 },
     show: {

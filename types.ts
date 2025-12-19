@@ -11,7 +11,8 @@ export enum ViewSection {
   DEEP_LEARNING = 'deep-learning',
   REINFORCEMENT = 'reinforcement',
   MODEL_COMPARISON = 'battleground',
-  PROJECT_LAB = 'lab'
+  PROJECT_LAB = 'lab',
+  SITEMAP = 'sitemap'
 }
 
 export enum MLModelType {
@@ -35,8 +36,8 @@ export interface NavigationItem {
   id: string; 
   label: string;
   icon?: React.ReactNode;
-  category?: 'Core' | 'Supervised' | 'Advanced' | 'Lab';
-  items?: NavigationItem[]; // Replaced subItems with recursive items
+  category?: string; // Relaxed to string for flexible module naming
+  items?: NavigationItem[];
 }
 
 export interface DocMetadata {
