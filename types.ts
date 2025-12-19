@@ -31,12 +31,43 @@ export interface ModelMetrics {
   rocCurve: { fpr: number; tpr: number }[];
 }
 
-// Recursive Navigation Structure
+// --- NEW DATA BACKBONE TYPES ---
+
+export type ContentType = 'doc' | 'lab';
+
+export interface LabConfig {
+  initialCode: string;
+  solution: string;
+  hints: string[];
+}
+
+export interface Topic {
+  id: string;
+  title: string;
+  type: ContentType;
+  description?: string;
+  labConfig?: LabConfig;
+}
+
+export interface Chapter {
+  id: string;
+  title: string;
+  topics: Topic[];
+}
+
+export interface Module {
+  id: string;
+  title: string;
+  icon?: React.ReactNode;
+  chapters: Chapter[];
+}
+
+// Legacy support (can be deprecated later)
 export interface NavigationItem {
   id: string; 
   label: string;
   icon?: React.ReactNode;
-  category?: string; // Relaxed to string for flexible module naming
+  category?: string; 
   items?: NavigationItem[];
 }
 

@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { ViewSection, NavigationItem } from './types';
+import { ViewSection } from './types';
 import { CONTENT_REGISTRY } from './content/registry';
-import { NAV_ITEMS } from './lib/navigation-data';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { LoadingOverlay } from './components/LoadingOverlay';
 import { SearchModal } from './components/SearchModal';
@@ -11,8 +10,10 @@ import { Sidebar } from './components/Sidebar';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { BackToTop } from './components/BackToTop';
 import { DocViewer } from './components/DocViewer';
-import { LabWorkspace } from './components/LabWorkspace'; // Import LabWorkspace
+import { LabWorkspace } from './components/LabWorkspace';
 import { SitemapView } from './views/SitemapView';
+import { getTopicById } from './lib/contentHelpers';
+import { NAV_ITEMS } from './lib/navigation-data'; // Kept for Sitemap/Breadcrumbs backward compat if needed, otherwise could be removed
 import { 
   Menu, X, Search, Command, BrainCircuit
 } from 'lucide-react';
@@ -39,18 +40,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Helper to find label recursively
-  const findLabel = (items: NavigationItem[], id: string): string => {
-    for (const item of items) {
-        if (item.id === id) return item.label;
-        if (item.items) {
-            const found = findLabel(item.items, id);
-            if (found) return found;
-        }
-    }
-    return '';
-  };
-
   // Routing Logic
   useEffect(() => {
     const handleHashChange = () => {
@@ -58,17 +47,17 @@ const App: React.FC = () => {
       const path = hash || ViewSection.FOUNDATIONS;
       setCurrentPath(path);
       
-      // If we are in lab mode, get the underlying topic ID for the label
+      // Determine label based on new registry or legacy
       const topicId = path.startsWith('lab/') ? path.replace('lab/', '') : path;
-      const label = findLabel(NAV_ITEMS, topicId);
-      setActiveLabel(label || 'Documentation');
+      const topic = getTopicById(topicId);
+      setActiveLabel(topic?.title || 'Documentation');
     };
     
     window.addEventListener('hashchange', handleHashChange);
     if (window.location.hash) handleHashChange(); 
     else {
-        const initLabel = findLabel(NAV_ITEMS, ViewSection.FOUNDATIONS);
-        setActiveLabel(initLabel);
+        // Initial load
+        handleHashChange();
     }
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
@@ -141,7 +130,7 @@ const App: React.FC = () => {
               </div>
               <div>
                 <h1 className="font-serif font-black text-lg text-white tracking-tighter">AI Codex</h1>
-                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v2.5.0</p>
+                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v3.0.0</p>
               </div>
             </div>
             
@@ -161,7 +150,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
-            <Sidebar items={NAV_ITEMS} currentPath={currentPath} onNavigate={navigateTo} />
+            <Sidebar currentPath={currentPath} onNavigate={navigateTo} />
           </div>
 
           <div className="p-4 border-t border-slate-800/50 text-[10px] text-slate-600 flex justify-between">

@@ -1,26 +1,26 @@
 
 import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, BarChart, Tag, Share2, ArrowRight, FlaskConical } from 'lucide-react';
+import { Calendar, Clock, BarChart, Share2, ArrowRight, FlaskConical } from 'lucide-react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
 import { Callout } from './Callout';
 import { LatexRenderer } from './LatexRenderer';
 import { DocPagination } from './DocPagination';
+import { getTopicById } from '../lib/contentHelpers';
 
 interface DocViewerProps {
   topicId: string;
   title: string;
-  isCompact?: boolean; // New prop for Lab Mode
+  isCompact?: boolean;
 }
 
-// Helper to generate context-aware mock content
+// Fallback mock content generator for topics that don't have custom content yet
 const getMockData = (id: string, title: string) => {
   const isMath = id.startsWith('math');
   const isCode = id.startsWith('de') || id.startsWith('mlops');
   
   return {
-    description: `A comprehensive deep dive into ${title}, exploring its theoretical underpinnings, algorithmic implementation, and real-world application in modern ${isCode ? 'data infrastructure' : 'machine learning systems'}.`,
+    description: `A comprehensive deep dive into ${title}, exploring its theoretical underpinnings, algorithmic implementation, and real-world application.`,
     math: isMath 
       ? "\\frac{\\partial J}{\\partial \\theta} = \\frac{1}{m} \\sum_{i=1}^{m} (h_\\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}"
       : "P(A|B) = \\frac{P(B|A)P(A)}{P(B)}",
@@ -31,8 +31,15 @@ const getMockData = (id: string, title: string) => {
 };
 
 export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact = false }) => {
-  const content = useMemo(() => getMockData(topicId, title), [topicId, title]);
+  // Try to get real topic data from registry
+  const topic = getTopicById(topicId);
+  const displayTitle = topic?.title || title;
+  const displayDesc = topic?.description || getMockData(topicId, displayTitle).description;
+  
+  const content = useMemo(() => getMockData(topicId, displayTitle), [topicId, displayTitle]);
   const tags = topicId.split('/').filter(t => t !== 'cat-math' && t !== 'cat-ml');
+
+  const showStartLab = topic?.type === 'lab' || !!topic?.labConfig;
 
   return (
     <div className={`mx-auto ${isCompact ? 'max-w-none px-2' : 'max-w-4xl pb-24'}`}>
@@ -53,7 +60,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
           </div>
 
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight">
-            {title}
+            {displayTitle}
           </h1>
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -62,24 +69,26 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
                   <Calendar size={14} /> Updated Today
               </div>
               <div className="flex items-center gap-2">
-                  <Clock size={14} /> 12 min read
+                  <Clock size={14} /> 15 min read
               </div>
               <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/20 text-indigo-400 bg-indigo-500/10">
                   <BarChart size={14} /> Intermediate
               </div>
             </div>
 
-            {/* Start Lab Button */}
-            <a 
-              href={`#lab/${topicId}`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-indigo-900/40 transition-all hover:scale-105"
-            >
-              <FlaskConical size={16} /> Start Lab
-            </a>
+            {/* Start Lab Button - Only if lab config exists */}
+            {showStartLab && (
+              <a 
+                href={`#lab/${topicId}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-indigo-900/40 transition-all hover:scale-105"
+              >
+                <FlaskConical size={16} /> Start Lab
+              </a>
+            )}
           </div>
           
           <p className="text-xl text-slate-400 font-light leading-relaxed mt-8">
-            {content.description}
+            {displayDesc}
           </p>
         </header>
       )}
@@ -87,15 +96,15 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
       {/* Compact Header for Lab Mode */}
       {isCompact && (
         <div className="mb-8 pb-4 border-b border-slate-800/50">
-           <h2 className="text-2xl font-serif font-bold text-white mb-2">{title}</h2>
-           <p className="text-sm text-slate-400 leading-relaxed">{content.description}</p>
+           <h2 className="text-2xl font-serif font-bold text-white mb-2">{displayTitle}</h2>
+           <p className="text-sm text-slate-400 leading-relaxed">{displayDesc}</p>
         </div>
       )}
       
       {/* 2. Main Content Area */}
       <div className={`prose prose-invert ${isCompact ? 'prose-sm max-w-none' : 'prose-lg max-w-none'}`}>
          <Callout type="note" title="Learning Objectives">
-            In this module, we will deconstruct the core mechanics of <strong>{title}</strong>. 
+            In this module, we will deconstruct the core mechanics of <strong>{displayTitle}</strong>. 
             By the end, you will understand the mathematical derivation and how to implement a production-ready version from scratch.
          </Callout>
 
@@ -104,7 +113,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
             Theoretical Foundation
          </h2>
          <p className="text-slate-400 leading-relaxed">
-            At its core, {title} relies on minimizing a specific objective function. 
+            At its core, {displayTitle} relies on minimizing a specific objective function. 
             Understanding the gradients involved is crucial for debugging convergence issues in practice.
          </p>
 
@@ -122,7 +131,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
             Implementation Strategy
          </h2>
          <p className="text-slate-400 leading-relaxed">
-            While libraries like Scikit-Learn or PyTorch abstract away the complexity, implementing {title} from scratch is the best way to intuit the hyperparameters.
+            While libraries like Scikit-Learn or PyTorch abstract away the complexity, implementing {displayTitle} from scratch is the best way to intuit the hyperparameters.
          </p>
 
          <CodeBlock 
@@ -143,19 +152,21 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
                 Real-World Application
              </h2>
              <p className="text-slate-400 leading-relaxed">
-                In industry, {title} is frequently used in high-throughput environments. 
+                In industry, {displayTitle} is frequently used in high-throughput environments. 
                 The trade-off between latency and accuracy usually favors this approach when resources are constrained.
              </p>
              
-             <div className="mt-12 p-1 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-                <div className="bg-slate-950 rounded-xl p-8 text-center">
-                    <h3 className="text-xl font-bold text-white mb-4">Ready to test your knowledge?</h3>
-                    <p className="text-slate-400 mb-6">Explore the interactive lab to see {title} in action against a real dataset.</p>
-                    <a href={`#lab/${topicId}`} className="px-6 py-3 bg-white text-slate-950 font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 mx-auto w-fit">
-                       Go to Lab <ArrowRight size={16} />
-                    </a>
-                </div>
-             </div>
+             {showStartLab && (
+                 <div className="mt-12 p-1 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                    <div className="bg-slate-950 rounded-xl p-8 text-center">
+                        <h3 className="text-xl font-bold text-white mb-4">Ready to test your knowledge?</h3>
+                        <p className="text-slate-400 mb-6">Explore the interactive lab to see {displayTitle} in action against a real dataset.</p>
+                        <a href={`#lab/${topicId}`} className="px-6 py-3 bg-white text-slate-950 font-bold rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-2 mx-auto w-fit">
+                        Go to Lab <ArrowRight size={16} />
+                        </a>
+                    </div>
+                 </div>
+             )}
            </>
          )}
       </div>
