@@ -1,7 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Check, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Declare Prism global
+declare const Prism: any;
 
 interface CodeBlockProps {
   code: string;
@@ -11,6 +14,13 @@ interface CodeBlockProps {
 
 export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python', filename }) => {
   const [copied, setCopied] = useState(false);
+  const codeRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (typeof Prism !== 'undefined' && codeRef.current) {
+      Prism.highlightElement(codeRef.current);
+    }
+  }, [code, language]);
 
   const handleCopy = async () => {
     try {
@@ -22,67 +32,55 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
     }
   };
 
-  const lines = code.trim().split('\n');
-
   return (
-    <div className="my-8 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-[#0d1117] group relative">
-      {/* Header Bar */}
-      <div className="flex items-center justify-between px-5 py-3 bg-slate-900/80 border-b border-slate-800 backdrop-blur-md">
+    <div className="my-8 rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-[#1e222a] group relative">
+      {/* Terminal Header */}
+      <div className="flex items-center justify-between px-4 py-2 bg-[#282c34] border-b border-black/20">
         <div className="flex items-center gap-4">
           <div className="flex space-x-1.5">
-            <div className="w-3 h-3 rounded-full bg-rose-500/20 border border-rose-500/40"></div>
-            <div className="w-3 h-3 rounded-full bg-amber-500/20 border border-amber-500/40"></div>
-            <div className="w-3 h-3 rounded-full bg-emerald-500/20 border border-emerald-500/40"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
           </div>
           <div className="flex items-center gap-2">
-            <Terminal size={12} className="text-slate-500" />
-            <span className="text-[10px] text-slate-400 font-mono uppercase tracking-widest">
-              {filename || `${language}_module.py`}
-            </span>
+            {filename && (
+                <>
+                    <Terminal size={10} className="text-slate-500" />
+                    <span className="text-[10px] text-slate-400 font-mono tracking-wide">{filename}</span>
+                </>
+            )}
           </div>
         </div>
-        <button 
-          onClick={handleCopy}
-          className="p-2 rounded-lg hover:bg-slate-800 transition-all text-slate-500 hover:text-white flex items-center gap-2 active:scale-95"
-        >
-          <AnimatePresence mode="wait">
-            {copied ? (
-              <motion.div key="check" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                <Check size={14} className="text-emerald-400" />
-              </motion.div>
-            ) : (
-              <motion.div key="copy" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                <Copy size={14} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <span className="text-[10px] font-bold uppercase tracking-tighter">{copied ? 'Copied' : 'Copy'}</span>
-        </button>
+        <div className="flex items-center gap-3">
+             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{language}</span>
+             <button 
+                onClick={handleCopy}
+                className="p-1.5 rounded-md hover:bg-slate-700/50 transition-all text-slate-400 hover:text-white"
+                title="Copy Code"
+                >
+                <AnimatePresence mode="wait">
+                    {copied ? (
+                    <motion.div key="check" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <Check size={12} className="text-emerald-400" />
+                    </motion.div>
+                    ) : (
+                    <motion.div key="copy" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <Copy size={12} />
+                    </motion.div>
+                    )}
+                </AnimatePresence>
+            </button>
+        </div>
       </div>
 
       {/* Code Area */}
-      <div className="p-0 overflow-x-auto custom-scrollbar flex font-mono text-sm leading-relaxed">
-        {/* Line Numbers */}
-        <div className="py-5 px-4 bg-slate-950/50 border-r border-slate-800 text-slate-600 text-right select-none min-w-[50px]">
-          {lines.map((_, i) => (
-            <div key={i}>{i + 1}</div>
-          ))}
-        </div>
-        
-        {/* Actual Code */}
-        <pre className="py-5 px-6 text-slate-300 flex-1 whitespace-pre">
-          <code>
-            {lines.map((line, i) => (
-              <div key={i} className="hover:bg-slate-800/30 transition-colors px-2 -mx-2 rounded">
-                {line || ' '}
-              </div>
-            ))}
+      <div className="relative overflow-x-auto custom-scrollbar">
+        <pre className={`language-${language} !bg-transparent !m-0 !p-6 text-sm`}>
+          <code ref={codeRef} className={`language-${language}`}>
+            {code.trim()}
           </code>
         </pre>
       </div>
-
-      {/* Syntax Shimmer */}
-      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-5 transition-opacity bg-gradient-to-r from-transparent via-indigo-500 to-transparent -translate-x-full group-hover:animate-[shimmer_3s_linear_infinite]"></div>
     </div>
   );
 };

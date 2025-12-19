@@ -30,10 +30,25 @@ export interface ModelMetrics {
   rocCurve: { fpr: number; tpr: number }[];
 }
 
+// Recursive Navigation Structure
 export interface NavigationItem {
-  id: ViewSection;
+  id: string; 
   label: string;
-  icon: React.ReactNode;
-  category: 'Core' | 'Supervised' | 'Advanced' | 'Lab';
-  subItems?: { id: string; label: string }[];
+  icon?: React.ReactNode;
+  category?: 'Core' | 'Supervised' | 'Advanced' | 'Lab';
+  items?: NavigationItem[]; // Replaced subItems with recursive items
+}
+
+export interface DocMetadata {
+  title: string;
+  description: string;
+  date: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+  tags: string[];
+  readTimeMinutes: number;
+}
+
+export interface ContentModule {
+  metadata: DocMetadata;
+  Content: React.FC;
 }

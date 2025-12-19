@@ -4,10 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Mastery Hub | The Technical Codex</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind with Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- KaTeX for Mathematics -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    
+    <!-- PrismJS for Syntax Highlighting (One Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-one-dark.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
     <script>
       tailwind.config = {
         theme: {
@@ -29,11 +42,27 @@
                 600: '#4f46e5',
               }
             },
+            typography: (theme) => ({
+              DEFAULT: {
+                css: {
+                  color: theme('colors.slate.300'),
+                  a: {
+                    color: theme('colors.indigo.400'),
+                    '&:hover': { color: theme('colors.indigo.300') },
+                  },
+                  h1: { color: theme('colors.white'), fontFamily: theme('fontFamily.serif') },
+                  h2: { color: theme('colors.slate.100'), fontFamily: theme('fontFamily.serif') },
+                  h3: { color: theme('colors.slate.200') },
+                  strong: { color: theme('colors.white') },
+                  code: { color: theme('colors.indigo.300') },
+                  blockquote: { borderLeftColor: theme('colors.indigo.500'), color: theme('colors.slate.400') },
+                },
+              },
+            }),
             animation: {
               'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'flow': 'flow 1.5s linear infinite',
               'shimmer': 'shimmer 2s linear infinite',
-              'float': 'float 6s ease-in-out infinite',
             },
             keyframes: {
               flow: {
@@ -42,10 +71,6 @@
               },
               shimmer: {
                 '100%': { transform: 'translateX(100%)' }
-              },
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-10px)' },
               }
             }
           }
@@ -60,21 +85,25 @@
       
       .math-serif { font-family: 'Times New Roman', serif; }
       html { scroll-behavior: smooth; }
+
+      /* LaTeX Overflow Handling */
+      .katex-display {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 1rem 0;
+        margin: 1rem 0;
+      }
       
-      .glass-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+      /* Prose Customization */
+      .prose { max-width: 65ch; margin: 0 auto; }
+      
+      /* Prism Overrides for Cleaner Look */
+      pre[class*="language-"] {
+        border-radius: 0;
+        margin: 0 !important;
+        background: transparent !important;
+        text-shadow: none !important;
       }
-
-      /* Custom Selection Color */
-      ::selection {
-        background: rgba(99, 102, 241, 0.3);
-        color: white;
-      }
-
-      /* LaTeX Overrides */
-      .katex { font-size: 1.1em !important; color: #e2e8f0; }
     </style>
   <script type="importmap">
 {
