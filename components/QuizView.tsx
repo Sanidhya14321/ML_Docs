@@ -6,6 +6,7 @@ import { getTopicById } from '../lib/contentHelpers';
 import { useQuiz } from '../hooks/useQuiz';
 import { useCourseProgress } from '../hooks/useCourseProgress';
 import { LoadingOverlay } from './LoadingOverlay';
+import { triggerConfetti } from './Confetti';
 
 interface QuizViewProps {
   topicId: string;
@@ -31,17 +32,21 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
 
   const { markAsCompleted } = useCourseProgress();
 
-  useEffect(() => {
-    if (isFinished) {
-      markAsCompleted(topicId);
-    }
-  }, [isFinished, topicId, markAsCompleted]);
-
   if (!topic || !topic.quizConfig) return <LoadingOverlay />;
 
   const passingScore = topic.quizConfig.passingScore || 70;
   const percentage = Math.round((score / totalQuestions) * 100);
   const passed = percentage >= passingScore;
+
+  // Trigger effects on finish
+  useEffect(() => {
+    if (isFinished) {
+      if (passed) {
+        markAsCompleted(topicId);
+        triggerConfetti();
+      }
+    }
+  }, [isFinished, passed, topicId, markAsCompleted]);
 
   if (isFinished) {
     return (
@@ -49,25 +54,25 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-slate-900 border border-slate-800 rounded-3xl p-12 max-w-lg w-full text-center relative overflow-hidden"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 max-w-lg w-full text-center relative overflow-hidden shadow-2xl"
         >
           <div className={`absolute top-0 left-0 w-full h-2 ${passed ? 'bg-emerald-500' : 'bg-rose-500'}`} />
           
-          <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 ${passed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+          <div className={`mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-6 ${passed ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
              {passed ? <Award size={48} /> : <AlertCircle size={48} />}
           </div>
 
-          <h2 className="text-3xl font-serif font-bold text-white mb-2">
+          <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
             {passed ? 'Assessment Passed!' : 'Needs Improvement'}
           </h2>
-          <p className="text-slate-400 mb-8">
-            You scored <strong className={passed ? 'text-white' : 'text-rose-400'}>{percentage}%</strong> on {topic.title}.
+          <p className="text-slate-500 dark:text-slate-400 mb-8">
+            You scored <strong className={passed ? 'text-slate-900 dark:text-white' : 'text-rose-500 dark:text-rose-400'}>{percentage}%</strong> on {topic.title}.
           </p>
 
           <div className="flex gap-4 justify-center">
             <button 
               onClick={resetQuiz}
-              className="px-6 py-3 rounded-xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-2 font-bold text-sm"
+              className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 font-bold text-sm"
             >
               <RotateCcw size={16} /> Retry
             </button>
@@ -87,10 +92,10 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
     <div className="max-w-3xl mx-auto pt-12 pb-24 px-6">
       <header className="mb-12">
          <div className="flex justify-between items-end mb-4">
-            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Assessment</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 dark:text-indigo-400">Assessment</span>
             <span className="text-xs font-mono text-slate-500">Question {currentIndex + 1} of {totalQuestions}</span>
          </div>
-         <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+         <div className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
             <motion.div 
               className="h-full bg-indigo-500" 
               initial={{ width: 0 }}
@@ -100,24 +105,24 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
       </header>
 
       <div className="space-y-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
           {currentQuestion.text}
         </h1>
 
         <div className="grid grid-cols-1 gap-4">
           {currentQuestion.options.map((option, idx) => {
-            let statusClass = "bg-slate-900 border-slate-800 hover:border-slate-600 text-slate-300";
+            let statusClass = "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 text-slate-600 dark:text-slate-300";
             let icon = null;
 
             if (selectedOption !== null) {
                if (idx === currentQuestion.correctIndex) {
-                 statusClass = "bg-emerald-500/10 border-emerald-500/50 text-emerald-300";
+                 statusClass = "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500/50 text-emerald-600 dark:text-emerald-300";
                  icon = <CheckCircle size={18} />;
                } else if (idx === selectedOption) {
-                 statusClass = "bg-rose-500/10 border-rose-500/50 text-rose-300";
+                 statusClass = "bg-rose-50 dark:bg-rose-500/10 border-rose-500/50 text-rose-600 dark:text-rose-300";
                  icon = <XCircle size={18} />;
                } else {
-                 statusClass = "opacity-50 bg-slate-900 border-slate-800";
+                 statusClass = "opacity-50 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800";
                }
             }
 
@@ -126,7 +131,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
                 key={idx}
                 disabled={selectedOption !== null}
                 onClick={() => selectOption(idx)}
-                className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 flex items-center justify-between group ${statusClass} ${selectedOption === null ? 'hover:scale-[1.01]' : ''}`}
+                className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-200 flex items-center justify-between group ${statusClass} ${selectedOption === null ? 'hover:scale-[1.01] shadow-sm' : ''}`}
               >
                 <span className="text-lg font-medium">{option}</span>
                 {icon}
@@ -140,24 +145,24 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-8 p-6 rounded-2xl bg-slate-900/50 border border-slate-800"
+              className="mt-8 p-6 rounded-2xl bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800"
             >
               <div className="flex items-start gap-3">
-                 <div className={`mt-1 ${answerStatus === 'correct' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                 <div className={`mt-1 ${answerStatus === 'correct' ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`}>
                     {answerStatus === 'correct' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
                  </div>
                  <div>
-                    <h4 className={`font-bold text-sm mb-1 ${answerStatus === 'correct' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <h4 className={`font-bold text-sm mb-1 ${answerStatus === 'correct' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                        {answerStatus === 'correct' ? 'Correct!' : 'Incorrect'}
                     </h4>
-                    <p className="text-slate-400 text-sm leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                        {currentQuestion.explanation}
                     </p>
                  </div>
                  
                  <button 
                    onClick={nextQuestion}
-                   className="ml-auto px-6 py-2 bg-white text-slate-950 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors"
+                   className="ml-auto px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity"
                  >
                    {currentIndex === totalQuestions - 1 ? 'Finish' : 'Next'}
                  </button>

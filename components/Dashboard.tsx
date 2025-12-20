@@ -3,8 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CURRICULUM } from '../data/curriculum';
 import { useCourseProgress } from '../hooks/useCourseProgress';
-import { Play, CheckCircle, Circle, ArrowRight, Trophy, Zap, Terminal } from 'lucide-react';
-import { ViewSection } from '../types';
+import { Play, CheckCircle, Circle, Trophy } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (path: string) => void;
@@ -18,7 +17,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     if (lastActiveTopic) {
       onNavigate(lastActiveTopic);
     } else {
-      // Default to first topic
+      // Default to first topic of first module
       const firstTopic = CURRICULUM[0]?.chapters[0]?.topics[0]?.id;
       if (firstTopic) onNavigate(firstTopic);
     }
@@ -35,11 +34,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <span className="text-xs font-black uppercase tracking-widest">Course Progress</span>
              </div>
              <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
-                Welcome back, Engineer.
+                Full Stack AI Engineer
              </h1>
              <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
-                You have completed <strong className="text-white">{overallProgress}%</strong> of the curriculum. 
-                {overallProgress === 100 ? " Incredible work!" : " Keep pushing the boundaries of what's possible."}
+                You have completed <strong className="text-white">{overallProgress}%</strong> of the certification. 
+                {overallProgress === 100 ? " Ready for deployment." : " Continue building your neural architecture."}
              </p>
           </div>
 
@@ -61,7 +60,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 className="w-full py-3 bg-white text-slate-950 hover:bg-indigo-50 font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg"
              >
                 <Play size={16} fill="currentColor" />
-                {lastActiveTopic ? "Resume Learning" : "Start Journey"}
+                {lastActiveTopic ? "Resume Learning" : "Start Course"}
              </button>
           </div>
         </div>
@@ -70,7 +69,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
       </header>
 
-      {/* Modules Grid */}
+      {/* Dynamic Modules Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {CURRICULUM.map((module, idx) => {
           const progress = getModuleProgress(module.id);

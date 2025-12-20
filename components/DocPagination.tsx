@@ -1,8 +1,10 @@
 
 import React from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle, Circle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Circle, Award, PartyPopper } from 'lucide-react';
 import { getNextTopic, getPrevTopic, getTopicById } from '../lib/contentHelpers';
 import { useCourseProgress } from '../hooks/useCourseProgress';
+import { triggerConfetti } from './Confetti';
+import { ViewSection } from '../types';
 
 interface DocPaginationProps {
   currentPath: string;
@@ -21,7 +23,13 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
     markAsCompleted(currentPath);
   };
 
-  if (!prevTopic && !nextTopic) return null;
+  const handleFinishCourse = () => {
+    markAsCompleted(currentPath);
+    triggerConfetti();
+    setTimeout(() => {
+        window.location.hash = `#/${ViewSection.DASHBOARD}`;
+    }, 2500);
+  };
 
   return (
     <div className="mt-20 pt-10 border-t border-slate-800">
@@ -47,7 +55,7 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Previous Link */}
+        {/* Previous Link - Only show if prevTopic exists */}
         {prevTopic ? (
           <a 
             href={`#/${prevTopic.id}`}
@@ -62,10 +70,10 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
             </span>
           </a>
         ) : (
-          <div /> /* Spacer */
+          <div /> /* Spacer if no prev topic */
         )}
 
-        {/* Next Link */}
+        {/* Next Link OR Finish Button */}
         {nextTopic ? (
           <a 
             href={`#/${nextTopic.id}`}
@@ -80,7 +88,18 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
             </span>
           </a>
         ) : (
-          <div />
+          <button 
+            onClick={handleFinishCourse}
+            className="group flex flex-col items-center justify-center text-center p-6 rounded-2xl border border-emerald-500/30 bg-emerald-900/10 hover:bg-emerald-900/20 hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden"
+          >
+             <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/10 via-transparent to-transparent opacity-50" />
+             <span className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest mb-2">
+               <Award size={14} /> Completion
+            </span>
+            <span className="text-xl font-serif font-bold text-white flex items-center gap-3">
+              Finish Course <PartyPopper size={20} className="text-yellow-400" />
+            </span>
+          </button>
         )}
       </div>
     </div>

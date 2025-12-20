@@ -66,6 +66,14 @@ export const useCourseProgress = () => {
      return total === 0 ? 0 : Math.round((completed / total) * 100);
   }, [completedTopics]);
 
+  const resetProgress = useCallback(() => {
+    setCompletedTopics([]);
+    setLastActiveTopic('');
+    localStorage.removeItem(STORAGE_KEY_PROGRESS);
+    localStorage.removeItem(STORAGE_KEY_ACTIVE);
+    window.location.reload(); // Force reload to clear all states
+  }, []);
+
   return { 
     completedTopics, 
     lastActiveTopic, 
@@ -73,6 +81,7 @@ export const useCourseProgress = () => {
     markAsCompleted, 
     isCompleted, 
     getModuleProgress,
-    getOverallProgress 
+    getOverallProgress,
+    resetProgress
   };
 };

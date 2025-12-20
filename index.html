@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,6 +24,7 @@
 
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
@@ -45,7 +47,18 @@
             typography: (theme) => ({
               DEFAULT: {
                 css: {
+                  color: theme('colors.slate.600'), // Adjusted for light mode default
+                  '--tw-prose-headings': theme('colors.slate.900'),
+                  a: {
+                    color: theme('colors.indigo.600'),
+                    '&:hover': { color: theme('colors.indigo.500') },
+                  },
+                },
+              },
+              invert: {
+                css: {
                   color: theme('colors.slate.300'),
+                  '--tw-prose-headings': theme('colors.white'),
                   a: {
                     color: theme('colors.indigo.400'),
                     '&:hover': { color: theme('colors.indigo.300') },
@@ -79,9 +92,13 @@
     </script>
     <style>
       ::-webkit-scrollbar { width: 6px; height: 6px; }
-      ::-webkit-scrollbar-track { background: #020617; }
-      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
-      ::-webkit-scrollbar-thumb:hover { background: #334155; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      .dark ::-webkit-scrollbar-track { background: #020617; }
+      .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
+      
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      .dark ::-webkit-scrollbar-thumb:hover { background: #334155; }
       
       .math-serif { font-family: 'Times New Roman', serif; }
       html { scroll-behavior: smooth; }
@@ -119,7 +136,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-950 text-slate-200 antialiased overflow-hidden selection:bg-indigo-500/30">
+  <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-200 antialiased overflow-hidden selection:bg-indigo-500/30 transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

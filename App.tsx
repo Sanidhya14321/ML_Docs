@@ -16,6 +16,7 @@ import { SitemapView } from './views/SitemapView';
 import { getTopicById } from './lib/contentHelpers';
 import { NAV_ITEMS } from './lib/navigation-data';
 import { useCourseProgress } from './hooks/useCourseProgress';
+import { useTheme } from './hooks/useTheme';
 import { 
   BrainCircuit, Search, Command, X
 } from 'lucide-react';
@@ -23,14 +24,18 @@ import {
 // New Components
 import { Header } from './components/Header';
 import { MobileNav } from './components/MobileNav';
+import { SettingsModal } from './components/SettingsModal';
 
 const App: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(ViewSection.DASHBOARD);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState<string>('');
   
+  // Initialize Global Hooks
   const { setLastActiveTopic } = useCourseProgress();
+  const { theme } = useTheme(); // Initialize theme effect
 
   // Scroll Progress Logic
   const { scrollYProgress } = useScroll();
@@ -128,7 +133,7 @@ const App: React.FC = () => {
 
   // Standard Layout
   return (
-    <div className="flex h-screen bg-[#020617] text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30">
+    <div className="flex h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30 transition-colors duration-300">
       
       {/* Scroll Progress Bar */}
       <motion.div 
@@ -137,8 +142,8 @@ const App: React.FC = () => {
       />
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 flex-col border-r border-slate-800/50 bg-slate-950/50 backdrop-blur-xl relative z-40">
-        <div className="p-6 border-b border-slate-800/50">
+      <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800/50 bg-white/50 dark:bg-slate-950/50 backdrop-blur-xl relative z-40">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800/50">
            <button 
               onClick={() => navigateTo(ViewSection.DASHBOARD)}
               className="flex items-center gap-3 mb-6 w-full text-left group"
@@ -147,16 +152,16 @@ const App: React.FC = () => {
                 <BrainCircuit size={18} className="text-white" />
               </div>
               <div>
-                <h1 className="font-serif font-black text-lg text-white tracking-tighter">AI Codex</h1>
+                <h1 className="font-serif font-black text-lg text-slate-900 dark:text-white tracking-tighter">AI Codex</h1>
                 <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v3.2.0</p>
               </div>
             </button>
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="w-full bg-slate-900 border border-slate-800 hover:border-indigo-500/50 p-2.5 rounded-lg flex items-center justify-between text-slate-500 transition-all group shadow-sm"
+              className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 p-2.5 rounded-lg flex items-center justify-between text-slate-500 transition-all group shadow-sm"
             >
               <div className="flex items-center gap-2">
-                <Search size={14} className="group-hover:text-indigo-400" />
+                <Search size={14} className="group-hover:text-indigo-500 dark:group-hover:text-indigo-400" />
                 <span className="text-[11px] font-bold">Quick find...</span>
               </div>
               <div className="flex items-center gap-1 opacity-50 group-hover:opacity-100">
@@ -170,25 +175,26 @@ const App: React.FC = () => {
           <Sidebar currentPath={currentPath} onNavigate={navigateTo} />
         </div>
 
-        <div className="p-4 border-t border-slate-800/50 text-[10px] text-slate-600 flex justify-between">
-            <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-400 transition-colors">Site Map</button>
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800/50 text-[10px] text-slate-600 flex justify-between">
+            <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">Site Map</button>
             <span>© 2024 AI Codex</span>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#020617] relative">
+      <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-[#020617] relative">
          <Header 
             onMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={() => setIsSearchOpen(true)}
+            onSettingsClick={() => setIsSettingsOpen(true)}
             currentPath={currentPath}
             navItems={NAV_ITEMS}
             onNavigate={navigateTo}
          />
 
          <main className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar relative">
-             <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none" />
-             <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
+             <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+             <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
              
              <div className="max-w-[1000px] mx-auto p-4 md:p-12 lg:p-16 relative z-10 min-h-screen">
                 <Suspense fallback={<LoadingOverlay />}>
@@ -209,7 +215,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Desktop TOC Sidebar */}
-      <aside className="hidden xl:block w-64 border-l border-slate-800/50 bg-[#020617]/50 backdrop-blur-sm p-8 h-full overflow-y-auto z-40">
+      <aside className="hidden xl:block w-64 border-l border-slate-200 dark:border-slate-800/50 bg-white/50 dark:bg-[#020617]/50 backdrop-blur-sm p-8 h-full overflow-y-auto z-40">
           {CONTENT_REGISTRY[currentPath] && <TableOfContents />}
       </aside>
 
@@ -219,6 +225,10 @@ const App: React.FC = () => {
         onClose={() => setIsMobileMenuOpen(false)} 
         currentPath={currentPath} 
         onNavigate={navigateTo} 
+      />
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
       />
       <BackToTop />
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} onNavigate={(slug) => navigateTo(slug as string)} />

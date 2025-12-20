@@ -1,37 +1,35 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Hash, ArrowRight, Zap, BookOpen, BrainCircuit, Command, CornerDownLeft } from 'lucide-react';
-import { ViewSection } from '../types';
+import { Search, Hash, CornerDownLeft, Command, FileText, Terminal, Award } from 'lucide-react';
+import { getAllTopics } from '../lib/contentHelpers';
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigate: (section: ViewSection) => void;
+  onNavigate: (section: string) => void;
 }
-
-const SEARCH_REGISTRY = [
-  { id: ViewSection.FOUNDATIONS, label: 'Linear Algebra', category: 'Math', icon: <Hash size={14}/> },
-  { id: ViewSection.OPTIMIZATION, label: 'Gradient Descent', category: 'Engine', icon: <Zap size={14}/> },
-  { id: ViewSection.REGRESSION, label: 'Linear Regression', category: 'Supervised', icon: <BookOpen size={14}/> },
-  { id: ViewSection.CLASSIFICATION, label: 'Logistic Regression', category: 'Supervised', icon: <BookOpen size={14}/> },
-  { id: ViewSection.CLASSIFICATION, label: 'Support Vector Machines', category: 'Supervised', icon: <BookOpen size={14}/> },
-  { id: ViewSection.ENSEMBLE, label: 'Random Forests', category: 'Ensemble', icon: <BrainCircuit size={14}/> },
-  { id: ViewSection.DEEP_LEARNING, label: 'Neural Networks', category: 'Deep Learning', icon: <BrainCircuit size={14}/> },
-  { id: ViewSection.DEEP_LEARNING, label: 'Backpropagation', category: 'Deep Learning', icon: <Zap size={14}/> },
-  { id: 'deep-learning/attention-mechanism', label: 'Attention Mechanism', category: 'Deep Learning', icon: <Zap size={14}/> },
-  { id: ViewSection.REINFORCEMENT, label: 'Q-Learning', category: 'RL', icon: <BrainCircuit size={14}/> },
-];
 
 export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
   
-  const filtered = SEARCH_REGISTRY.filter(item => 
-    item.label.toLowerCase().includes(query.toLowerCase()) ||
-    item.category.toLowerCase().includes(query.toLowerCase())
+  // Dynamic Search Registry derived from Real Data
+  const allTopics = getAllTopics();
+  
+  const filtered = allTopics.filter(topic => 
+    topic.title.toLowerCase().includes(query.toLowerCase()) ||
+    topic.description?.toLowerCase().includes(query.toLowerCase())
   );
+
+  const getIcon = (type: string) => {
+      switch(type) {
+          case 'lab': return <Terminal size={14} />;
+          case 'quiz': return <Award size={14} />;
+          default: return <FileText size={14} />;
+      }
+  };
 
   useEffect(() => {
     setActiveIndex(0);
@@ -39,13 +37,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (!isOpen) {
-             // Logic to open is handled by parent, but strict checking here prevents ghost triggers
-        }
-      }
-      
       if (!isOpen) return;
 
       if (e.key === 'Escape') onClose();
@@ -60,7 +51,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
       if (e.key === 'Enter') {
         e.preventDefault();
         if (filtered[activeIndex]) {
-          onNavigate(filtered[activeIndex].id as ViewSection);
+          onNavigate(filtered[activeIndex].id);
           onClose();
         }
       }
@@ -70,7 +61,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
   }, [isOpen, onClose, filtered, activeIndex, onNavigate]);
 
   useEffect(() => {
-    // Scroll active item into view
     if (listRef.current && filtered.length > 0) {
       const activeElement = listRef.current.children[activeIndex] as HTMLElement;
       if (activeElement) {
@@ -98,13 +88,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-xl z-[101] px-4"
           >
             <div className="bg-[#0f1117] border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden ring-1 ring-white/10 flex flex-col max-h-[60vh]">
-              {/* Search Header */}
               <div className="p-4 border-b border-slate-800 flex items-center gap-3 bg-slate-900/50">
                 <Search size={18} className="text-slate-500" />
                 <input 
                   autoFocus
                   type="text" 
-                  placeholder="Search documentation..."
+                  placeholder="Search curriculum..."
                   className="bg-transparent border-none outline-none w-full text-white placeholder:text-slate-500 text-sm font-medium"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -114,15 +103,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                 </div>
               </div>
               
-              {/* Results List */}
               <div ref={listRef} className="overflow-y-auto p-2 custom-scrollbar">
                 {filtered.length > 0 ? (
                   <div className="space-y-1">
                     {filtered.map((item, idx) => (
                       <button
-                        key={`${item.id}-${idx}`}
+                        key={item.id}
                         onClick={() => {
-                          onNavigate(item.id as ViewSection);
+                          onNavigate(item.id);
                           onClose();
                         }}
                         onMouseEnter={() => setActiveIndex(idx)}
@@ -131,7 +119,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                           ${activeIndex === idx ? 'bg-indigo-600/10' : 'hover:bg-slate-800/50'}
                         `}
                       >
-                         {/* Active Indicator Bar */}
                          {activeIndex === idx && (
                            <motion.div 
                               layoutId="command-active"
@@ -144,13 +131,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                             w-6 h-6 rounded flex items-center justify-center transition-colors
                             ${activeIndex === idx ? 'text-indigo-400 bg-indigo-500/20' : 'text-slate-500 bg-slate-800'}
                           `}>
-                            {item.icon}
+                            {getIcon(item.type)}
                           </div>
                           <div className="text-left">
                             <div className={`text-sm font-medium transition-colors ${activeIndex === idx ? 'text-white' : 'text-slate-300'}`}>
-                              {item.label}
+                              {item.title}
                             </div>
-                            <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{item.category}</div>
+                            <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{item.type}</div>
                           </div>
                         </div>
                         
@@ -171,19 +158,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                   <div className="py-12 flex flex-col items-center justify-center text-slate-500">
                     <Search size={32} className="mb-4 opacity-20" />
                     <p className="text-sm font-medium">No results found for "{query}"</p>
-                    <p className="text-xs mt-1 opacity-50">Try searching for "Regression" or "Neural"</p>
                   </div>
                 )}
               </div>
               
-              {/* Footer */}
               <div className="px-4 py-2 bg-slate-900/80 border-t border-slate-800 flex justify-between items-center text-[10px] text-slate-500 font-medium select-none">
                 <div className="flex gap-4">
                    <span className="flex items-center gap-1"><span className="bg-slate-800 px-1 rounded">↑↓</span> to navigate</span>
                    <span className="flex items-center gap-1"><span className="bg-slate-800 px-1 rounded">↵</span> to select</span>
-                </div>
-                <div className="flex items-center gap-1 opacity-50">
-                   <Command size={10} /> + K
                 </div>
               </div>
             </div>

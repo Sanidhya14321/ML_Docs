@@ -1,9 +1,9 @@
 
 import { CURRICULUM } from '../data/curriculum';
-import { Topic, Chapter, Module } from '../types';
+import { Topic } from '../types';
 
-// Flatten the curriculum into a linear list of topics for easy navigation
-const getAllTopics = (): Topic[] => {
+// Recursively flatten the curriculum into a single list of topics
+export const getAllTopics = (): Topic[] => {
   const topics: Topic[] = [];
   CURRICULUM.forEach(module => {
     module.chapters.forEach(chapter => {
@@ -16,16 +16,15 @@ const getAllTopics = (): Topic[] => {
 };
 
 export const getTopicById = (id: string): Topic | undefined => {
-  // Direct lookup
-  for (const module of CURRICULUM) {
-    for (const chapter of module.chapters) {
-      const topic = chapter.topics.find(t => t.id === id);
-      if (topic) return topic;
-    }
-  }
-  return undefined;
+  const allTopics = getAllTopics();
+  return allTopics.find(t => t.id === id);
 };
 
+export const validateTopic = (id: string): boolean => {
+  return !!getTopicById(id);
+};
+
+// Seamlessly jump between Modules/Chapters by using linear index
 export const getNextTopic = (currentId: string): string | null => {
   const allTopics = getAllTopics();
   const index = allTopics.findIndex(t => t.id === currentId);

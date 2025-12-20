@@ -9,6 +9,7 @@ import { getTopicById } from '../lib/contentHelpers';
 import { useCourseProgress } from '../hooks/useCourseProgress';
 import { Play, RotateCcw, Terminal, FileCode, Loader2, Lightbulb, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { triggerConfetti } from './Confetti';
 
 interface LabWorkspaceProps {
   topicId: string;
@@ -49,18 +50,16 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     if (!isRunning && logs.length > 0) {
        const lastLog = logs[logs.length - 1];
        if (lastLog.type === 'system' && lastLog.content.includes('Execution completed')) {
-           markAsCompleted(topicId);
+           if (!isCompleted(topicId)) {
+               markAsCompleted(topicId);
+               triggerConfetti();
+           }
        }
     }
-  }, [isRunning, logs, topicId, markAsCompleted]);
+  }, [isRunning, logs, topicId, markAsCompleted, isCompleted]);
 
   const handleRun = () => {
     if (isMobile) {
-        // On mobile, if we run, maybe auto-switch tab to console if they are separate tabs?
-        // But here we use ResizableLayout which shows both if split, or we might need tabs for the right pane?
-        // Wait, ResizableLayout splits Left (Docs) vs Right (Code+Console).
-        // On mobile, it stacks Docs (Top) vs Right (Bottom).
-        // The Right pane HAS tabs (Editor vs Console).
         setActiveTab('console');
     } else {
         setActiveTab('console');

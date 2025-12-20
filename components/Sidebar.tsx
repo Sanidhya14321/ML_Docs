@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Circle, FileText, Terminal, FolderOpen, Award } from 'lucide-react';
+import { ChevronRight, ChevronDown, Circle, FileText, Terminal, FolderOpen, Award, CheckCircle } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
 import { Module, Chapter, Topic } from '../types';
+import { useCourseProgress } from '../hooks/useCourseProgress';
 
 interface SidebarProps {
   currentPath: string;
@@ -11,9 +12,12 @@ interface SidebarProps {
 }
 
 const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path: string) => void }> = ({ topic, currentPath, onNavigate }) => {
+  const { isCompleted } = useCourseProgress();
   const isActive = currentPath === topic.id;
+  const completed = isCompleted(topic.id);
   
   const getIcon = () => {
+    if (completed) return <CheckCircle size={12} className="text-emerald-500" />;
     switch (topic.type) {
       case 'lab': return <Terminal size={12} />;
       case 'quiz': return <Award size={12} />;
@@ -25,7 +29,7 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
     <button
       onClick={() => onNavigate(topic.id)}
       className={`
-        w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-medium transition-all duration-200 group relative z-10 ml-2
+        w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-medium transition-all duration-200 group relative z-10 ml-2 text-left
         ${isActive ? 'text-indigo-300' : 'text-slate-400 hover:text-slate-200'}
       `}
     >
@@ -37,10 +41,10 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
         />
       )}
       
-      <span className={`${isActive ? "text-indigo-400" : "text-slate-600 group-hover:text-slate-400"}`}>
+      <span className={`shrink-0 ${isActive ? "text-indigo-400" : "text-slate-600 group-hover:text-slate-400"}`}>
         {getIcon()}
       </span>
-      <span className="truncate">{topic.title}</span>
+      <span className="truncate leading-tight">{topic.title}</span>
     </button>
   );
 };
@@ -49,9 +53,10 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
   const hasActiveChild = chapter.topics.some(t => t.id === currentPath);
   const [isOpen, setIsOpen] = useState(hasActiveChild);
 
+  // Sync open state with active path changes (navigating via Next/Prev buttons)
   useEffect(() => {
     if (hasActiveChild) setIsOpen(true);
-  }, [currentPath]);
+  }, [currentPath, hasActiveChild]);
 
   return (
     <div className="mb-2">
@@ -84,7 +89,7 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
 const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (path: string) => void }> = ({ module, currentPath, onNavigate }) => {
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-3 px-2 mb-3 text-slate-200">
+      <div className="flex items-center gap-3 px-2 mb-3 text-slate-200 sticky top-0 bg-[#060810]/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
         <span className="text-indigo-500">{module.icon}</span>
         <h3 className="text-sm font-serif font-bold tracking-tight">{module.title}</h3>
       </div>
@@ -99,7 +104,7 @@ const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (p
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => {
   return (
-    <nav className="pb-24 px-4">
+    <nav className="pb-32 px-4 h-full overflow-y-auto custom-scrollbar">
       {CURRICULUM.map(module => (
         <ModuleItem key={module.id} module={module} currentPath={currentPath} onNavigate={onNavigate} />
       ))}

@@ -55,11 +55,20 @@ export interface QuizConfig {
   passingScore?: number; // percentage, default 70
 }
 
+export interface TopicDetails {
+  theory?: string; // Long form text
+  math?: string;   // LaTeX formula
+  mathLabel?: string;
+  code?: string;   // Code snippet
+  codeLanguage?: string;
+}
+
 export interface Topic {
   id: string;
   title: string;
   type: ContentType;
   description?: string;
+  details?: TopicDetails; // Rich content structure
   labConfig?: LabConfig;
   quizConfig?: QuizConfig;
 }

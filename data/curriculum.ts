@@ -1,68 +1,69 @@
 
 import React from 'react';
-import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical } from 'lucide-react';
+import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical, Terminal, Activity, Layers, GitBranch, Globe, Container } from 'lucide-react';
 import { Module } from '../types';
 
 export const CURRICULUM: Module[] = [
   {
-    id: 'math-foundations',
-    title: 'Mathematical Foundations',
-    icon: React.createElement(BookOpen, { size: 16 }),
+    id: 'module-1',
+    title: 'Module 1: AI Engineering Foundations',
+    icon: React.createElement(Database, { size: 16 }),
     chapters: [
       {
-        id: 'linear-algebra',
-        title: 'Linear Algebra',
+        id: 'data-stack',
+        title: 'The Modern Data Stack',
         topics: [
           {
-            id: 'foundations',
-            title: 'Vectors & Spaces',
+            id: 'foundations/python-advanced',
+            title: 'High-Performance Python',
             type: 'doc',
-            description: 'Understanding the fundamental building blocks of linear algebra: vectors, vector spaces, and linear independence.'
-          },
-          {
-            id: 'matrix-ops',
-            title: 'Matrix Operations',
-            type: 'doc',
-            description: 'Deep dive into matrix multiplication, transformations, and determinants.'
-          },
-          {
-            id: 'numpy-lab',
-            title: 'Lab: NumPy Tensor Ops',
-            type: 'lab',
-            description: 'Hands-on practice with NumPy for high-performance vector computation.',
-            labConfig: {
-              initialCode: `import numpy as np\n\n# 1. Create a 3x3 Identity Matrix\nI = \n\n# 2. Create a vector v = [1, 2, 3]\nv = \n\n# 3. Compute dot product of v and itself\ndot_prod = \n\nprint(f"Identity:\\n{I}")\nprint(f"Dot Product: {dot_prod}")`,
-              solution: `import numpy as np\nI = np.eye(3)\nv = np.array([1, 2, 3])\ndot_prod = np.dot(v, v)\nprint(f"Identity:\\n{I}")\nprint(f"Dot Product: {dot_prod}")`,
-              hints: ['Use np.eye() for identity', 'Use np.dot() or @ operator']
+            description: 'Optimizing Python for data throughput using vectorization and memory management.',
+            details: {
+              theory: 'Standard Python lists involve significant pointer overhead. In AI engineering, we leverage NumPy strides and contiguous memory blocks to achieve near C-level speeds. Understanding the Global Interpreter Lock (GIL) and multiprocessing is crucial for data loading pipelines.',
+              math: '\\text{Speedup} = \\frac{1}{(1-P) + \\frac{P}{N}}',
+              mathLabel: 'Amdahl\'s Law',
+              code: 'import numpy as np\n# Vectorized operation (100x faster than loops)\ndata = np.random.rand(1000000)\nresult = np.log(data) * np.exp(data)',
+              codeLanguage: 'python'
             }
           },
           {
-            id: 'linear-algebra-quiz',
+            id: 'foundations/sql-pipelines',
+            title: 'SQL for Data Engineers',
+            type: 'lab',
+            description: 'Constructing analytical datasets using Window Functions and CTEs.',
+            labConfig: {
+              initialCode: `import sqlite3\nimport pandas as pd\n\n# Create in-memory DB\nconn = sqlite3.connect(':memory:')\ndf = pd.DataFrame({'user': ['A','A','B','B'], 'val': [10, 20, 30, 40], 'date': [1,2,1,2]})\ndf.to_sql('metrics', conn, index=False)\n\n# TODO: Write a query to calculate cumulative sum per user\nquery = """\nSELECT \n    user,\n    val,\n    -- Add Window Function Here\n    SUM(val) OVER (PARTITION BY ... ORDER BY ...) as running_total\nFROM metrics\n"""\n\nprint(pd.read_sql(query, conn))`,
+              solution: `query = "SELECT user, val, SUM(val) OVER (PARTITION BY user ORDER BY date) as running_total FROM metrics"`,
+              hints: ['Use PARTITION BY user', 'Use ORDER BY date', 'SUM(val) OVER (...)']
+            }
+          },
+          {
+            id: 'foundations/math-quiz',
             title: 'Checkpoint: Linear Algebra',
             type: 'quiz',
-            description: 'Verify your understanding of vectors, matrices, and NumPy operations.',
+            description: 'Validate understanding of vector spaces and matrix operations.',
             quizConfig: {
               questions: [
                 {
                   id: 'q1',
-                  text: 'What is the result of the dot product between v=[1, 2] and u=[3, 4]?',
-                  options: ['10', '11', '7', '[3, 8]'],
+                  text: 'What does the Rank of a matrix represent?',
+                  options: ['The number of rows', 'The number of linearly independent columns', 'The total sum of elements', 'The determinant value'],
                   correctIndex: 1,
-                  explanation: 'The dot product is (1*3) + (2*4) = 3 + 8 = 11.'
+                  explanation: 'Rank is the dimension of the vector space generated (or spanned) by its columns.'
                 },
                 {
                   id: 'q2',
-                  text: 'Which NumPy function creates an Identity Matrix?',
-                  options: ['np.identity()', 'np.eye()', 'np.ones()', 'np.diag()'],
-                  correctIndex: 1,
-                  explanation: 'np.eye(n) creates an n x n identity matrix.'
+                  text: 'In PCA, what do the Eigenvectors represent?',
+                  options: ['The principal directions of variance', 'The magnitude of variance', 'The cluster centroids', 'The loss function gradients'],
+                  correctIndex: 0,
+                  explanation: 'Eigenvectors point in the direction of the greatest variance in the data.'
                 },
                 {
                   id: 'q3',
-                  text: 'If matrix A is shape (3, 2) and B is shape (2, 4), what is the shape of A @ B?',
-                  options: ['(3, 4)', '(2, 2)', '(3, 2)', 'Error'],
-                  correctIndex: 0,
-                  explanation: 'Matrix multiplication (m, n) x (n, p) results in (m, p).'
+                  text: 'Which matrix operation is non-commutative?',
+                  options: ['Addition (A+B)', 'Matrix Multiplication (AB)', 'Scalar Multiplication (cA)', 'Transpose (A^T)'],
+                  correctIndex: 1,
+                  explanation: 'In general, AB does not equal BA. The order of transformation matters.'
                 }
               ]
             }
@@ -70,89 +71,215 @@ export const CURRICULUM: Module[] = [
         ]
       },
       {
-        id: 'calculus',
-        title: 'Calculus',
+        id: 'etl-pipelines',
+        title: 'ETL & Orchestration',
         topics: [
-          { id: 'optimization', title: 'Gradient Descent', type: 'doc', description: 'The engine of learning: minimizing loss functions via gradients.' },
-          { id: 'backprop-lab', title: 'Lab: Autograd from Scratch', type: 'lab', description: 'Implement a basic automatic differentiation engine.', labConfig: { initialCode: '# TODO: Implement Node class for autograd', solution: '', hints: [] } }
+          {
+            id: 'mlops/airflow',
+            title: 'DAGs with Airflow',
+            type: 'doc',
+            description: 'Defining dependencies and scheduling workflows as code.',
+            details: {
+              theory: 'Directed Acyclic Graphs (DAGs) model the logical flow of data tasks. Airflow serves as the scheduler, ensuring tasks like data extraction, validation, and model training occur in the correct topological order. We handle retries, backfills, and SLA alerts programmatically.',
+              math: 'G = (V, E) \\text{ where } \\forall v \\in V, (v, v) \\notin E^*',
+              mathLabel: 'Acyclic Property',
+              code: 'from airflow import DAG\nfrom airflow.operators.python import PythonOperator\n\nwith DAG("model_train", schedule_interval="@daily") as dag:\n    t1 = PythonOperator(task_id="extract", python_callable=extract_data)\n    t2 = PythonOperator(task_id="train", python_callable=train_model)\n    t1 >> t2',
+              codeLanguage: 'python'
+            }
+          },
+          {
+            id: 'mlops/data-lab',
+            title: 'Lab: Data Cleaning Pipeline',
+            type: 'lab',
+            description: 'Build a robust Pandas pipeline to handle missing values and outliers.',
+            labConfig: {
+              initialCode: `import pandas as pd\nimport numpy as np\n\ndata = pd.DataFrame({\n    'age': [25, 30, np.nan, 150, 40],\n    'income': [50000, 60000, 55000, -1000, 100000000]\n})\n\ndef clean_data(df):\n    # 1. Fill NA age with median\n    \n    # 2. Filter invalid income (< 0)\n    \n    # 3. Cap income outliers at 99th percentile\n    \n    return df\n\ncleaned = clean_data(data)\nprint(cleaned)`,
+              solution: `def clean_data(df):\n    df['age'] = df['age'].fillna(df['age'].median())\n    df = df[df['income'] >= 0]\n    cap = df['income'].quantile(0.99)\n    df['income'] = df['income'].clip(upper=cap)\n    return df`,
+              hints: ['Use fillna()', 'Boolean indexing for filtering', 'Use quantile() and clip()']
+            }
+          }
         ]
       }
     ]
   },
   {
-    id: 'classical-ml',
-    title: 'Classical Machine Learning',
-    icon: React.createElement(Cpu, { size: 16 }),
+    id: 'module-2',
+    title: 'Module 2: Model Engineering',
+    icon: React.createElement(BrainCircuit, { size: 16 }),
     chapters: [
       {
-        id: 'supervised',
-        title: 'Supervised Learning',
+        id: 'deep-learning',
+        title: 'Deep Learning Architectures',
         topics: [
-          { id: 'regression', title: 'Linear Regression', type: 'doc', description: 'Predicting continuous values using least squares.' },
-          { id: 'classification', title: 'Classification (SVM/LogReg)', type: 'doc', description: 'Separating classes with hyperplanes and probability.' },
-          { id: 'ensemble', title: 'Ensemble Methods', type: 'doc', description: 'Combining weak learners: Random Forests and Gradient Boosting.' },
-          { 
-            id: 'sklearn-lab', 
-            title: 'Lab: Scikit-Learn Pipeline', 
+          {
+            id: 'dl/transformers-arch',
+            title: 'Transformer Architecture',
+            type: 'doc',
+            description: 'The mechanism behind LLMs: Attention, Normalization, and Feed-Forward networks.',
+            details: {
+              theory: 'Transformers discard recurrence for pure attention. The Encoder processes the input context, while the Decoder generates output. Layer Normalization and Residual Connections are critical for gradient flow in deep stacks. Positional encodings inject sequence order information.',
+              math: '\\text{FFN}(x) = \\max(0, xW_1 + b_1)W_2 + b_2',
+              mathLabel: 'Position-wise Feed-Forward',
+              code: 'class TransformerBlock(nn.Module):\n    def __init__(self, embed_dim, num_heads):\n        super().__init__()\n        self.attention = nn.MultiheadAttention(embed_dim, num_heads)\n        self.norm1 = nn.LayerNorm(embed_dim)\n        self.ffn = nn.Linear(embed_dim, embed_dim)',
+              codeLanguage: 'python'
+            }
+          },
+          {
+            id: 'dl/pytorch-training-lab',
+            title: 'Lab: Training Loop',
             type: 'lab',
-            description: 'Build a production-ready training pipeline with preprocessing.',
+            description: 'Implement a full PyTorch training loop with batches and optimization.',
             labConfig: {
-              initialCode: `from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\n\n# TODO: Define steps\nsteps = []\n\npipeline = Pipeline(steps)`,
-              solution: '',
-              hints: []
-            } 
+              initialCode: `import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\n# Dummy Data\nX = torch.randn(100, 10)\ny = torch.randint(0, 2, (100,)).float().unsqueeze(1)\n\nmodel = nn.Sequential(nn.Linear(10, 1), nn.Sigmoid())\n\n# TODO: Define Optimizer (SGD) and Loss (BCELoss)\noptimizer = \ncriterion = \n\n# Training Step\noptimizer.zero_grad()\npred = model(X)\nloss = criterion(pred, y)\nloss.backward()\noptimizer.step()\n\nprint(f"Loss: {loss.item()}")`,
+              solution: `optimizer = optim.SGD(model.parameters(), lr=0.01)\ncriterion = nn.BCELoss()\noptimizer.zero_grad()\npred = model(X)\nloss = criterion(pred, y)\nloss.backward()\noptimizer.step()`,
+              hints: ['Use optim.SGD', 'Use nn.BCELoss for binary classification', 'Remember zero_grad() before backward()']
+            }
           }
         ]
       },
       {
-        id: 'unsupervised',
-        title: 'Unsupervised Learning',
+        id: 'generative-ai',
+        title: 'Generative AI & LLMs',
         topics: [
-          { id: 'unsupervised', title: 'Clustering & Dim Reduction', type: 'doc', description: 'Finding hidden structures: K-Means, PCA, and t-SNE.' }
+          {
+            id: 'genai/diffusion',
+            title: 'Diffusion Models',
+            type: 'doc',
+            description: 'Generating data by reversing a gradual noise addition process.',
+            details: {
+              theory: 'Diffusion models learn to reverse a Markov chain that adds Gaussian noise to data. The forward process destroys information (image -> noise), and the reverse process creates information (noise -> image). Training involves predicting the noise added at each timestep.',
+              math: 'L_t(\\theta) = ||\\epsilon - \\epsilon_\\theta(\\sqrt{\\bar{\\alpha}_t}x_0 + \\sqrt{1-\\bar{\\alpha}_t}\\epsilon, t)||^2',
+              mathLabel: 'Denoising Objective',
+              code: '# Forward diffusion sample\nnoise = torch.randn_like(x_0)\nnoisy_image = sqrt_alpha_cumprod[t] * x_0 + sqrt_one_minus_alpha[t] * noise',
+              codeLanguage: 'python'
+            }
+          },
+          {
+            id: 'genai/prompt-quiz',
+            title: 'Checkpoint: LLM Concepts',
+            type: 'quiz',
+            description: 'Test your knowledge on Tokenization, Context Windows, and Temperature.',
+            quizConfig: {
+              questions: [
+                {
+                  id: 'q1',
+                  text: 'What is the role of Temperature in LLM sampling?',
+                  options: ['It controls the learning rate', 'It controls the randomness of predictions', 'It sets the context length', 'It adjusts the model weights'],
+                  correctIndex: 1,
+                  explanation: 'Higher temperature flattens the probability distribution, making lower probability tokens more likely to be sampled (more creative).'
+                },
+                {
+                  id: 'q2',
+                  text: 'Why do we use Byte-Pair Encoding (BPE) or WordPiece?',
+                  options: ['To encrypt data', 'To handle out-of-vocabulary words efficiently', 'To remove stop words', 'To increase dataset size'],
+                  correctIndex: 1,
+                  explanation: 'Subword tokenization breaks unknown words into known sub-units, allowing the model to process rare terms.'
+                },
+                {
+                  id: 'q3',
+                  text: 'What limits the Context Window of a standard Transformer?',
+                  options: ['Disk space', 'Quadratic memory complexity of Self-Attention', 'Number of layers', 'Vocabulary size'],
+                  correctIndex: 1,
+                  explanation: 'The attention matrix grows as N^2 with sequence length N, consuming massive GPU VRAM.'
+                }
+              ]
+            }
+          }
         ]
       }
     ]
   },
   {
-    id: 'deep-learning',
-    title: 'Deep Learning',
-    icon: React.createElement(BrainCircuit, { size: 16 }),
+    id: 'module-3',
+    title: 'Module 3: MLOps & Production',
+    icon: React.createElement(Server, { size: 16 }),
     chapters: [
       {
-        id: 'neural-nets',
-        title: 'Neural Networks',
+        id: 'deployment',
+        title: 'Model Deployment',
         topics: [
-          { id: 'deep-learning', title: 'Perceptrons & MLP', type: 'doc', description: 'The architecture of artificial neurons and layers.' },
-          { id: 'deep-learning/attention-mechanism', title: 'The Attention Mechanism', type: 'doc', description: 'The math behind Transformers and LLMs.' }
+          {
+            id: 'mlops/fastapi',
+            title: 'Real-time Inference APIs',
+            type: 'doc',
+            description: 'Wrapping models in REST APIs using FastAPI and Pydantic.',
+            details: {
+              theory: 'For real-time serving, models are containerized and exposed via HTTP. FastAPI provides high-performance asynchronous handling. We must consider serialization overhead, latency budgets, and concurrency management (Uvicorn workers).',
+              math: '\\text{Latency} = T_{net} + T_{deserialize} + T_{inference} + T_{serialize}',
+              mathLabel: 'Request Latency Model',
+              code: 'from fastapi import FastAPI\napp = FastAPI()\n\n@app.post("/predict")\nasync def predict(payload: InputSchema):\n    vector = preprocess(payload)\n    return {"pred": model.predict(vector).tolist()}',
+              codeLanguage: 'python'
+            }
+          },
+          {
+            id: 'mlops/docker-lab',
+            title: 'Lab: Dockerizing Models',
+            type: 'lab',
+            description: 'Write a Dockerfile to containerize a Python ML application.',
+            labConfig: {
+              initialCode: `# Complete the Dockerfile\n\n# 1. Base Image (python:3.9-slim)\nFROM \n\n# 2. Set work directory\nWORKDIR /app\n\n# 3. Copy requirements and install\nCOPY requirements.txt .\nRUN \n\n# 4. Copy app code\nCOPY . .\n\n# 5. Command to run app\nCMD ["python", "app.py"]`,
+              solution: `FROM python:3.9-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD ["python", "app.py"]`,
+              hints: ['Use python:3.9-slim', 'RUN pip install', 'CMD needs a list of strings']
+            }
+          }
         ]
-      }
-    ]
-  },
-  {
-    id: 'reinforcement',
-    title: 'Reinforcement Learning',
-    icon: React.createElement(Gamepad2, { size: 16 }),
-    chapters: [
+      },
       {
-        id: 'rl-basics',
-        title: 'Foundations',
+        id: 'monitoring',
+        title: 'Observability',
         topics: [
-          { id: 'reinforcement', title: 'MDPs & Q-Learning', type: 'doc', description: 'Agents, environments, and reward maximization.' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'labs',
-    title: 'Project Labs',
-    icon: React.createElement(FlaskConical, { size: 16 }),
-    chapters: [
-      {
-        id: 'capstones',
-        title: 'Capstones',
-        topics: [
-          { id: 'battleground', title: 'Algorithm Battleground', type: 'doc', description: 'Interactive comparison of model performance.' },
-          { id: 'lab', title: 'Clinical Case Study', type: 'doc', description: 'End-to-end medical diagnosis project.' }
+          {
+            id: 'mlops/drift',
+            title: 'Data Drift Detection',
+            type: 'doc',
+            description: 'Detecting distributional shifts between training and production data.',
+            details: {
+              theory: 'Models degrade over time as the world changes (Concept Drift) or input data changes (Covariate Shift). We use statistical tests like Kolmogorov-Smirnov (KS) or Population Stability Index (PSI) to trigger retraining pipelines automatically.',
+              math: 'D_{KL}(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}',
+              mathLabel: 'Kullback-Leibler Divergence',
+              code: 'from scipy.stats import ks_2samp\n\nstat, p_value = ks_2samp(train_data, prod_data)\nif p_value < 0.05:\n    trigger_retrain()',
+              codeLanguage: 'python'
+            }
+          },
+          {
+            id: 'mlops/final-exam',
+            title: 'Final Certification Exam',
+            type: 'quiz',
+            description: 'Comprehensive assessment covering Architecture, MLOps, and Theory.',
+            quizConfig: {
+              passingScore: 80,
+              questions: [
+                {
+                  id: 'f1',
+                  text: 'Which deployment strategy directs a small % of traffic to the new model?',
+                  options: ['Blue/Green', 'Canary', 'Shadow Mode', 'A/B Testing'],
+                  correctIndex: 1,
+                  explanation: 'Canary deployment releases the change to a small subset of users to reduce risk before full rollout.'
+                },
+                {
+                  id: 'f2',
+                  text: 'What happens if you increase the batch size significantly without adjusting learning rate?',
+                  options: ['Faster convergence', 'Generalization gap (worse test accuracy)', 'Model collapse', 'Gradient explosion'],
+                  correctIndex: 1,
+                  explanation: 'Large batch training tends to converge to sharp minimas, leading to poorer generalization unless heuristics like Linear Scaling Rule are used.'
+                },
+                {
+                  id: 'f3',
+                  text: 'In Docker, which instruction minimizes layer size?',
+                  options: ['Using multiple RUN commands', 'Chaining commands with &&', 'Copying all files', 'Using Ubuntu base'],
+                  correctIndex: 1,
+                  explanation: 'Chaining commands prevents the creation of intermediate temporary layers, keeping the image small.'
+                },
+                {
+                  id: 'f4',
+                  text: 'What is the primary benefit of Feature Stores?',
+                  options: ['Cheaper storage', 'Consistency between training and inference', 'Faster model training', 'Auto-ML'],
+                  correctIndex: 1,
+                  explanation: 'Feature Stores ensure the exact same feature logic serves both offline training and online inference, preventing training-serving skew.'
+                }
+              ]
+            }
+          }
         ]
       }
     ]
