@@ -11,6 +11,13 @@ export const LatexRenderer: React.FC<LatexRendererProps> = ({ formula, displayMo
 
   useEffect(() => {
     if (containerRef.current && (window as any).katex) {
+      // Guard against quirks mode which causes KaTeX to throw
+      if (document.compatMode === 'BackCompat') {
+         console.warn("KaTeX skipped due to Quirks Mode.");
+         containerRef.current.innerText = formula;
+         return;
+      }
+
       try {
         (window as any).katex.render(formula, containerRef.current, {
           throwOnError: false,
