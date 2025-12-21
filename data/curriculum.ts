@@ -1,287 +1,582 @@
 
-import React from 'react';
-import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical, Terminal, Activity, Layers, GitBranch, Globe, Container, Swords, Network, TrendingUp, Search } from 'lucide-react';
-import { Module } from '../types';
+import { 
+  BookOpen, 
+  Code, 
+  Brain, 
+  Database, 
+  Calculator, 
+  Layers, 
+  Gamepad2, 
+  CheckCircle,
+  TrendingUp,
+  Cpu,
+  Network,
+  Sigma,
+  GitBranch,
+  Search,
+  Zap,
+  Box,
+  Server,
+  FlaskConical,
+  Activity,
+  Swords
+} from "lucide-react";
+import { Course } from "../types";
 
-export const CURRICULUM: Module[] = [
-  {
-    id: 'module-1',
-    title: 'Module 1: Foundations',
-    icon: React.createElement(BookOpen, { size: 16 }),
-    chapters: [
-      {
-        id: 'math-foundations',
-        title: 'Mathematical Core',
-        topics: [
-          {
-            id: 'foundations',
-            title: 'Linear Algebra Primer',
-            type: 'doc',
-            description: 'The geometric interpretation of data: Vectors, Matrices, and Dot Products.',
-          },
-          {
-            id: 'optimization',
-            title: 'Optimization Engines',
-            type: 'doc',
-            description: 'Gradient Descent and Backtracking: How machines learn by minimizing error.',
-          }
-        ]
-      },
-      {
-        id: 'data-engineering',
-        title: 'Data Engineering',
-        topics: [
-          {
-            id: 'foundations/python-advanced',
-            title: 'High-Performance Python',
-            type: 'doc',
-            description: 'Optimizing Python for data throughput using vectorization and memory management.',
-            details: {
-              theory: 'Standard Python lists involve significant pointer overhead. In AI engineering, we leverage NumPy strides and contiguous memory blocks to achieve near C-level speeds. Understanding the Global Interpreter Lock (GIL) and multiprocessing is crucial for data loading pipelines.',
-              math: '\\text{Speedup} = \\frac{1}{(1-P) + \\frac{P}{N}}',
-              mathLabel: 'Amdahl\'s Law',
-              code: 'import numpy as np\n# Vectorized operation (100x faster than loops)\ndata = np.random.rand(1000000)\nresult = np.log(data) * np.exp(data)',
-              codeLanguage: 'python'
+export const CURRICULUM: Course = {
+  id: "ai-engineering-mastery",
+  title: "The Complete AI Engineering Pipeline",
+  description: "From Linear Algebra to Large Language Models. A definitive curriculum for modern AI.",
+  modules: [
+    // ========================================================================
+    // MODULE 1: MATHEMATICAL FOUNDATIONS
+    // ========================================================================
+    {
+      id: "mod-math",
+      title: "Module 1: Mathematical Foundations",
+      description: "Linear Algebra, Calculus, Statistics, and Probability theory required for ML.",
+      icon: Calculator,
+      chapters: [
+        {
+          id: "chap-linalg",
+          title: "Linear Algebra",
+          topics: [
+            {
+              id: "foundations", // Mapped to FoundationsView
+              title: "Vectors & Matrices",
+              type: "doc",
+              icon: Sigma,
+              description: "The geometric interpretation of data: Vectors, Matrices, and Dot Products.",
+              content: `
+# The Language of Data
+
+To speak to a GPU, you must speak in Tensors.
+
+### 1. Hierarchy of Tensors
+* **Scalar (Rank 0):** A single number (e.g., $x = 5$).
+* **Vector (Rank 1):** A 1D array (e.g., a row of data).
+* **Matrix (Rank 2):** A 2D grid (e.g., a grayscale image).
+* **Tensor (Rank 3+):** N-dimensional arrays (e.g., RGB video data).
+
+### 2. Matrix Multiplication
+The engine of Deep Learning. If $A$ is $(m \\times n)$ and $B$ is $(n \\times p)$, then $C = A \\cdot B$ is $(m \\times p)$.
+
+$$
+C_{ij} = \\sum_{k=1}^n A_{ik} B_{kj}
+$$
+              `
+            },
+            {
+              id: "topic-eigen",
+              title: "Eigenvalues & Eigenvectors",
+              type: "doc",
+              icon: Sigma,
+              description: "Understanding principal components and dimensionality.",
+              content: `
+# Eigen decomposition
+
+An **Eigenvector** is a vector that, when a linear transformation is applied to it, does not change direction. It only scales by a factor called the **Eigenvalue** ($\lambda$).
+
+$$
+Av = \lambda v
+$$
+
+This concept is crucial for:
+1.  **PCA (Principal Component Analysis):** Reducing dimensions by finding the axes of maximum variance.
+2.  **SVD (Singular Value Decomposition):** Used in recommendation systems.
+              `
             }
-          },
-          {
-            id: 'foundations/sql-pipelines',
-            title: 'SQL for Data Engineers',
-            type: 'lab',
-            description: 'Constructing analytical datasets using Window Functions and CTEs.',
-            labConfig: {
-              initialCode: `import sqlite3\nimport pandas as pd\n\n# Create in-memory DB\nconn = sqlite3.connect(':memory:')\ndf = pd.DataFrame({'user': ['A','A','B','B'], 'val': [10, 20, 30, 40], 'date': [1,2,1,2]})\ndf.to_sql('metrics', conn, index=False)\n\n# TODO: Write a query to calculate cumulative sum per user\nquery = """\nSELECT \n    user,\n    val,\n    -- Add Window Function Here\n    SUM(val) OVER (PARTITION BY ... ORDER BY ...) as running_total\nFROM metrics\n"""\n\nprint(pd.read_sql(query, conn))`,
-              solution: `query = "SELECT user, val, SUM(val) OVER (PARTITION BY user ORDER BY date) as running_total FROM metrics"`,
-              hints: ['Use PARTITION BY user', 'Use ORDER BY date', 'SUM(val) OVER (...)']
+          ]
+        },
+        {
+          id: "chap-calculus",
+          title: "Calculus & Optimization",
+          topics: [
+            {
+              id: "optimization", // Mapped to OptimizationView
+              title: "Optimization Engines",
+              type: "doc",
+              icon: TrendingUp,
+              description: "Gradient Descent and Backtracking: How machines learn by minimizing error.",
+            },
+            {
+              id: "lab-autograd-scratch",
+              title: "Lab: Build Autograd",
+              type: "lab",
+              icon: Code,
+              description: "Implement simple dual-number automatic differentiation.",
+              labConfig: {
+                initialCode: `class Value:
+    def __init__(self, data, _children=()):
+        self.data = data
+        self.grad = 0
+        self._backward = lambda: None
+        self._prev = set(_children)
+
+    def __add__(self, other):
+        out = Value(self.data + other.data, (self, other))
+        def _backward():
+            self.grad += out.grad
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        out = Value(self.data * other.data, (self, other))
+        def _backward():
+            self.grad += other.data * out.grad
+            other.grad += self.data * out.grad
+        out._backward = _backward
+        return out
+
+    def backward(self):
+        # Topological sort logic would go here
+        self._backward()
+
+# TASK: Create variables a=2, b=-3. Calculate c = a*b + a. 
+# Manually verify gradients.`,
+                solution: "Implements basic DAG gradient flow",
+                hints: ["Chain rule adds gradients", "Multiplication distributes gradients based on value"]
+              }
             }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'module-2',
-    title: 'Module 2: Supervised Learning',
-    icon: React.createElement(TrendingUp, { size: 16 }),
-    chapters: [
-      {
-        id: 'classical-ml',
-        title: 'Classical Algorithms',
-        topics: [
-          {
-            id: 'regression',
-            title: 'Regression Analysis',
-            type: 'doc',
-            description: 'Predicting continuous variables using Linear, Ridge, Lasso, and Polynomial models.',
-          },
-          {
-            id: 'classification',
-            title: 'Classification Logic',
-            type: 'doc',
-            description: 'Decision boundaries: Logistic Regression, KNN, SVM, and Naive Bayes.',
-          },
-          {
-            id: 'ensemble',
-            title: 'Ensemble Methods',
-            type: 'doc',
-            description: 'Random Forests and Gradient Boosting: Combining weak learners for robustness.',
-          },
-          {
-            id: 'battleground',
-            title: 'Model Battleground',
-            type: 'doc',
-            description: 'Direct comparison of algorithm performance, training time, and interpretability.',
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'module-3',
-    title: 'Module 3: Neural Intelligence',
-    icon: React.createElement(BrainCircuit, { size: 16 }),
-    chapters: [
-      {
-        id: 'deep-architectures',
-        title: 'Deep Architectures',
-        topics: [
-          {
-            id: 'unsupervised',
-            title: 'Unsupervised Learning',
-            type: 'doc',
-            description: 'Clustering and Dimensionality Reduction: K-Means, Hierarchical, and t-SNE.',
-          },
-          {
-            id: 'deep-learning',
-            title: 'Deep Neural Networks',
-            type: 'doc',
-            description: 'MLPs, CNNs for Vision, RNNs for Sequence, and Embeddings.',
-          },
-          {
-            id: 'reinforcement',
-            title: 'Reinforcement Learning',
-            type: 'doc',
-            description: 'Agents, Environments, Q-Learning, and Actor-Critic methods.',
-          }
-        ]
-      },
-      {
-        id: 'generative-ai',
-        title: 'Generative AI & LLMs',
-        topics: [
-          {
-            id: 'deep-learning/attention-mechanism',
-            title: 'The Attention Mechanism',
-            type: 'doc',
-            description: 'The mathematical heart of Transformers and LLMs.',
-          },
-          {
-            id: 'genai/diffusion',
-            title: 'Diffusion Models',
-            type: 'doc',
-            description: 'Generating data by reversing a gradual noise addition process.',
-            details: {
-              theory: 'Diffusion models learn to reverse a Markov chain that adds Gaussian noise to data. The forward process destroys information (image -> noise), and the reverse process creates information (noise -> image). Training involves predicting the noise added at each timestep.',
-              math: 'L_t(\\theta) = ||\\epsilon - \\epsilon_\\theta(\\sqrt{\\bar{\\alpha}_t}x_0 + \\sqrt{1-\\bar{\\alpha}_t}\\epsilon, t)||^2',
-              mathLabel: 'Denoising Objective',
-              code: '# Forward diffusion sample\nnoise = torch.randn_like(x_0)\nnoisy_image = sqrt_alpha_cumprod[t] * x_0 + sqrt_one_minus_alpha[t] * noise',
-              codeLanguage: 'python'
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 2: DATA ENGINEERING
+    // ========================================================================
+    {
+      id: "mod-data",
+      title: "Module 2: Data Engineering",
+      description: "ETL, Feature Engineering, and Handling messy real-world data.",
+      icon: Database,
+      chapters: [
+        {
+          id: "chap-preprocessing",
+          title: "Data Cleaning & Prep",
+          topics: [
+            {
+              id: "topic-scaling",
+              title: "Normalization & Standardization",
+              type: "doc",
+              icon: Database,
+              description: "Feature Scaling techniques for distance-based algorithms.",
+              content: `
+# Feature Scaling
+
+Models that rely on distance (KNN, SVM, K-Means) or Gradients fit poorly if features have vastly different scales (e.g., Age: 0-100 vs Income: 0-100,000).
+
+### Min-Max Normalization
+Scales data to [0, 1].
+$$ x' = \frac{x - \min(x)}{\max(x) - \min(x)} $$
+
+### Z-Score Standardization
+Scales data to mean 0 and variance 1.
+$$ z = \frac{x - \mu}{\sigma} $$
+              `
+            },
+            {
+              id: "lab-pandas-pipeline",
+              title: "Lab: Pandas Pipeline",
+              type: "lab",
+              icon: Code,
+              description: "Build a robust pipeline handling missing data and categorical encoding.",
+              labConfig: {
+                initialCode: `import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+# MOCK DATA
+data = pd.DataFrame({
+    'age': [25, np.nan, 30, 22],
+    'salary': [50000, 60000, 55000, np.nan],
+    'city': ['NY', 'SF', 'NY', 'Chicago']
+})
+
+def preprocess(df):
+    # 1. Fill Missing Values (Imputation)
+    df['age'] = df['age'].fillna(df['age'].mean())
+    
+    # 2. Normalize 'salary'
+    # TODO: Implement Standard Scaling for Salary
+    
+    # 3. One-Hot Encode 'city'
+    # TODO: Use pd.get_dummies
+    
+    return df
+
+print(preprocess(data))`,
+                solution: "Use fillna and standard scaler",
+                hints: ["One-Hot Encoding expands columns", "Always handle NaNs before scaling"]
+              }
             }
-          },
-          {
-            id: 'genai/prompt-quiz',
-            title: 'Checkpoint: LLM Concepts',
-            type: 'quiz',
-            description: 'Test your knowledge on Tokenization, Context Windows, and Temperature.',
-            quizConfig: {
-              questions: [
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 3: CLASSICAL MACHINE LEARNING
+    // ========================================================================
+    {
+      id: "mod-ml-classical",
+      title: "Module 3: Classical Machine Learning",
+      description: "From Regressions to advanced Boosting algorithms.",
+      icon: GitBranch,
+      chapters: [
+        {
+          id: "chap-supervised-basics",
+          title: "Supervised Learning",
+          topics: [
+            {
+              id: "regression", // Mapped to RegressionView
+              title: "Regression Analysis",
+              type: "doc",
+              icon: Activity,
+              description: "Predicting continuous variables using Linear, Ridge, Lasso, and Polynomial models.",
+            },
+            {
+              id: "classification", // Mapped to ClassificationView
+              title: "Classification Logic",
+              type: "doc",
+              icon: BookOpen,
+              description: "Decision boundaries: Logistic Regression, KNN, SVM, and Naive Bayes.",
+            }
+          ]
+        },
+        {
+          id: "chap-ensemble",
+          title: "Ensemble Learning",
+          topics: [
+            {
+              id: "ensemble", // Mapped to EnsembleView
+              title: "Random Forests & Boosting",
+              type: "doc",
+              icon: Layers,
+              description: "Random Forests and Gradient Boosting: Combining weak learners for robustness.",
+            },
+            {
+              id: "battleground", // Mapped to ModelComparisonView
+              title: "Model Battleground",
+              type: "doc",
+              icon: Swords,
+              description: "Direct comparison of algorithm performance, training time, and interpretability.",
+            },
+            {
+              id: "lab-xgboost-opt",
+              title: "Lab: Training XGBoost",
+              type: "lab",
+              icon: Code,
+              description: "Train a gradient boosting model and tune hyperparameters.",
+              labConfig: {
+                initialCode: `import xgboost as xgb
+import numpy as np
+from sklearn.metrics import accuracy_score
+
+# Mock Data Generation
+X = np.random.rand(100, 10)
+y = np.random.randint(0, 2, 100)
+
+def train_xgb():
+    # 1. Create DMatrix (XGBoost specific structure)
+    dtrain = xgb.DMatrix(X, label=y)
+    
+    # 2. Set Parameters
+    params = {
+        'max_depth': 3,  # Tree depth
+        'eta': 0.1,      # Learning rate
+        'objective': 'binary:logistic',
+        'eval_metric': 'logloss'
+    }
+    
+    # 3. Train
+    bst = xgb.train(params, dtrain, num_boost_round=10)
+    
+    # 4. Predict
+    preds = bst.predict(dtrain)
+    predictions = [1 if p > 0.5 else 0 for p in preds]
+    
+    acc = accuracy_score(y, predictions)
+    print(f"Model Accuracy: {acc}")
+    return "Training Complete"
+
+train_xgb()`,
+                solution: "Basic XGBoost workflow",
+                hints: ["DMatrix is faster than numpy arrays", "eta is the learning rate"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 4: DEEP LEARNING
+    // ========================================================================
+    {
+      id: "mod-dl",
+      title: "Module 4: Deep Learning & Vision",
+      description: "Neural Networks, CNNs, ResNets, and Vision Transformers.",
+      icon: Brain,
+      chapters: [
+        {
+          id: "chap-nn-foundations",
+          title: "Neural Networks",
+          topics: [
+            {
+              id: "deep-learning", // Mapped to DeepLearningView
+              title: "Deep Neural Networks",
+              type: "doc",
+              icon: Brain,
+              description: "MLPs, CNNs, RNNs, and the core Backpropagation algorithm.",
+            },
+            {
+              id: "unsupervised", // Mapped to UnsupervisedView
+              title: "Unsupervised Learning",
+              type: "doc",
+              icon: Search,
+              description: "Clustering and Dimensionality Reduction: K-Means, Hierarchical, and t-SNE.",
+            }
+          ]
+        },
+        {
+          id: "chap-cnn-arch",
+          title: "Advanced CNNs",
+          topics: [
+            {
+              id: "topic-resnet",
+              title: "ResNet & Skip Connections",
+              type: "doc",
+              icon: Layers,
+              description: "Solving vanishing gradients with residual blocks.",
+              content: `
+# The Vanishing Gradient Problem
+
+As networks got deeper, they became harder to train because gradients would shrink to zero during backpropagation.
+
+### Residual Networks (ResNet)
+ResNet introduced "Skip Connections" (or shortcuts). Instead of learning $H(x)$, layers learn the residual $F(x) = H(x) - x$.
+The output becomes $y = F(x) + x$. This allows gradients to flow directly through the network, enabling training of 100+ layer models.
+              `
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 5: NLP & TRANSFORMERS
+    // ========================================================================
+    {
+      id: "mod-nlp",
+      title: "Module 5: NLP & LLMs",
+      description: "From RNNs to GPT-4. Mastering Sequence Modeling.",
+      icon: BookOpen,
+      chapters: [
+        {
+          id: "chap-transformers",
+          title: "The Transformer Revolution",
+          topics: [
+             {
+              id: "deep-learning/attention-mechanism", // Mapped to custom content module
+              title: "The Attention Mechanism",
+              type: "doc",
+              icon: Zap,
+              description: "The mathematical heart of Transformers and LLMs.",
+            },
+            {
+              id: "topic-bert-gpt",
+              title: "BERT vs GPT",
+              type: "doc",
+              icon: Brain,
+              description: "Encoder vs Decoder architectures.",
+              content: `
+# Encoder vs Decoder
+
+### BERT (Bidirectional Encoder Representations from Transformers)
+* **Architecture:** Encoder-only.
+* **Task:** Masked Language Modeling (Fill in the blank).
+* **Use Case:** Understanding, Classification, QA.
+
+### GPT (Generative Pre-trained Transformer)
+* **Architecture:** Decoder-only.
+* **Task:** Causal Language Modeling (Predict next token).
+* **Use Case:** Text Generation, Reasoning.
+              `
+            },
+            {
+              id: "lab-attention-mech",
+              title: "Lab: Code Self-Attention",
+              type: "lab",
+              icon: Code,
+              description: "Implement scaled dot-product attention from scratch.",
+              labConfig: {
+                initialCode: `import numpy as np
+
+def scaled_dot_product_attention(q, k, v):
+    d_k = q.shape[-1]
+    
+    # 1. Dot Product of Q and K Transpose
+    scores = np.dot(q, k.T)
+    
+    # 2. Scale by square root of d_k
+    scaled_scores = scores / np.sqrt(d_k)
+    
+    # 3. Apply Softmax
+    weights = np.exp(scaled_scores) / np.sum(np.exp(scaled_scores), axis=-1, keepdims=True)
+    
+    # 4. Multiply by Values
+    output = np.dot(weights, v)
+    
+    return output, weights
+
+# Mock Vectors (Batch size 1, Seq len 3, Dim 4)
+Q = np.random.rand(3, 4)
+K = np.random.rand(3, 4)
+V = np.random.rand(3, 4)
+
+out, w = scaled_dot_product_attention(Q, K, V)
+print("Attention Weights:\\n", w)`,
+                solution: "Implements the math of the Attention paper",
+                hints: ["Softmax turns scores into probabilities", "Scaling prevents exploding gradients"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 6: RL & GENERATIVE AI
+    // ========================================================================
+    {
+      id: "mod-advanced",
+      title: "Module 6: RL & Generative AI",
+      description: "Deep Reinforcement Learning, GANs, and Diffusion Models.",
+      icon: Gamepad2,
+      chapters: [
+        {
+          id: "chap-drl",
+          title: "Deep Reinforcement Learning",
+          topics: [
+            {
+              id: "reinforcement", // Mapped to ReinforcementView
+              title: "RL Foundations",
+              type: "doc",
+              icon: Cpu,
+              description: "Agents, Environments, Q-Learning, and Actor-Critic methods.",
+            },
+            {
+              id: "topic-dqn",
+              title: "Deep Q-Networks (DQN)",
+              type: "doc",
+              icon: Cpu,
+              description: "Using Neural Networks to approximate the Q-function.",
+              content: `
+# Playing Atari with Deep Learning
+
+Q-Learning uses a table. DQN replaces the table with a Neural Network to approximate the Q-function.
+
+### Innovations:
+1.  **Experience Replay:** Storing past transitions in a buffer and sampling randomly to break correlation.
+2.  **Target Network:** Using a frozen copy of the network to stabilize training.
+              `
+            }
+          ]
+        },
+        {
+          id: "chap-genai",
+          title: "Generative Deep Learning",
+          topics: [
+            {
+              id: "topic-gans",
+              title: "GANs",
+              type: "doc",
+              icon: Layers,
+              description: "Generative Adversarial Networks: The game of two networks.",
+              content: `
+# The Adversarial Game
+
+Two networks competing against each other:
+1.  **Generator:** Tries to create fake data that looks real.
+2.  **Discriminator:** Tries to distinguish real data from fake.
+
+$$ \min_G \max_D V(D, G) $$
+              `
+            },
+            {
+              id: "topic-diffusion",
+              title: "Diffusion Models",
+              type: "doc",
+              icon: Box,
+              description: "Generating data by reversing noise.",
+              content: `
+# Denoising Diffusion
+
+GANs are notoriously hard to train (mode collapse). Diffusion models work differently:
+1.  **Forward Process:** Slowly add noise to an image until it is pure static.
+2.  **Reverse Process:** Train a neural network to predict the noise added at each step and subtract it.
+
+This allows generating high-quality images from random noise.
+              `
+            },
+            {
+              id: "quiz-final-boss",
+              title: "Final Exam: AI Engineering",
+              type: "quiz",
+              icon: CheckCircle,
+              description: "Test your knowledge across the entire curriculum.",
+              quizConfig: {
+                questions: [
+                  {
+                    id: "q1",
+                    text: "Which Transformer component allows it to process words in parallel?",
+                    options: ["Recurrent Connections", "Self-Attention", "Convolutional Filters", "Forget Gates"],
+                    correctIndex: 1,
+                    explanation: "Self-Attention computes relationships between all words simultaneously, unlike sequential RNNs."
+                  },
+                  {
+                    id: "q2",
+                    text: "In XGBoost, what is the role of the 'Learning Rate' (eta)?",
+                    options: ["It determines the depth of trees", "It scales the contribution of each new tree", "It removes missing values", "It changes the loss function"],
+                    correctIndex: 1,
+                    explanation: "Learning rate shrinks the weight of each new tree to prevent overfitting."
+                  },
+                  {
+                    id: "q3",
+                    text: "What is the primary advantage of CatBoost over XGBoost?",
+                    options: ["It runs on CPUs only", "It handles categorical features natively without One-Hot Encoding", "It uses Neural Networks", "It is older"],
+                    correctIndex: 1,
+                    explanation: "CatBoost uses 'ordered target statistics' to handle categories without preprocessing."
+                  },
+                  {
+                    id: "q4",
+                    text: "Which algorithm is commonly used for RLHF (Reinforcement Learning from Human Feedback) in LLMs?",
+                    options: ["DQN", "K-Means", "PPO", "Linear Regression"],
+                    correctIndex: 2,
+                    explanation: "Proximal Policy Optimization (PPO) is the standard for fine-tuning LLMs with human feedback."
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+            id: "chap-capstone",
+            title: "Capstone Project",
+            topics: [
                 {
-                  id: 'q1',
-                  text: 'What is the role of Temperature in LLM sampling?',
-                  options: ['It controls the learning rate', 'It controls the randomness of predictions', 'It sets the context length', 'It adjusts the model weights'],
-                  correctIndex: 1,
-                  explanation: 'Higher temperature flattens the probability distribution, making lower probability tokens more likely to be sampled (more creative).'
-                },
-                {
-                  id: 'q2',
-                  text: 'Why do we use Byte-Pair Encoding (BPE) or WordPiece?',
-                  options: ['To encrypt data', 'To handle out-of-vocabulary words efficiently', 'To remove stop words', 'To increase dataset size'],
-                  correctIndex: 1,
-                  explanation: 'Subword tokenization breaks unknown words into known sub-units, allowing the model to process rare terms.'
-                },
-                {
-                  id: 'q3',
-                  text: 'What limits the Context Window of a standard Transformer?',
-                  options: ['Disk space', 'Quadratic memory complexity of Self-Attention', 'Number of layers', 'Vocabulary size'],
-                  correctIndex: 1,
-                  explanation: 'The attention matrix grows as N^2 with sequence length N, consuming massive GPU VRAM.'
+                    id: "lab", // Mapped to ProjectLabView
+                    title: "Medical Case Study",
+                    type: "lab",
+                    icon: FlaskConical,
+                    description: "End-to-end project: EDA, Model Selection, and Performance Analysis on clinical heart disease data.",
                 }
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'module-4',
-    title: 'Module 4: MLOps & Engineering',
-    icon: React.createElement(Server, { size: 16 }),
-    chapters: [
-      {
-        id: 'deployment',
-        title: 'Production Systems',
-        topics: [
-          {
-            id: 'mlops/fastapi',
-            title: 'Real-time Inference APIs',
-            type: 'doc',
-            description: 'Wrapping models in REST APIs using FastAPI and Pydantic.',
-            details: {
-              theory: 'For real-time serving, models are containerized and exposed via HTTP. FastAPI provides high-performance asynchronous handling. We must consider serialization overhead, latency budgets, and concurrency management (Uvicorn workers).',
-              math: '\\text{Latency} = T_{net} + T_{deserialize} + T_{inference} + T_{serialize}',
-              mathLabel: 'Request Latency Model',
-              code: 'from fastapi import FastAPI\napp = FastAPI()\n\n@app.post("/predict")\nasync def predict(payload: InputSchema):\n    vector = preprocess(payload)\n    return {"pred": model.predict(vector).tolist()}',
-              codeLanguage: 'python'
-            }
-          },
-          {
-            id: 'mlops/docker-lab',
-            title: 'Lab: Dockerizing Models',
-            type: 'lab',
-            description: 'Write a Dockerfile to containerize a Python ML application.',
-            labConfig: {
-              initialCode: `# Complete the Dockerfile\n\n# 1. Base Image (python:3.9-slim)\nFROM \n\n# 2. Set work directory\nWORKDIR /app\n\n# 3. Copy requirements and install\nCOPY requirements.txt .\nRUN \n\n# 4. Copy app code\nCOPY . .\n\n# 5. Command to run app\nCMD ["python", "app.py"]`,
-              solution: `FROM python:3.9-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD ["python", "app.py"]`,
-              hints: ['Use python:3.9-slim', 'RUN pip install', 'CMD needs a list of strings']
-            }
-          },
-          {
-            id: 'mlops/drift',
-            title: 'Data Drift Detection',
-            type: 'doc',
-            description: 'Detecting distributional shifts between training and production data.',
-            details: {
-              theory: 'Models degrade over time as the world changes (Concept Drift) or input data changes (Covariate Shift). We use statistical tests like Kolmogorov-Smirnov (KS) or Population Stability Index (PSI) to trigger retraining pipelines automatically.',
-              math: 'D_{KL}(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}',
-              mathLabel: 'Kullback-Leibler Divergence',
-              code: 'from scipy.stats import ks_2samp\n\nstat, p_value = ks_2samp(train_data, prod_data)\nif p_value < 0.05:\n    trigger_retrain()',
-              codeLanguage: 'python'
-            }
-          }
-        ]
-      },
-      {
-        id: 'certification',
-        title: 'Certification',
-        topics: [
-          {
-            id: 'lab',
-            title: 'Capstone: Medical Case Study',
-            type: 'lab',
-            description: 'End-to-end project: EDA, Model Selection, and Performance Analysis on clinical heart disease data.',
-          },
-          {
-            id: 'mlops/final-exam',
-            title: 'Final Certification Exam',
-            type: 'quiz',
-            description: 'Comprehensive assessment covering Architecture, MLOps, and Theory.',
-            quizConfig: {
-              passingScore: 80,
-              questions: [
-                {
-                  id: 'f1',
-                  text: 'Which deployment strategy directs a small % of traffic to the new model?',
-                  options: ['Blue/Green', 'Canary', 'Shadow Mode', 'A/B Testing'],
-                  correctIndex: 1,
-                  explanation: 'Canary deployment releases the change to a small subset of users to reduce risk before full rollout.'
-                },
-                {
-                  id: 'f2',
-                  text: 'What happens if you increase the batch size significantly without adjusting learning rate?',
-                  options: ['Faster convergence', 'Generalization gap (worse test accuracy)', 'Model collapse', 'Gradient explosion'],
-                  correctIndex: 1,
-                  explanation: 'Large batch training tends to converge to sharp minimas, leading to poorer generalization unless heuristics like Linear Scaling Rule are used.'
-                },
-                {
-                  id: 'f3',
-                  text: 'In Docker, which instruction minimizes layer size?',
-                  options: ['Using multiple RUN commands', 'Chaining commands with &&', 'Copying all files', 'Using Ubuntu base'],
-                  correctIndex: 1,
-                  explanation: 'Chaining commands prevents the creation of intermediate temporary layers, keeping the image small.'
-                },
-                {
-                  id: 'f4',
-                  text: 'What is the primary benefit of Feature Stores?',
-                  options: ['Cheaper storage', 'Consistency between training and inference', 'Faster model training', 'Auto-ML'],
-                  correctIndex: 1,
-                  explanation: 'Feature Stores ensure the exact same feature logic serves both offline training and online inference, preventing training-serving skew.'
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }
-];
+            ]
+        }
+      ]
+    }
+  ]
+};

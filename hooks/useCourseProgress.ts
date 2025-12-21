@@ -40,7 +40,7 @@ export const useCourseProgress = () => {
   }, [completedTopics]);
 
   const getModuleProgress = useCallback((moduleId: string) => {
-    const module = CURRICULUM.find(m => m.id === moduleId);
+    const module = CURRICULUM.modules.find(m => m.id === moduleId);
     if (!module) return 0;
     
     let total = 0;
@@ -59,7 +59,7 @@ export const useCourseProgress = () => {
   const getOverallProgress = useCallback(() => {
      let total = 0;
      let completed = 0;
-     CURRICULUM.forEach(m => m.chapters.forEach(c => c.topics.forEach(t => {
+     CURRICULUM.modules.forEach(m => m.chapters.forEach(c => c.topics.forEach(t => {
          total++;
          if (completedTopics.includes(t.id)) completed++;
      })));

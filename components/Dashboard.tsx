@@ -18,7 +18,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       onNavigate(lastActiveTopic);
     } else {
       // Default to first topic of first module
-      const firstTopic = CURRICULUM[0]?.chapters[0]?.topics[0]?.id;
+      const firstTopic = CURRICULUM.modules[0]?.chapters[0]?.topics[0]?.id;
       if (firstTopic) onNavigate(firstTopic);
     }
   };
@@ -34,7 +34,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <span className="text-xs font-black uppercase tracking-widest">Course Progress</span>
              </div>
              <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
-                Full Stack AI Engineer
+                {CURRICULUM.title}
              </h1>
              <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
                 You have completed <strong className="text-white">{overallProgress}%</strong> of the certification. 
@@ -71,10 +71,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* Dynamic Modules Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {CURRICULUM.map((module, idx) => {
+        {CURRICULUM.modules.map((module, idx) => {
           const progress = getModuleProgress(module.id);
           const isStarted = progress > 0;
           const isComplete = progress === 100;
+          const Icon = module.icon;
 
           return (
             <motion.div 
@@ -87,7 +88,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <div className="p-6 border-b border-slate-800/50 bg-slate-900/50 flex justify-between items-center">
                  <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${isComplete ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
-                       {isComplete ? <CheckCircle size={20} /> : module.icon}
+                       {isComplete ? <CheckCircle size={20} /> : (Icon ? <Icon size={20} /> : null)}
                     </div>
                     <div>
                        <h3 className="font-bold text-slate-200 text-lg">{module.title}</h3>

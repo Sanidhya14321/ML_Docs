@@ -32,8 +32,6 @@ export interface ModelMetrics {
   rocCurve: { fpr: number; tpr: number }[];
 }
 
-// --- NEW DATA BACKBONE TYPES ---
-
 export type ContentType = 'doc' | 'lab' | 'quiz';
 
 export interface LabConfig {
@@ -67,8 +65,10 @@ export interface Topic {
   id: string;
   title: string;
   type: ContentType;
+  icon?: any; // Lucide icon component
   description?: string;
   details?: TopicDetails; // Rich content structure
+  content?: string; // Markdown content fallback
   labConfig?: LabConfig;
   quizConfig?: QuizConfig;
 }
@@ -82,11 +82,18 @@ export interface Chapter {
 export interface Module {
   id: string;
   title: string;
-  icon?: React.ReactNode;
+  description?: string;
+  icon?: any; // Lucide icon component
   chapters: Chapter[];
 }
 
-// Legacy support (can be deprecated later)
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  modules: Module[];
+}
+
 export interface NavigationItem {
   id: string; 
   label: string;

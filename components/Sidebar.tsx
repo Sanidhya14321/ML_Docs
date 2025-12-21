@@ -18,6 +18,13 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
   
   const getIcon = () => {
     if (completed) return <CheckCircle size={12} className="text-emerald-500" />;
+    
+    // Check if topic.icon is a React component (Lucide icon)
+    if (topic.icon) {
+        const Icon = topic.icon;
+        return <Icon size={12} />;
+    }
+
     switch (topic.type) {
       case 'lab': return <Terminal size={12} />;
       case 'quiz': return <Award size={12} />;
@@ -87,10 +94,11 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
 };
 
 const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (path: string) => void }> = ({ module, currentPath, onNavigate }) => {
+  const Icon = module.icon;
   return (
     <div className="mb-8">
       <div className="flex items-center gap-3 px-2 mb-3 text-slate-200 sticky top-0 bg-[#060810]/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
-        <span className="text-indigo-500">{module.icon}</span>
+        <span className="text-indigo-500">{Icon ? <Icon size={16} /> : null}</span>
         <h3 className="text-sm font-serif font-bold tracking-tight">{module.title}</h3>
       </div>
       <div className="space-y-1">
@@ -105,7 +113,7 @@ const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (p
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => {
   return (
     <nav className="pb-32 px-4 h-full overflow-y-auto custom-scrollbar">
-      {CURRICULUM.map(module => (
+      {CURRICULUM.modules.map(module => (
         <ModuleItem key={module.id} module={module} currentPath={currentPath} onNavigate={onNavigate} />
       ))}
     </nav>

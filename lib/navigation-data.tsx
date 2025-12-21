@@ -4,7 +4,7 @@ import { NavigationItem } from '../types';
 
 // Dynamically map the Master Database (CURRICULUM) into the Navigation Structure.
 // This ensures Sidebar, Sitemap, and Breadcrumbs are always 100% in sync with the data.
-export const NAV_ITEMS: NavigationItem[] = CURRICULUM.map((module) => ({
+export const NAV_ITEMS: NavigationItem[] = CURRICULUM.modules.map((module) => ({
   id: module.id,
   label: module.title,
   icon: module.icon,

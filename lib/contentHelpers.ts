@@ -5,7 +5,7 @@ import { Topic } from '../types';
 // Recursively flatten the curriculum into a single list of topics
 export const getAllTopics = (): Topic[] => {
   const topics: Topic[] = [];
-  CURRICULUM.forEach(module => {
+  CURRICULUM.modules.forEach(module => {
     module.chapters.forEach(chapter => {
       chapter.topics.forEach(topic => {
         topics.push(topic);
@@ -44,7 +44,7 @@ export const getPrevTopic = (currentId: string): string | null => {
 };
 
 export const getBreadcrumbs = (topicId: string): { label: string; id?: string }[] => {
-  for (const module of CURRICULUM) {
+  for (const module of CURRICULUM.modules) {
     for (const chapter of module.chapters) {
       const topic = chapter.topics.find(t => t.id === topicId);
       if (topic) {
