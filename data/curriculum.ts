@@ -1,17 +1,35 @@
 
 import React from 'react';
-import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical, Terminal, Activity, Layers, GitBranch, Globe, Container } from 'lucide-react';
+import { BookOpen, Database, Cpu, BrainCircuit, Gamepad2, Server, FlaskConical, Terminal, Activity, Layers, GitBranch, Globe, Container, Swords, Network, TrendingUp, Search } from 'lucide-react';
 import { Module } from '../types';
 
 export const CURRICULUM: Module[] = [
   {
     id: 'module-1',
-    title: 'Module 1: AI Engineering Foundations',
-    icon: React.createElement(Database, { size: 16 }),
+    title: 'Module 1: Foundations',
+    icon: React.createElement(BookOpen, { size: 16 }),
     chapters: [
       {
-        id: 'data-stack',
-        title: 'The Modern Data Stack',
+        id: 'math-foundations',
+        title: 'Mathematical Core',
+        topics: [
+          {
+            id: 'foundations',
+            title: 'Linear Algebra Primer',
+            type: 'doc',
+            description: 'The geometric interpretation of data: Vectors, Matrices, and Dot Products.',
+          },
+          {
+            id: 'optimization',
+            title: 'Optimization Engines',
+            type: 'doc',
+            description: 'Gradient Descent and Backtracking: How machines learn by minimizing error.',
+          }
+        ]
+      },
+      {
+        id: 'data-engineering',
+        title: 'Data Engineering',
         topics: [
           {
             id: 'foundations/python-advanced',
@@ -36,67 +54,6 @@ export const CURRICULUM: Module[] = [
               solution: `query = "SELECT user, val, SUM(val) OVER (PARTITION BY user ORDER BY date) as running_total FROM metrics"`,
               hints: ['Use PARTITION BY user', 'Use ORDER BY date', 'SUM(val) OVER (...)']
             }
-          },
-          {
-            id: 'foundations/math-quiz',
-            title: 'Checkpoint: Linear Algebra',
-            type: 'quiz',
-            description: 'Validate understanding of vector spaces and matrix operations.',
-            quizConfig: {
-              questions: [
-                {
-                  id: 'q1',
-                  text: 'What does the Rank of a matrix represent?',
-                  options: ['The number of rows', 'The number of linearly independent columns', 'The total sum of elements', 'The determinant value'],
-                  correctIndex: 1,
-                  explanation: 'Rank is the dimension of the vector space generated (or spanned) by its columns.'
-                },
-                {
-                  id: 'q2',
-                  text: 'In PCA, what do the Eigenvectors represent?',
-                  options: ['The principal directions of variance', 'The magnitude of variance', 'The cluster centroids', 'The loss function gradients'],
-                  correctIndex: 0,
-                  explanation: 'Eigenvectors point in the direction of the greatest variance in the data.'
-                },
-                {
-                  id: 'q3',
-                  text: 'Which matrix operation is non-commutative?',
-                  options: ['Addition (A+B)', 'Matrix Multiplication (AB)', 'Scalar Multiplication (cA)', 'Transpose (A^T)'],
-                  correctIndex: 1,
-                  explanation: 'In general, AB does not equal BA. The order of transformation matters.'
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        id: 'etl-pipelines',
-        title: 'ETL & Orchestration',
-        topics: [
-          {
-            id: 'mlops/airflow',
-            title: 'DAGs with Airflow',
-            type: 'doc',
-            description: 'Defining dependencies and scheduling workflows as code.',
-            details: {
-              theory: 'Directed Acyclic Graphs (DAGs) model the logical flow of data tasks. Airflow serves as the scheduler, ensuring tasks like data extraction, validation, and model training occur in the correct topological order. We handle retries, backfills, and SLA alerts programmatically.',
-              math: 'G = (V, E) \\text{ where } \\forall v \\in V, (v, v) \\notin E^*',
-              mathLabel: 'Acyclic Property',
-              code: 'from airflow import DAG\nfrom airflow.operators.python import PythonOperator\n\nwith DAG("model_train", schedule_interval="@daily") as dag:\n    t1 = PythonOperator(task_id="extract", python_callable=extract_data)\n    t2 = PythonOperator(task_id="train", python_callable=train_model)\n    t1 >> t2',
-              codeLanguage: 'python'
-            }
-          },
-          {
-            id: 'mlops/data-lab',
-            title: 'Lab: Data Cleaning Pipeline',
-            type: 'lab',
-            description: 'Build a robust Pandas pipeline to handle missing values and outliers.',
-            labConfig: {
-              initialCode: `import pandas as pd\nimport numpy as np\n\ndata = pd.DataFrame({\n    'age': [25, 30, np.nan, 150, 40],\n    'income': [50000, 60000, 55000, -1000, 100000000]\n})\n\ndef clean_data(df):\n    # 1. Fill NA age with median\n    \n    # 2. Filter invalid income (< 0)\n    \n    # 3. Cap income outliers at 99th percentile\n    \n    return df\n\ncleaned = clean_data(data)\nprint(cleaned)`,
-              solution: `def clean_data(df):\n    df['age'] = df['age'].fillna(df['age'].median())\n    df = df[df['income'] >= 0]\n    cap = df['income'].quantile(0.99)\n    df['income'] = df['income'].clip(upper=cap)\n    return df`,
-              hints: ['Use fillna()', 'Boolean indexing for filtering', 'Use quantile() and clip()']
-            }
           }
         ]
       }
@@ -104,36 +61,67 @@ export const CURRICULUM: Module[] = [
   },
   {
     id: 'module-2',
-    title: 'Module 2: Model Engineering',
+    title: 'Module 2: Supervised Learning',
+    icon: React.createElement(TrendingUp, { size: 16 }),
+    chapters: [
+      {
+        id: 'classical-ml',
+        title: 'Classical Algorithms',
+        topics: [
+          {
+            id: 'regression',
+            title: 'Regression Analysis',
+            type: 'doc',
+            description: 'Predicting continuous variables using Linear, Ridge, Lasso, and Polynomial models.',
+          },
+          {
+            id: 'classification',
+            title: 'Classification Logic',
+            type: 'doc',
+            description: 'Decision boundaries: Logistic Regression, KNN, SVM, and Naive Bayes.',
+          },
+          {
+            id: 'ensemble',
+            title: 'Ensemble Methods',
+            type: 'doc',
+            description: 'Random Forests and Gradient Boosting: Combining weak learners for robustness.',
+          },
+          {
+            id: 'battleground',
+            title: 'Model Battleground',
+            type: 'doc',
+            description: 'Direct comparison of algorithm performance, training time, and interpretability.',
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'module-3',
+    title: 'Module 3: Neural Intelligence',
     icon: React.createElement(BrainCircuit, { size: 16 }),
     chapters: [
       {
-        id: 'deep-learning',
-        title: 'Deep Learning Architectures',
+        id: 'deep-architectures',
+        title: 'Deep Architectures',
         topics: [
           {
-            id: 'dl/transformers-arch',
-            title: 'Transformer Architecture',
+            id: 'unsupervised',
+            title: 'Unsupervised Learning',
             type: 'doc',
-            description: 'The mechanism behind LLMs: Attention, Normalization, and Feed-Forward networks.',
-            details: {
-              theory: 'Transformers discard recurrence for pure attention. The Encoder processes the input context, while the Decoder generates output. Layer Normalization and Residual Connections are critical for gradient flow in deep stacks. Positional encodings inject sequence order information.',
-              math: '\\text{FFN}(x) = \\max(0, xW_1 + b_1)W_2 + b_2',
-              mathLabel: 'Position-wise Feed-Forward',
-              code: 'class TransformerBlock(nn.Module):\n    def __init__(self, embed_dim, num_heads):\n        super().__init__()\n        self.attention = nn.MultiheadAttention(embed_dim, num_heads)\n        self.norm1 = nn.LayerNorm(embed_dim)\n        self.ffn = nn.Linear(embed_dim, embed_dim)',
-              codeLanguage: 'python'
-            }
+            description: 'Clustering and Dimensionality Reduction: K-Means, Hierarchical, and t-SNE.',
           },
           {
-            id: 'dl/pytorch-training-lab',
-            title: 'Lab: Training Loop',
-            type: 'lab',
-            description: 'Implement a full PyTorch training loop with batches and optimization.',
-            labConfig: {
-              initialCode: `import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\n# Dummy Data\nX = torch.randn(100, 10)\ny = torch.randint(0, 2, (100,)).float().unsqueeze(1)\n\nmodel = nn.Sequential(nn.Linear(10, 1), nn.Sigmoid())\n\n# TODO: Define Optimizer (SGD) and Loss (BCELoss)\noptimizer = \ncriterion = \n\n# Training Step\noptimizer.zero_grad()\npred = model(X)\nloss = criterion(pred, y)\nloss.backward()\noptimizer.step()\n\nprint(f"Loss: {loss.item()}")`,
-              solution: `optimizer = optim.SGD(model.parameters(), lr=0.01)\ncriterion = nn.BCELoss()\noptimizer.zero_grad()\npred = model(X)\nloss = criterion(pred, y)\nloss.backward()\noptimizer.step()`,
-              hints: ['Use optim.SGD', 'Use nn.BCELoss for binary classification', 'Remember zero_grad() before backward()']
-            }
+            id: 'deep-learning',
+            title: 'Deep Neural Networks',
+            type: 'doc',
+            description: 'MLPs, CNNs for Vision, RNNs for Sequence, and Embeddings.',
+          },
+          {
+            id: 'reinforcement',
+            title: 'Reinforcement Learning',
+            type: 'doc',
+            description: 'Agents, Environments, Q-Learning, and Actor-Critic methods.',
           }
         ]
       },
@@ -141,6 +129,12 @@ export const CURRICULUM: Module[] = [
         id: 'generative-ai',
         title: 'Generative AI & LLMs',
         topics: [
+          {
+            id: 'deep-learning/attention-mechanism',
+            title: 'The Attention Mechanism',
+            type: 'doc',
+            description: 'The mathematical heart of Transformers and LLMs.',
+          },
           {
             id: 'genai/diffusion',
             title: 'Diffusion Models',
@@ -190,13 +184,13 @@ export const CURRICULUM: Module[] = [
     ]
   },
   {
-    id: 'module-3',
-    title: 'Module 3: MLOps & Production',
+    id: 'module-4',
+    title: 'Module 4: MLOps & Engineering',
     icon: React.createElement(Server, { size: 16 }),
     chapters: [
       {
         id: 'deployment',
-        title: 'Model Deployment',
+        title: 'Production Systems',
         topics: [
           {
             id: 'mlops/fastapi',
@@ -221,13 +215,7 @@ export const CURRICULUM: Module[] = [
               solution: `FROM python:3.9-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install -r requirements.txt\nCOPY . .\nCMD ["python", "app.py"]`,
               hints: ['Use python:3.9-slim', 'RUN pip install', 'CMD needs a list of strings']
             }
-          }
-        ]
-      },
-      {
-        id: 'monitoring',
-        title: 'Observability',
-        topics: [
+          },
           {
             id: 'mlops/drift',
             title: 'Data Drift Detection',
@@ -240,6 +228,18 @@ export const CURRICULUM: Module[] = [
               code: 'from scipy.stats import ks_2samp\n\nstat, p_value = ks_2samp(train_data, prod_data)\nif p_value < 0.05:\n    trigger_retrain()',
               codeLanguage: 'python'
             }
+          }
+        ]
+      },
+      {
+        id: 'certification',
+        title: 'Certification',
+        topics: [
+          {
+            id: 'lab',
+            title: 'Capstone: Medical Case Study',
+            type: 'lab',
+            description: 'End-to-end project: EDA, Model Selection, and Performance Analysis on clinical heart disease data.',
           },
           {
             id: 'mlops/final-exam',
