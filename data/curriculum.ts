@@ -19,7 +19,8 @@ import {
   Server,
   FlaskConical,
   Activity,
-  Swords
+  Swords,
+  PieChart
 } from "lucide-react";
 import { Course } from "../types";
 
@@ -75,15 +76,35 @@ $$
               content: `
 # Eigen decomposition
 
-An **Eigenvector** is a vector that, when a linear transformation is applied to it, does not change direction. It only scales by a factor called the **Eigenvalue** ($\lambda$).
+An **Eigenvector** is a vector that, when a linear transformation is applied to it, does not change direction. It only scales by a factor called the **Eigenvalue** ($\\lambda$).
 
 $$
-Av = \lambda v
+Av = \\lambda v
 $$
 
 This concept is crucial for:
 1.  **PCA (Principal Component Analysis):** Reducing dimensions by finding the axes of maximum variance.
 2.  **SVD (Singular Value Decomposition):** Used in recommendation systems.
+              `
+            },
+            {
+              id: "topic-matrix-decomp",
+              title: "Matrix Decompositions",
+              type: "doc",
+              icon: Layers,
+              description: "SVD, LU, and QR: Breaking matrices into fundamental building blocks.",
+              content: `
+# Singular Value Decomposition (SVD)
+
+Every matrix $A$ (even non-square ones) can be decomposed into three specific matrices. This is the "Data Compression" of Linear Algebra.
+
+$$ A = U \\Sigma V^T $$
+
+*   **U (Left Singular Vectors):** Orthogonal matrix representing the "input" basis.
+*   **$\\Sigma$ (Singular Values):** Diagonal matrix scaling the axes (strength of features).
+*   **$V^T$ (Right Singular Vectors):** Orthogonal matrix representing the "output" basis.
+
+Applications include **Image Compression**, **Denoising**, and **Dimensionality Reduction**.
               `
             }
           ]
@@ -93,10 +114,30 @@ This concept is crucial for:
           title: "Calculus & Optimization",
           topics: [
             {
+              id: "topic-multivar-calc",
+              title: "Multivariable Calculus",
+              type: "doc",
+              icon: TrendingUp,
+              description: "Gradients, Jacobians, and Hessians: Navigating high-dimensional spaces.",
+              content: `
+# The Gradient Vector
+
+In ML, we deal with functions of millions of variables (weights). The gradient $\\nabla f$ is a vector of partial derivatives pointing in the direction of steepest ascent.
+
+$$
+\\nabla f(x) = \\left[ \\frac{\\partial f}{\\partial x_1}, \\frac{\\partial f}{\\partial x_2}, \\dots, \\frac{\\partial f}{\\partial x_n} \\right]^T
+$$
+
+### The Jacobian & Hessian
+*   **Jacobian Matrix:** The matrix of all first-order partial derivatives of a vector-valued function. Used in Backpropagation.
+*   **Hessian Matrix:** The matrix of second-order derivatives. Tells us about the curvature of the loss landscape (convexity).
+              `
+            },
+            {
               id: "optimization", // Mapped to OptimizationView
               title: "Optimization Engines",
               type: "doc",
-              icon: TrendingUp,
+              icon: Zap,
               description: "Gradient Descent and Backtracking: How machines learn by minimizing error.",
             },
             {
@@ -140,6 +181,48 @@ This concept is crucial for:
               }
             }
           ]
+        },
+        {
+          id: "chap-prob-stats",
+          title: "Probability & Statistics",
+          topics: [
+            {
+              id: "topic-probability",
+              title: "Probability Theory",
+              type: "doc",
+              icon: PieChart, // Placeholder icon, assumes PieChart is generic enough or add import
+              description: "Quantifying uncertainty: Random Variables, Bayes' Theorem, and Distributions.",
+              content: `
+# Bayes' Theorem
+
+The framework for updating beliefs based on new evidence.
+
+$$ P(A|B) = \\frac{P(B|A)P(A)}{P(B)} $$
+
+*   **P(A):** Prior (Initial belief).
+*   **P(B|A):** Likelihood (How probable is the evidence given the hypothesis?).
+*   **P(A|B):** Posterior (Updated belief).
+
+In ML, we often want to find the parameters $\\theta$ that maximize the probability of the data $D$: $P(\\theta | D)$.
+              `
+            },
+            {
+              id: "topic-stats-inference",
+              title: "Statistical Inference",
+              type: "doc",
+              icon: Activity,
+              description: "Learning from data: Maximum Likelihood Estimation (MLE) and MAP.",
+              content: `
+# Maximum Likelihood Estimation (MLE)
+
+The standard method for training neural networks. We search for parameters $\\theta$ that make the observed data most probable.
+
+$$ \\hat{\\theta}_{MLE} = \\underset{\\theta}{\\text{argmax}} \\ \\mathcal{L}(\\theta; x) $$
+
+Often, we minimize the **Negative Log-Likelihood (NLL)** because logarithms turn products into sums, which are numerically stable and easier to differentiate. This directly leads to Cross-Entropy Loss in classification.
+              `
+            }
+          ]
         }
       ]
     },
@@ -170,11 +253,11 @@ Models that rely on distance (KNN, SVM, K-Means) or Gradients fit poorly if feat
 
 ### Min-Max Normalization
 Scales data to [0, 1].
-$$ x' = \frac{x - \min(x)}{\max(x) - \min(x)} $$
+$$ x' = \\frac{x - \\min(x)}{\\max(x) - \\min(x)} $$
 
 ### Z-Score Standardization
 Scales data to mean 0 and variance 1.
-$$ z = \frac{x - \mu}{\sigma} $$
+$$ z = \\frac{x - \\mu}{\\sigma} $$
               `
             },
             {
@@ -503,7 +586,7 @@ Two networks competing against each other:
 1.  **Generator:** Tries to create fake data that looks real.
 2.  **Discriminator:** Tries to distinguish real data from fake.
 
-$$ \min_G \max_D V(D, G) $$
+$$ \\min_G \\max_D V(D, G) $$
               `
             },
             {
