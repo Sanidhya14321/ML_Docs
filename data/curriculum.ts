@@ -20,14 +20,19 @@ import {
   FlaskConical,
   Activity,
   Swords,
-  PieChart
+  PieChart,
+  Eye,
+  Container,
+  Workflow,
+  Sparkles,
+  Settings
 } from "lucide-react";
 import { Course } from "../types";
 
 export const CURRICULUM: Course = {
   id: "ai-engineering-mastery",
   title: "The Complete AI Engineering Pipeline",
-  description: "From Linear Algebra to Large Language Models. A definitive curriculum for modern AI.",
+  description: "From Mathematical First Principles to MLOps. A definitive curriculum for modern AI.",
   modules: [
     // ========================================================================
     // MODULE 1: MATHEMATICAL FOUNDATIONS
@@ -44,10 +49,10 @@ export const CURRICULUM: Course = {
           topics: [
             {
               id: "foundations", // Mapped to FoundationsView
-              title: "Vectors & Matrices",
+              title: "Vectors, Matrices & Tensors",
               type: "doc",
               icon: Sigma,
-              description: "The geometric interpretation of data: Vectors, Matrices, and Dot Products.",
+              description: "The geometric interpretation of data: Basis, Norms, and Operations.",
               content: `
 # The Language of Data
 
@@ -59,17 +64,33 @@ To speak to a GPU, you must speak in Tensors.
 * **Matrix (Rank 2):** A 2D grid (e.g., a grayscale image).
 * **Tensor (Rank 3+):** N-dimensional arrays (e.g., RGB video data).
 
-### 2. Matrix Multiplication
-The engine of Deep Learning. If $A$ is $(m \\times n)$ and $B$ is $(n \\times p)$, then $C = A \\cdot B$ is $(m \\times p)$.
+### 2. Norms
+Measuring the "size" of vectors is crucial for regularization (L1/L2).
+* **L1 Norm (Manhattan):** $||x||_1 = \\sum |x_i|$
+* **L2 Norm (Euclidean):** $||x||_2 = \\sqrt{\\sum x_i^2}$
+              `
+            },
+            {
+              id: "topic-matrix-decomp",
+              title: "Matrix Decompositions",
+              type: "doc",
+              icon: Layers,
+              description: "SVD, LU, and Cholesky: Breaking matrices into fundamental building blocks.",
+              content: `
+# Singular Value Decomposition (SVD)
 
-$$
-C_{ij} = \\sum_{k=1}^n A_{ik} B_{kj}
-$$
+Every matrix $A$ can be decomposed into three specific matrices. This is the "Data Compression" of Linear Algebra.
+
+$$ A = U \\Sigma V^T $$
+
+*   **U (Left Singular Vectors):** Orthogonal matrix representing the "input" basis.
+*   **$\\Sigma$ (Singular Values):** Diagonal matrix scaling the axes (strength of features).
+*   **$V^T$ (Right Singular Vectors):** Orthogonal matrix representing the "output" basis.
               `
             },
             {
               id: "topic-eigen",
-              title: "Eigenvalues & Eigenvectors",
+              title: "Eigenvalues & PCA Math",
               type: "doc",
               icon: Sigma,
               description: "Understanding principal components and dimensionality.",
@@ -82,29 +103,7 @@ $$
 Av = \\lambda v
 $$
 
-This concept is crucial for:
-1.  **PCA (Principal Component Analysis):** Reducing dimensions by finding the axes of maximum variance.
-2.  **SVD (Singular Value Decomposition):** Used in recommendation systems.
-              `
-            },
-            {
-              id: "topic-matrix-decomp",
-              title: "Matrix Decompositions",
-              type: "doc",
-              icon: Layers,
-              description: "SVD, LU, and QR: Breaking matrices into fundamental building blocks.",
-              content: `
-# Singular Value Decomposition (SVD)
-
-Every matrix $A$ (even non-square ones) can be decomposed into three specific matrices. This is the "Data Compression" of Linear Algebra.
-
-$$ A = U \\Sigma V^T $$
-
-*   **U (Left Singular Vectors):** Orthogonal matrix representing the "input" basis.
-*   **$\\Sigma$ (Singular Values):** Diagonal matrix scaling the axes (strength of features).
-*   **$V^T$ (Right Singular Vectors):** Orthogonal matrix representing the "output" basis.
-
-Applications include **Image Compression**, **Denoising**, and **Dimensionality Reduction**.
+This is the mathematical backbone of **Principal Component Analysis (PCA)**, which rotates data to align with axes of maximum variance.
               `
             }
           ]
@@ -118,27 +117,27 @@ Applications include **Image Compression**, **Denoising**, and **Dimensionality 
               title: "Multivariable Calculus",
               type: "doc",
               icon: TrendingUp,
-              description: "Gradients, Jacobians, and Hessians: Navigating high-dimensional spaces.",
+              description: "Gradients, Jacobians, and Hessians.",
               content: `
 # The Gradient Vector
 
 In ML, we deal with functions of millions of variables (weights). The gradient $\\nabla f$ is a vector of partial derivatives pointing in the direction of steepest ascent.
 
 $$
-\\nabla f(x) = \\left[ \\frac{\\partial f}{\\partial x_1}, \\frac{\\partial f}{\\partial x_2}, \\dots, \\frac{\\partial f}{\\partial x_n} \\right]^T
+\\nabla f(x) = \\left[ \\frac{\\partial f}{\\partial x_1}, \\dots, \\frac{\\partial f}{\\partial x_n} \\right]^T
 $$
 
 ### The Jacobian & Hessian
-*   **Jacobian Matrix:** The matrix of all first-order partial derivatives of a vector-valued function. Used in Backpropagation.
-*   **Hessian Matrix:** The matrix of second-order derivatives. Tells us about the curvature of the loss landscape (convexity).
+*   **Jacobian ($J$):** Matrix of first-order partial derivatives for vector-valued functions. Crucial for Backpropagation.
+*   **Hessian ($H$):** Matrix of second-order derivatives. Determines the curvature of the loss landscape.
               `
             },
             {
               id: "optimization", // Mapped to OptimizationView
-              title: "Optimization Engines",
+              title: "Optimization Algorithms",
               type: "doc",
               icon: Zap,
-              description: "Gradient Descent and Backtracking: How machines learn by minimizing error.",
+              description: "Gradient Descent, Newton's Method, and Convexity.",
             },
             {
               id: "lab-autograd-scratch",
@@ -161,21 +160,9 @@ $$
             other.grad += out.grad
         out._backward = _backward
         return out
-
-    def __mul__(self, other):
-        out = Value(self.data * other.data, (self, other))
-        def _backward():
-            self.grad += other.data * out.grad
-            other.grad += self.data * out.grad
-        out._backward = _backward
-        return out
-
-    def backward(self):
-        # Topological sort logic would go here
-        self._backward()
-
-# TASK: Create variables a=2, b=-3. Calculate c = a*b + a. 
-# Manually verify gradients.`,
+    
+    # ... Implement __mul__ and backward() ...
+`,
                 solution: "Implements basic DAG gradient flow",
                 hints: ["Chain rule adds gradients", "Multiplication distributes gradients based on value"]
               }
@@ -190,36 +177,33 @@ $$
               id: "topic-probability",
               title: "Probability Theory",
               type: "doc",
-              icon: PieChart, // Placeholder icon, assumes PieChart is generic enough or add import
-              description: "Quantifying uncertainty: Random Variables, Bayes' Theorem, and Distributions.",
+              icon: PieChart, 
+              description: "Bayes' Theorem, Distributions (Gaussian, Poisson), and MLE.",
               content: `
 # Bayes' Theorem
 
-The framework for updating beliefs based on new evidence.
-
 $$ P(A|B) = \\frac{P(B|A)P(A)}{P(B)} $$
 
-*   **P(A):** Prior (Initial belief).
-*   **P(B|A):** Likelihood (How probable is the evidence given the hypothesis?).
-*   **P(A|B):** Posterior (Updated belief).
-
-In ML, we often want to find the parameters $\\theta$ that maximize the probability of the data $D$: $P(\\theta | D)$.
+# Maximum Likelihood Estimation (MLE)
+We search for parameters $\\theta$ that make the observed data most probable.
+$$ \\hat{\\theta}_{MLE} = \\underset{\\theta}{\\text{argmax}} \\ \\mathcal{L}(\\theta; x) $$
               `
             },
             {
-              id: "topic-stats-inference",
-              title: "Statistical Inference",
+              id: "topic-hypothesis",
+              title: "Hypothesis Testing",
               type: "doc",
               icon: Activity,
-              description: "Learning from data: Maximum Likelihood Estimation (MLE) and MAP.",
+              description: "p-values, t-tests, and A/B testing fundamentals.",
               content: `
-# Maximum Likelihood Estimation (MLE)
+# Statistical Significance
 
-The standard method for training neural networks. We search for parameters $\\theta$ that make the observed data most probable.
+How do we know if a model improvement is real or just noise?
 
-$$ \\hat{\\theta}_{MLE} = \\underset{\\theta}{\\text{argmax}} \\ \\mathcal{L}(\\theta; x) $$
+*   **Null Hypothesis ($H_0$):** No effect exists.
+*   **p-value:** The probability of observing results at least as extreme as the data, assuming $H_0$ is true.
 
-Often, we minimize the **Negative Log-Likelihood (NLL)** because logarithms turn products into sums, which are numerically stable and easier to differentiate. This directly leads to Cross-Entropy Loss in classification.
+If $p < \\alpha$ (usually 0.05), we reject the null hypothesis.
               `
             }
           ]
@@ -233,31 +217,51 @@ Often, we minimize the **Negative Log-Likelihood (NLL)** because logarithms turn
     {
       id: "mod-data",
       title: "Module 2: Data Engineering",
-      description: "ETL, Feature Engineering, and Handling messy real-world data.",
+      description: "EDA, Cleaning, Feature Engineering, and Dimensionality Reduction.",
       icon: Database,
       chapters: [
         {
-          id: "chap-preprocessing",
-          title: "Data Cleaning & Prep",
+          id: "chap-eda",
+          title: "Exploratory Analysis",
+          topics: [
+            {
+              id: "topic-eda",
+              title: "EDA & Visualization",
+              type: "doc",
+              icon: Search,
+              description: "Univariate/Bivariate analysis, Correlation Matrices, and Outlier Detection.",
+              content: `
+# Know Your Data
+
+Before training, you must understand the distribution.
+
+1.  **Univariate:** Histograms, Box Plots (IQR for outliers).
+2.  **Bivariate:** Scatter plots, Correlation Heatmaps (Pearson/Spearman).
+3.  **Missingness:** Heatmap of null values.
+              `
+            }
+          ]
+        },
+        {
+          id: "chap-feature-eng",
+          title: "Feature Engineering",
           topics: [
             {
               id: "topic-scaling",
-              title: "Normalization & Standardization",
+              title: "Scaling & Encoding",
               type: "doc",
               icon: Database,
-              description: "Feature Scaling techniques for distance-based algorithms.",
+              description: "Normalization, Standardization, and Categorical Encodings.",
               content: `
-# Feature Scaling
+# Transformations
 
-Models that rely on distance (KNN, SVM, K-Means) or Gradients fit poorly if features have vastly different scales (e.g., Age: 0-100 vs Income: 0-100,000).
+*   **Min-Max:** Scales to [0,1]. Sensitive to outliers.
+*   **Standardization (Z-Score):** Centers around 0 with std dev 1.
+*   **Log Transform:** Handles skewed distributions (e.g., income).
 
-### Min-Max Normalization
-Scales data to [0, 1].
-$$ x' = \\frac{x - \\min(x)}{\\max(x) - \\min(x)} $$
-
-### Z-Score Standardization
-Scales data to mean 0 and variance 1.
-$$ z = \\frac{x - \\mu}{\\sigma} $$
+### Categorical
+*   **One-Hot:** Good for low cardinality.
+*   **Target Encoding:** Good for high cardinality, risk of leakage.
               `
             },
             {
@@ -269,7 +273,6 @@ $$ z = \\frac{x - \\mu}{\\sigma} $$
               labConfig: {
                 initialCode: `import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 # MOCK DATA
 data = pd.DataFrame({
@@ -278,19 +281,7 @@ data = pd.DataFrame({
     'city': ['NY', 'SF', 'NY', 'Chicago']
 })
 
-def preprocess(df):
-    # 1. Fill Missing Values (Imputation)
-    df['age'] = df['age'].fillna(df['age'].mean())
-    
-    # 2. Normalize 'salary'
-    # TODO: Implement Standard Scaling for Salary
-    
-    # 3. One-Hot Encode 'city'
-    # TODO: Use pd.get_dummies
-    
-    return df
-
-print(preprocess(data))`,
+# TODO: Fill NA, Normalize Salary, Encode City`,
                 solution: "Use fillna and standard scaler",
                 hints: ["One-Hot Encoding expands columns", "Always handle NaNs before scaling"]
               }
@@ -306,11 +297,11 @@ print(preprocess(data))`,
     {
       id: "mod-ml-classical",
       title: "Module 3: Classical Machine Learning",
-      description: "From Regressions to advanced Boosting algorithms.",
+      description: "Supervised, Unsupervised, and Ensemble methods.",
       icon: GitBranch,
       chapters: [
         {
-          id: "chap-supervised-basics",
+          id: "chap-supervised",
           title: "Supervised Learning",
           topics: [
             {
@@ -318,14 +309,14 @@ print(preprocess(data))`,
               title: "Regression Analysis",
               type: "doc",
               icon: Activity,
-              description: "Predicting continuous variables using Linear, Ridge, Lasso, and Polynomial models.",
+              description: "Linear, Polynomial, Lasso (L1), and Ridge (L2).",
             },
             {
               id: "classification", // Mapped to ClassificationView
-              title: "Classification Logic",
+              title: "Classification Algorithms",
               type: "doc",
               icon: BookOpen,
-              description: "Decision boundaries: Logistic Regression, KNN, SVM, and Naive Bayes.",
+              description: "Logistic Regression, KNN, SVM, Naive Bayes, and Decision Trees.",
             }
           ]
         },
@@ -335,60 +326,30 @@ print(preprocess(data))`,
           topics: [
             {
               id: "ensemble", // Mapped to EnsembleView
-              title: "Random Forests & Boosting",
+              title: "Bagging & Boosting",
               type: "doc",
               icon: Layers,
-              description: "Random Forests and Gradient Boosting: Combining weak learners for robustness.",
+              description: "Random Forests, XGBoost, LightGBM, and CatBoost.",
             },
             {
               id: "battleground", // Mapped to ModelComparisonView
               title: "Model Battleground",
               type: "doc",
               icon: Swords,
-              description: "Direct comparison of algorithm performance, training time, and interpretability.",
-            },
+              description: "Direct comparison of algorithm performance and trade-offs.",
+            }
+          ]
+        },
+        {
+          id: "chap-unsupervised",
+          title: "Unsupervised Learning",
+          topics: [
             {
-              id: "lab-xgboost-opt",
-              title: "Lab: Training XGBoost",
-              type: "lab",
-              icon: Code,
-              description: "Train a gradient boosting model and tune hyperparameters.",
-              labConfig: {
-                initialCode: `import xgboost as xgb
-import numpy as np
-from sklearn.metrics import accuracy_score
-
-# Mock Data Generation
-X = np.random.rand(100, 10)
-y = np.random.randint(0, 2, 100)
-
-def train_xgb():
-    # 1. Create DMatrix (XGBoost specific structure)
-    dtrain = xgb.DMatrix(X, label=y)
-    
-    # 2. Set Parameters
-    params = {
-        'max_depth': 3,  # Tree depth
-        'eta': 0.1,      # Learning rate
-        'objective': 'binary:logistic',
-        'eval_metric': 'logloss'
-    }
-    
-    # 3. Train
-    bst = xgb.train(params, dtrain, num_boost_round=10)
-    
-    # 4. Predict
-    preds = bst.predict(dtrain)
-    predictions = [1 if p > 0.5 else 0 for p in preds]
-    
-    acc = accuracy_score(y, predictions)
-    print(f"Model Accuracy: {acc}")
-    return "Training Complete"
-
-train_xgb()`,
-                solution: "Basic XGBoost workflow",
-                hints: ["DMatrix is faster than numpy arrays", "eta is the learning rate"]
-              }
+              id: "unsupervised", // Mapped to UnsupervisedView
+              title: "Clustering & Dim Reduction",
+              type: "doc",
+              icon: Network,
+              description: "K-Means, Hierarchical, PCA, t-SNE, and Association Rules.",
             }
           ]
         }
@@ -396,16 +357,16 @@ train_xgb()`,
     },
 
     // ========================================================================
-    // MODULE 4: DEEP LEARNING
+    // MODULE 4: DEEP LEARNING FUNDAMENTALS
     // ========================================================================
     {
       id: "mod-dl",
-      title: "Module 4: Deep Learning & Vision",
-      description: "Neural Networks, CNNs, ResNets, and Vision Transformers.",
+      title: "Module 4: Deep Learning Fundamentals",
+      description: "ANNs, Backpropagation, and Optimization strategies.",
       icon: Brain,
       chapters: [
         {
-          id: "chap-nn-foundations",
+          id: "chap-ann",
           title: "Neural Networks",
           topics: [
             {
@@ -413,35 +374,42 @@ train_xgb()`,
               title: "Deep Neural Networks",
               type: "doc",
               icon: Brain,
-              description: "MLPs, CNNs, RNNs, and the core Backpropagation algorithm.",
-            },
-            {
-              id: "unsupervised", // Mapped to UnsupervisedView
-              title: "Unsupervised Learning",
-              type: "doc",
-              icon: Search,
-              description: "Clustering and Dimensionality Reduction: K-Means, Hierarchical, and t-SNE.",
+              description: "Perceptrons, MLPs, Activation Functions, and Backpropagation.",
             }
           ]
         },
         {
-          id: "chap-cnn-arch",
-          title: "Advanced CNNs",
+          id: "chap-optimization",
+          title: "Training & Optimization",
           topics: [
             {
-              id: "topic-resnet",
-              title: "ResNet & Skip Connections",
+              id: "topic-optimizers",
+              title: "Optimizers & Loss",
               type: "doc",
-              icon: Layers,
-              description: "Solving vanishing gradients with residual blocks.",
+              icon: TrendingUp,
+              description: "Adam, RMSProp, SGD, and Cross-Entropy.",
               content: `
-# The Vanishing Gradient Problem
+# Beyond Gradient Descent
 
-As networks got deeper, they became harder to train because gradients would shrink to zero during backpropagation.
+Standard SGD gets stuck in local minima.
 
-### Residual Networks (ResNet)
-ResNet introduced "Skip Connections" (or shortcuts). Instead of learning $H(x)$, layers learn the residual $F(x) = H(x) - x$.
-The output becomes $y = F(x) + x$. This allows gradients to flow directly through the network, enabling training of 100+ layer models.
+*   **Momentum:** Accumulates velocity to power through flat regions.
+*   **RMSProp:** Adapts learning rates per parameter.
+*   **Adam (Adaptive Moment Estimation):** Combines Momentum and RMSProp. The default for most tasks.
+              `
+            },
+            {
+              id: "topic-regularization-dl",
+              title: "Regularization in DL",
+              type: "doc",
+              icon: CheckCircle,
+              description: "Dropout, Batch Normalization, and Early Stopping.",
+              content: `
+# Fighting Overfitting
+
+*   **Dropout:** Randomly ignoring neurons during training to prevent co-adaptation.
+*   **Batch Normalization:** Normalizing layer inputs to stabilize learning.
+*   **Early Stopping:** Monitoring validation loss and stopping when it degrades.
               `
             }
           ]
@@ -450,44 +418,117 @@ The output becomes $y = F(x) + x$. This allows gradients to flow directly throug
     },
 
     // ========================================================================
-    // MODULE 5: NLP & TRANSFORMERS
+    // MODULE 5: COMPUTER VISION
+    // ========================================================================
+    {
+      id: "mod-cv",
+      title: "Module 5: Computer Vision",
+      description: "CNNs, Object Detection, and Segmentation.",
+      icon: Eye,
+      chapters: [
+        {
+          id: "chap-cnn",
+          title: "CNN Architectures",
+          topics: [
+            {
+              id: "topic-cnn-layers",
+              title: "Convolutions & Pooling",
+              type: "doc",
+              icon: Layers,
+              description: "Filters, Stride, Padding, and Max Pooling.",
+              content: "Visualizing kernels and feature map extraction."
+            },
+            {
+              id: "topic-resnet",
+              title: "ResNet & Modern Arcs",
+              type: "doc",
+              icon: Network,
+              description: "Solving vanishing gradients with Residual Connections.",
+              content: `
+# ResNet
+
+$y = F(x) + x$
+
+By learning the residual $F(x)$, gradients can flow directly through the identity connection $x$, allowing for extremely deep networks (100+ layers).
+              `
+            }
+          ]
+        },
+        {
+          id: "chap-vision-tasks",
+          title: "Advanced Vision",
+          topics: [
+            {
+              id: "topic-yolo",
+              title: "Object Detection (YOLO)",
+              type: "doc",
+              icon: Box,
+              description: "Single-shot detection vs R-CNN approaches.",
+              content: `
+# You Only Look Once (YOLO)
+
+Treats object detection as a single regression problem.
+Divides image into a grid; each cell predicts bounding boxes and probabilities. Much faster than region-proposal methods (R-CNN).
+              `
+            },
+            {
+              id: "topic-segmentation",
+              title: "Segmentation (U-Net)",
+              type: "doc",
+              icon: Layers,
+              description: "Semantic vs Instance Segmentation.",
+              content: "Pixel-level classification using Encoder-Decoder architectures with skip connections."
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 6: NLP
     // ========================================================================
     {
       id: "mod-nlp",
-      title: "Module 5: NLP & LLMs",
-      description: "From RNNs to GPT-4. Mastering Sequence Modeling.",
+      title: "Module 6: NLP & Transformers",
+      description: "Text processing, Embeddings, RNNs, and Transformers.",
       icon: BookOpen,
       chapters: [
         {
+          id: "chap-embeddings",
+          title: "Word Embeddings",
+          topics: [
+            {
+              id: "topic-embeddings",
+              title: "Word2Vec & GloVe",
+              type: "doc",
+              icon: Search,
+              description: "Dense vector representations of text.",
+              content: `
+# Semantic Space
+
+Mapping words to vectors such that:
+$Vec(\\text{King}) - Vec(\\text{Man}) + Vec(\\text{Woman}) \\approx Vec(\\text{Queen})$
+              `
+            }
+          ]
+        },
+        {
           id: "chap-transformers",
-          title: "The Transformer Revolution",
+          title: "The Transformer Era",
           topics: [
              {
               id: "deep-learning/attention-mechanism", // Mapped to custom content module
               title: "The Attention Mechanism",
               type: "doc",
               icon: Zap,
-              description: "The mathematical heart of Transformers and LLMs.",
+              description: "Self-Attention, Multi-Head Attention, and Positional Encoding.",
             },
             {
               id: "topic-bert-gpt",
               title: "BERT vs GPT",
               type: "doc",
               icon: Brain,
-              description: "Encoder vs Decoder architectures.",
-              content: `
-# Encoder vs Decoder
-
-### BERT (Bidirectional Encoder Representations from Transformers)
-* **Architecture:** Encoder-only.
-* **Task:** Masked Language Modeling (Fill in the blank).
-* **Use Case:** Understanding, Classification, QA.
-
-### GPT (Generative Pre-trained Transformer)
-* **Architecture:** Decoder-only.
-* **Task:** Causal Language Modeling (Predict next token).
-* **Use Case:** Text Generation, Reasoning.
-              `
+              description: "Encoder (Bi-directional) vs Decoder (Auto-regressive) models.",
             },
             {
               id: "lab-attention-mech",
@@ -499,31 +540,10 @@ The output becomes $y = F(x) + x$. This allows gradients to flow directly throug
                 initialCode: `import numpy as np
 
 def scaled_dot_product_attention(q, k, v):
-    d_k = q.shape[-1]
-    
-    # 1. Dot Product of Q and K Transpose
-    scores = np.dot(q, k.T)
-    
-    # 2. Scale by square root of d_k
-    scaled_scores = scores / np.sqrt(d_k)
-    
-    # 3. Apply Softmax
-    weights = np.exp(scaled_scores) / np.sum(np.exp(scaled_scores), axis=-1, keepdims=True)
-    
-    # 4. Multiply by Values
-    output = np.dot(weights, v)
-    
-    return output, weights
-
-# Mock Vectors (Batch size 1, Seq len 3, Dim 4)
-Q = np.random.rand(3, 4)
-K = np.random.rand(3, 4)
-V = np.random.rand(3, 4)
-
-out, w = scaled_dot_product_attention(Q, K, V)
-print("Attention Weights:\\n", w)`,
+    # TODO: Implement Attention Formula
+    pass`,
                 solution: "Implements the math of the Attention paper",
-                hints: ["Softmax turns scores into probabilities", "Scaling prevents exploding gradients"]
+                hints: ["Softmax turns scores into probabilities", "Divide by sqrt(d_k)"]
               }
             }
           ]
@@ -532,132 +552,182 @@ print("Attention Weights:\\n", w)`,
     },
 
     // ========================================================================
-    // MODULE 6: RL & GENERATIVE AI
+    // MODULE 7: LLMs & GenAI
     // ========================================================================
     {
-      id: "mod-advanced",
-      title: "Module 6: RL & Generative AI",
-      description: "Deep Reinforcement Learning, GANs, and Diffusion Models.",
-      icon: Gamepad2,
+      id: "mod-genai",
+      title: "Module 7: LLMs & GenAI",
+      description: "Fine-tuning, RAG, GANs, and Diffusion.",
+      icon: Sparkles, 
       chapters: [
         {
-          id: "chap-drl",
-          title: "Deep Reinforcement Learning",
+          id: "chap-llm-ops",
+          title: "LLM Engineering",
           topics: [
             {
-              id: "reinforcement", // Mapped to ReinforcementView
-              title: "RL Foundations",
+              id: "topic-peft",
+              title: "Fine-Tuning (PEFT/LoRA)",
               type: "doc",
-              icon: Cpu,
-              description: "Agents, Environments, Q-Learning, and Actor-Critic methods.",
+              icon: Settings,
+              description: "Low-Rank Adaptation and RLHF.",
+              content: `
+# LoRA (Low-Rank Adaptation)
+
+Instead of updating all weights $W$, we freeze $W$ and train low-rank matrices $A$ and $B$:
+$$ W' = W + \\Delta W = W + BA $$
+
+This reduces trainable parameters by 10,000x.
+              `
             },
             {
-              id: "topic-dqn",
-              title: "Deep Q-Networks (DQN)",
+              id: "topic-rag",
+              title: "RAG Systems",
               type: "doc",
-              icon: Cpu,
-              description: "Using Neural Networks to approximate the Q-function.",
-              content: `
-# Playing Atari with Deep Learning
-
-Q-Learning uses a table. DQN replaces the table with a Neural Network to approximate the Q-function.
-
-### Innovations:
-1.  **Experience Replay:** Storing past transitions in a buffer and sampling randomly to break correlation.
-2.  **Target Network:** Using a frozen copy of the network to stabilize training.
-              `
+              icon: Database,
+              description: "Retrieval Augmented Generation with Vector DBs.",
+              content: "Combining Parametric memory (LLM) with Non-Parametric memory (Vector DB) to reduce hallucinations."
             }
           ]
         },
         {
-          id: "chap-genai",
-          title: "Generative Deep Learning",
+          id: "chap-image-gen",
+          title: "Generative Vision",
           topics: [
             {
               id: "topic-gans",
               title: "GANs",
               type: "doc",
               icon: Layers,
-              description: "Generative Adversarial Networks: The game of two networks.",
-              content: `
-# The Adversarial Game
-
-Two networks competing against each other:
-1.  **Generator:** Tries to create fake data that looks real.
-2.  **Discriminator:** Tries to distinguish real data from fake.
-
-$$ \\min_G \\max_D V(D, G) $$
-              `
+              description: "Generator vs Discriminator.",
             },
             {
               id: "topic-diffusion",
               title: "Diffusion Models",
               type: "doc",
               icon: Box,
-              description: "Generating data by reversing noise.",
+              description: "Stable Diffusion and Latent Space denoising.",
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 8: REINFORCEMENT LEARNING
+    // ========================================================================
+    {
+      id: "mod-rl",
+      title: "Module 8: Reinforcement Learning",
+      description: "MDPs, Q-Learning, and Policy Gradients.",
+      icon: Gamepad2,
+      chapters: [
+        {
+          id: "chap-rl-basics",
+          title: "RL Fundamentals",
+          topics: [
+            {
+              id: "reinforcement", // Mapped to ReinforcementView
+              title: "MDPs & Bellman Equations",
+              type: "doc",
+              icon: Cpu,
+              description: "States, Actions, Rewards, and Q-Learning.",
+            }
+          ]
+        },
+        {
+          id: "chap-rl-modern",
+          title: "Modern RL",
+          topics: [
+            {
+              id: "topic-dqn",
+              title: "Deep Q-Networks (DQN)",
+              type: "doc",
+              icon: Network,
+              description: "Experience Replay and Target Networks.",
+            },
+            {
+              id: "topic-ppo",
+              title: "Policy Gradients (PPO)",
+              type: "doc",
+              icon: TrendingUp,
+              description: "Proximal Policy Optimization and Actor-Critic methods.",
               content: `
-# Denoising Diffusion
+# Policy Gradients
 
-GANs are notoriously hard to train (mode collapse). Diffusion models work differently:
-1.  **Forward Process:** Slowly add noise to an image until it is pure static.
-2.  **Reverse Process:** Train a neural network to predict the noise added at each step and subtract it.
-
-This allows generating high-quality images from random noise.
+Instead of learning value values $Q(s,a)$, we directly optimize the policy $\\pi(a|s)$.
+**PPO** constrains the update step to prevent the policy from changing too drastically, ensuring stability.
               `
+            }
+          ]
+        }
+      ]
+    },
+
+    // ========================================================================
+    // MODULE 9: MLOps
+    // ========================================================================
+    {
+      id: "mod-mlops",
+      title: "Module 9: MLOps & Deployment",
+      description: "Serving, CI/CD, and Infrastructure.",
+      icon: Container,
+      chapters: [
+        {
+          id: "chap-serving",
+          title: "Model Serving",
+          topics: [
+            {
+              id: "topic-api",
+              title: "REST APIs & ONNX",
+              type: "doc",
+              icon: Server,
+              description: "FastAPI, TorchServe, and ONNX Runtime.",
+              content: "Packaging models into microservices for production inference."
+            }
+          ]
+        },
+        {
+          id: "chap-infra",
+          title: "Infrastructure",
+          topics: [
+            {
+              id: "topic-docker",
+              title: "Docker & Kubernetes",
+              type: "doc",
+              icon: Box,
+              description: "Containerization and orchestration for ML workloads.",
+            },
+            {
+              id: "topic-cicd",
+              title: "CI/CD for ML",
+              type: "doc",
+              icon: Workflow,
+              description: "Automated training pipelines and Experiment Tracking (MLflow).",
             },
             {
               id: "quiz-final-boss",
-              title: "Final Exam: AI Engineering",
+              title: "Final Certification",
               type: "quiz",
               icon: CheckCircle,
-              description: "Test your knowledge across the entire curriculum.",
+              description: "Comprehensive exam covering all 9 modules.",
               quizConfig: {
                 questions: [
                   {
                     id: "q1",
-                    text: "Which Transformer component allows it to process words in parallel?",
-                    options: ["Recurrent Connections", "Self-Attention", "Convolutional Filters", "Forget Gates"],
-                    correctIndex: 1,
-                    explanation: "Self-Attention computes relationships between all words simultaneously, unlike sequential RNNs."
+                    text: "What prevents the vanishing gradient problem in ResNets?",
+                    options: ["Skip Connections", "Max Pooling", "Dropout", "L2 Regularization"],
+                    correctIndex: 0
                   },
                   {
                     id: "q2",
-                    text: "In XGBoost, what is the role of the 'Learning Rate' (eta)?",
-                    options: ["It determines the depth of trees", "It scales the contribution of each new tree", "It removes missing values", "It changes the loss function"],
-                    correctIndex: 1,
-                    explanation: "Learning rate shrinks the weight of each new tree to prevent overfitting."
-                  },
-                  {
-                    id: "q3",
-                    text: "What is the primary advantage of CatBoost over XGBoost?",
-                    options: ["It runs on CPUs only", "It handles categorical features natively without One-Hot Encoding", "It uses Neural Networks", "It is older"],
-                    correctIndex: 1,
-                    explanation: "CatBoost uses 'ordered target statistics' to handle categories without preprocessing."
-                  },
-                  {
-                    id: "q4",
-                    text: "Which algorithm is commonly used for RLHF (Reinforcement Learning from Human Feedback) in LLMs?",
-                    options: ["DQN", "K-Means", "PPO", "Linear Regression"],
-                    correctIndex: 2,
-                    explanation: "Proximal Policy Optimization (PPO) is the standard for fine-tuning LLMs with human feedback."
+                    text: "Which attention component computes the relevance score?",
+                    options: ["Value * Key", "Query * Key", "Query * Value", "Softmax"],
+                    correctIndex: 1
                   }
                 ]
               }
             }
           ]
-        },
-        {
-            id: "chap-capstone",
-            title: "Capstone Project",
-            topics: [
-                {
-                    id: "lab", // Mapped to ProjectLabView
-                    title: "Medical Case Study",
-                    type: "lab",
-                    icon: FlaskConical,
-                    description: "End-to-end project: EDA, Model Selection, and Performance Analysis on clinical heart disease data.",
-                }
-            ]
         }
       ]
     }
