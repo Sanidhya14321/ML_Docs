@@ -923,12 +923,3 @@ with mlflow.start_run():
     }
   ]
 };
-
-// Helper component import fix (same as before to prevent errors)
-function SparklesIcon(props: any) {
-    return <Zap {...props} /> 
-}
-
-function SettingsIcon(props: any) {
-    return <Workflow {...props} />
-}
