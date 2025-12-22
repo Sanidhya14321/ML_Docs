@@ -1,34 +1,13 @@
 
-import { lazy } from 'react';
-import { ViewSection } from '../types';
-
-// We map generic IDs to Lazy Loaded Content Modules
-export const CONTENT_REGISTRY: Record<string, any> = {
-  // Legacy Views
-  [ViewSection.FOUNDATIONS]: lazy(() => import('../views/FoundationsView').then(m => ({ default: m.FoundationsView }))),
-  [ViewSection.OPTIMIZATION]: lazy(() => import('../views/OptimizationView').then(m => ({ default: m.OptimizationView }))),
-  [ViewSection.REGRESSION]: lazy(() => import('../views/RegressionView').then(m => ({ default: m.RegressionView }))),
-  [ViewSection.CLASSIFICATION]: lazy(() => import('../views/ClassificationView').then(m => ({ default: m.ClassificationView }))),
-  [ViewSection.ENSEMBLE]: lazy(() => import('../views/EnsembleView').then(m => ({ default: m.EnsembleView }))),
-  [ViewSection.UNSUPERVISED]: lazy(() => import('../views/UnsupervisedView').then(m => ({ default: m.UnsupervisedView }))),
-  [ViewSection.DEEP_LEARNING]: lazy(() => import('../views/DeepLearningView').then(m => ({ default: m.DeepLearningView }))),
-  [ViewSection.REINFORCEMENT]: lazy(() => import('../views/ReinforcementView').then(m => ({ default: m.ReinforcementView }))),
-  [ViewSection.MODEL_COMPARISON]: lazy(() => import('../views/ModelComparisonView').then(m => ({ default: m.ModelComparisonView }))),
-  [ViewSection.PROJECT_LAB]: lazy(() => import('../views/ProjectLabView').then(m => ({ default: m.ProjectLabView }))),
-  
-  // New Content-First Modules
-  'deep-learning/attention-mechanism': lazy(() => import('./deep-learning/AttentionMechanism').then(m => ({ default: () => <DocReader module={m} path="deep-learning/attention-mechanism" /> }))),
-};
-
-// Helper Component to Read Metadata + Content
-import React, { useState } from 'react';
-import { ContentModule } from '../types';
+import React, { useState, lazy } from 'react';
+import { ViewSection, ContentModule } from '../types';
 import { Calendar, Clock, BarChart, Tag, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SEOHead } from '../components/SEOHead';
 import { Feedback } from '../components/Feedback';
 import { ShareDialog } from '../components/ShareDialog';
 
+// Helper Component to Read Metadata + Content
 const DocReader: React.FC<{ module: ContentModule; path: string }> = ({ module, path }) => {
   const { metadata, Content } = module;
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -91,4 +70,22 @@ const DocReader: React.FC<{ module: ContentModule; path: string }> = ({ module, 
       </motion.div>
     </>
   );
+};
+
+// We map generic IDs to Lazy Loaded Content Modules
+export const CONTENT_REGISTRY: Record<string, any> = {
+  // Legacy Views
+  [ViewSection.FOUNDATIONS]: lazy(() => import('../views/FoundationsView').then(m => ({ default: m.FoundationsView }))),
+  [ViewSection.OPTIMIZATION]: lazy(() => import('../views/OptimizationView').then(m => ({ default: m.OptimizationView }))),
+  [ViewSection.REGRESSION]: lazy(() => import('../views/RegressionView').then(m => ({ default: m.RegressionView }))),
+  [ViewSection.CLASSIFICATION]: lazy(() => import('../views/ClassificationView').then(m => ({ default: m.ClassificationView }))),
+  [ViewSection.ENSEMBLE]: lazy(() => import('../views/EnsembleView').then(m => ({ default: m.EnsembleView }))),
+  [ViewSection.UNSUPERVISED]: lazy(() => import('../views/UnsupervisedView').then(m => ({ default: m.UnsupervisedView }))),
+  [ViewSection.DEEP_LEARNING]: lazy(() => import('../views/DeepLearningView').then(m => ({ default: m.DeepLearningView }))),
+  [ViewSection.REINFORCEMENT]: lazy(() => import('../views/ReinforcementView').then(m => ({ default: m.ReinforcementView }))),
+  [ViewSection.MODEL_COMPARISON]: lazy(() => import('../views/ModelComparisonView').then(m => ({ default: m.ModelComparisonView }))),
+  [ViewSection.PROJECT_LAB]: lazy(() => import('../views/ProjectLabView').then(m => ({ default: m.ProjectLabView }))),
+  
+  // New Content-First Modules
+  'deep-learning/attention-mechanism': lazy(() => import('./deep-learning/AttentionMechanism').then(m => ({ default: () => <DocReader module={m} path="deep-learning/attention-mechanism" /> }))),
 };

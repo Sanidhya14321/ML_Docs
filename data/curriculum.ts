@@ -487,7 +487,10 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)`
                 theory: `Convolutional Neural Networks (CNNs) exploit the spatial structure of images.
                 
 *   **Convolution:** A learnable filter slides over the image (dot product) to detect features like edges or textures.
-*   **Pooling:** Downsamples the feature map (e.g., Max Pooling takes the largest value in a 2x2 window), reducing computation and providing translation invariance.`,
+*   **Pooling:** Downsamples the feature map (e.g., Max Pooling takes the largest value in a 2x2 window), reducing computation and providing translation invariance.
+
+### CNN Flow
+[Input Image] -> [Conv + ReLU] -> [Pool] -> [Conv + ReLU] -> [Pool] -> [Flatten] -> [Dense] -> [Class]`,
                 math: "(I * K)(i, j) = \\sum_m \\sum_n I(m, n) K(i-m, j-n)",
                 mathLabel: "2D Convolution Operation",
                 code: `layers.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)`
@@ -607,7 +610,11 @@ model = Word2Vec(sentences, vector_size=100, window=5, min_count=1)`
               details: {
                 theory: `**BERT (Bidirectional Encoder Representations)** is an Encoder-only model trained on Masked Language Modeling (MLM). It sees the entire sentence at once, making it ideal for understanding tasks (classification, QA).
                 
-**GPT (Generative Pre-trained Transformer)** is a Decoder-only model trained on Causal Language Modeling (predict next word). It is auto-regressive, making it ideal for generation tasks.`,
+**GPT (Generative Pre-trained Transformer)** is a Decoder-only model trained on Causal Language Modeling (predict next word). It is auto-regressive, making it ideal for generation tasks.
+
+### Architecture Contrast
+*   **BERT (Encoder):** [Input] <-> [Hidden] <-> [Output] (Bidirectional)
+*   **GPT (Decoder):** [Input] -> [Hidden] -> [Output] (Unidirectional)`,
                 math: "P(w_t | w_{1:t-1})",
                 mathLabel: "Autoregressive Objective",
                 code: `from transformers import BertModel, GPT2Model
@@ -690,6 +697,15 @@ model = get_peft_model(base_model, config)`
               description: "Retrieval Augmented Generation with Vector DBs.",
               details: {
                 theory: `**RAG** bridges the gap between an LLM's frozen knowledge and real-time private data.
+
+### Data Pipeline
+[User Query] -> [Embed Model] -> [Vector]
+                                   |
+                                   v
+[Docs] -> [Chunk] -> [Vector DB] -> [Top-K Context]
+                                   |
+                                   v
+[Prompt + Context] -> [LLM] -> [Answer]
                 
 1.  **Retrieve:** Convert user query to vector, search Vector DB for relevant context.
 2.  **Augment:** Stuff retrieved context into the prompt.
@@ -719,7 +735,13 @@ llm.predict(prompt)`
 *   **Generator ($G$):** Tries to create fake images that look real.
 *   **Discriminator ($D$):** Tries to distinguish between real and fake images.
                 
-They improve together until the Generator produces indistinguishable samples.`,
+They improve together until the Generator produces indistinguishable samples.
+
+### Adversarial Loop
+[Noise] -> [Generator] -> [Fake Image]
+                                |
+                                v
+[Real Image] ------------> [Discriminator] -> [Real/Fake Probability]`,
                 math: "\\min_G \\max_D V(D, G) = \\mathbb{E}_{x}[\\log D(x)] + \\mathbb{E}_{z}[\\log(1 - D(G(z)))]",
                 mathLabel: "Minimax Loss",
                 code: `# Adversarial Training Loop
@@ -884,7 +906,13 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]`
 1.  **Data Change:** Triggers a pipeline.
 2.  **Retrain:** Model trains on new data.
 3.  **Evaluate:** Auto-compares new model vs current production model.
-4.  **Deploy:** If metrics improve, auto-deploy.`,
+4.  **Deploy:** If metrics improve, auto-deploy.
+
+### MLOps Loop
+[Code/Data Push] -> [CI: Test] -> [CD: Train] -> [Model Registry]
+                                                      |
+                                                      v
+                                              [CD: Deploy Staging] -> [Smoke Test] -> [Prod]`,
                 math: "\\text{Drift}(P, Q) = KL(P || Q) = \\sum P(x) \\log \\frac{P(x)}{Q(x)}",
                 mathLabel: "KL Divergence (Data Drift)",
                 code: `import mlflow
