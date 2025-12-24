@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NeuralNetworkViz } from '../components/NeuralNetworkViz';
 import { AlgorithmCard } from '../components/AlgorithmCard';
@@ -235,7 +236,10 @@ export const DeepLearningView: React.FC = () => {
         id="mlp"
         title="Multilayer Perceptrons"
         complexity="Intermediate"
-        theory="The fundamental neural architecture. It stacks fully-connected layers, applying non-linear activation functions (like ReLU) at each stage. Through the backpropagation algorithm, it learns to map raw inputs into sophisticated high-dimensional feature representations."
+        theory={`The fundamental neural architecture. It stacks fully-connected layers, applying non-linear activation functions (like ReLU) at each stage. Through the backpropagation algorithm, it learns to map raw inputs into sophisticated high-dimensional feature representations.
+
+### Forward Pass
+[Input x] -> [Weights W1] -> [ReLU] -> [Hidden h] -> [Weights W2] -> [Softmax] -> [Output y]`}
         math={<span>a<sup>[l]</sup> = &sigma;(W<sup>[l]</sup> a<sup>[l-1]</sup> + b<sup>[l]</sup>)</span>}
         mathLabel="Forward Pass"
         code={`from tensorflow.keras import layers, models
@@ -262,7 +266,10 @@ model = models.Sequential([
         id="cnn"
         title="Convolutional Networks"
         complexity="Intermediate"
-        theory="Specialized for grid-structured data like images. CNNs use convolutional kernels to extract spatial features while preserving local relationships. They are highly efficient due to parameter sharing and spatial pooling mechanisms."
+        theory={`Specialized for grid-structured data like images. CNNs use convolutional kernels to extract spatial features while preserving local relationships. They are highly efficient due to parameter sharing and spatial pooling mechanisms.
+
+### CNN Pipeline
+[Image] -> [Conv] -> [ReLU] -> [Pool] -> [Conv] -> [ReLU] -> [Pool] -> [FC] -> [Class]`}
         math={<span>(I * K)(i, j) = &Sigma; &Sigma; I(m, n) K(i-m, j-n)</span>}
         mathLabel="Convolution Operation"
         code={`model = models.Sequential([
@@ -280,7 +287,13 @@ model = models.Sequential([
         id="rnn"
         title="Recurrent Networks (LSTM)"
         complexity="Advanced"
-        theory="Designed for sequential data processing. RNNs maintain an internal hidden state that acts as memory across time-steps. LSTMs (Long Short-Term Memory) refine this with specialized 'gates' that control information flow, solving long-range dependency issues."
+        theory={`Designed for sequential data processing. RNNs maintain an internal hidden state that acts as memory across time-steps. LSTMs (Long Short-Term Memory) refine this with specialized 'gates' that control information flow, solving long-range dependency issues.
+
+### Unrolled RNN
+h(t-1) --> [Cell A] --> h(t) --> [Cell A] --> h(t+1)
+              ^                    ^
+              |                    |
+            x(t)                 x(t+1)`}
         math={<span>h<sub>t</sub> = &sigma;(W<sub>hh</sub> h<sub>t-1</sub> + W<sub>xh</sub> x<sub>t</sub>)</span>}
         mathLabel="Hidden Update"
         code={`model = models.Sequential([
@@ -296,7 +309,10 @@ model = models.Sequential([
         id="embeddings"
         title="Embeddings"
         complexity="Intermediate"
-        theory="Learned dense representations of discrete items. Unlike one-hot encoding, embeddings place similar items closer together in a continuous vector space, allowing models to learn semantic relationships mathematically."
+        theory={`Learned dense representations of discrete items. Unlike one-hot encoding, embeddings place similar items closer together in a continuous vector space, allowing models to learn semantic relationships mathematically.
+
+### Word2Vec Concept
+"King" - "Man" + "Woman" ≈ "Queen"`}
         math={<span>L = E[ log P(w<sub>context</sub> | w<sub>target</sub>) ]</span>}
         mathLabel="Word2Vec Objective"
         code={`from tensorflow.keras.layers import Embedding
@@ -311,7 +327,10 @@ layer = Embedding(input_dim=10000, output_dim=300)`}
         id="transformers"
         title="Transformers"
         complexity="Advanced"
-        theory="The modern standard for large-scale modeling. It utilizes a Self-Attention mechanism to draw global dependencies regardless of distance in the sequence. This enables massive parallelization and state-of-the-art performance in LLMs."
+        theory={`The modern standard for large-scale modeling. It utilizes a Self-Attention mechanism to draw global dependencies regardless of distance in the sequence. This enables massive parallelization and state-of-the-art performance in LLMs.
+
+### Transformer Block
+[Input] -> [Attention] -> [Add & Norm] -> [Feed Forward] -> [Add & Norm] -> [Output]`}
         math={<span>Attn(Q, K, V) = softmax(<sup>QK<sup>T</sup></sup>&frasl;<sub>&radic;d<sub>k</sub></sub>)V</span>}
         mathLabel="Scaled Dot-Product Attention"
         code={`# Attention mechanism logic

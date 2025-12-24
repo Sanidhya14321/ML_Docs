@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database } from 'lucide-react';
@@ -227,7 +228,10 @@ export const ReinforcementView: React.FC = () => {
          <AlgorithmCard
             id="mdp"
             title="Markov Decision Processes"
-            theory="The formal framework for decision making. An MDP is defined by its states, actions, transition probabilities, and rewards. It assumes the Markov Property: 'The future depends only on the present'."
+            theory={`The formal framework for decision making. An MDP is defined by its states, actions, transition probabilities, and rewards. It assumes the Markov Property: 'The future depends only on the present'.
+
+### The Cycle
+[State S] -> [Agent] -> [Action A] -> [Environment] -> [Reward R, Next State S']`}
             math={<span>&langle; S, A, P, R, &gamma; &rangle;</span>}
             mathLabel="The RL Quintuple"
             code={`# The fundamental RL loop
@@ -252,7 +256,10 @@ for _ in range(steps):
         <AlgorithmCard
             id="q-learning"
             title="Q-Learning"
-            theory="A model-free algorithm that learns the value of every action in every state. It stores these estimates in a Q-Table, iteratively updating them based on the Bellman equation."
+            theory={`A model-free algorithm that learns the value of every action in every state. It stores these estimates in a Q-Table, iteratively updating them based on the Bellman equation.
+
+### Update Logic
+Q(s,a) <-- Q(s,a) + alpha * [Target - Q(s,a)]`}
             math={<span>Q(s,a) &larr; Q(s,a) + &alpha; [r + &gamma; max Q(s',a') - Q(s,a)]</span>}
             mathLabel="Temporal Difference Update"
             code={`# Q-Table Update Logic
