@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ScatterChart, Scatter, ReferenceDot, ComposedChart, Cell, AreaChart, Area } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
@@ -232,6 +233,37 @@ const DecisionTreeViz = () => {
   );
 };
 
+const KernelExplainer = () => (
+  <div className="mt-8 pt-8 border-t border-slate-800/50">
+    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">The Kernel Trick</h4>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative group overflow-hidden transition-all hover:border-indigo-500/30">
+        <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+        <h5 className="text-indigo-400 font-bold text-sm mb-3">Polynomial Kernel</h5>
+        <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/50 mb-3 text-center">
+           <span className="font-serif italic text-slate-200 text-sm">K(x, x') = (&gamma;x&middot;x' + r)<sup>d</sup></span>
+        </div>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Projects data into a space of feature interactions (e.g., x<sub>1</sub>x<sub>2</sub>, x<sub>1</sub><sup>2</sup>). 
+          <strong> Impact:</strong> Creates global, curved decision boundaries. Ideal for distinct geometric shapes.
+        </p>
+      </div>
+
+      <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative group overflow-hidden transition-all hover:border-emerald-500/30">
+        <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
+        <h5 className="text-emerald-400 font-bold text-sm mb-3">RBF (Radial Basis)</h5>
+        <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/50 mb-3 text-center">
+           <span className="font-serif italic text-slate-200 text-sm">K(x, x') = exp(-&gamma;||x - x'||<sup>2</sup>)</span>
+        </div>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Infinite dimensional projection. It measures similarity based on distance.
+          <strong> Impact:</strong> Creates local, island-like boundaries around data clusters. Captures complex topology.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 // --- MAIN VIEW ---
 
 export const ClassificationView: React.FC = () => {
@@ -299,7 +331,7 @@ knn.fit(X_train, y_train)`}
         id="svm"
         title="Support Vector Machines (SVM)"
         complexity="Intermediate"
-        theory="SVM finds the hyperplane that separates classes with the maximum margin. Using kernels, it can solve non-linear problems by projecting data into higher dimensions where a linear separation exists."
+        theory="SVM finds the optimal hyperplane maximizing the margin between classes. For non-linear data, it uses the 'Kernel Trick' to implicitly map input vectors into high-dimensional feature spaces where separation is linear, without computing the coordinates explicitly."
         math={<span>max <sup>2</sup>&frasl;<sub>||w||</sub> s.t. y<sub>i</sub>(w&sdot;x<sub>i</sub> - b) &ge; 1</span>}
         mathLabel="Margin Optimization"
         code={`from sklearn.svm import SVC
@@ -327,6 +359,7 @@ svm = SVC(kernel='rbf', C=1.0)`}
             </ComposedChart>
             </ResponsiveContainer>
         </div>
+        <KernelExplainer />
       </AlgorithmCard>
 
       <AlgorithmCard
