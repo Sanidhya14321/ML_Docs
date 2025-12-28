@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { MLModelType, ModelMetrics } from '../types';
 import { MEDICAL_MODEL_DATA } from '../constants';
-import { Loader2, Code, Activity, Database, TrendingUp, BarChart3, Play, Terminal, CheckCircle } from 'lucide-react';
+import { Loader2, Code, Activity, Database, TrendingUp, BarChart3, Play, Terminal, CheckCircle, Info } from 'lucide-react';
 import { CodeBlock } from '../components/CodeBlock';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,26 +18,41 @@ const CorrelationHeatmap = () => {
     ];
 
     const getColor = (val: number) => {
-        if (val > 0.7) return 'bg-emerald-500';
-        if (val > 0.4) return 'bg-emerald-600';
-        if (val > 0.2) return 'bg-emerald-700';
-        if (val < -0.4) return 'bg-rose-600';
-        if (val < -0.2) return 'bg-rose-700';
-        return 'bg-slate-800';
+        if (val === 1.0) return 'bg-slate-800 border-slate-700';
+        if (val > 0.7) return 'bg-emerald-500 border-emerald-400';
+        if (val > 0.3) return 'bg-emerald-600/80 border-emerald-500/50';
+        if (val > 0) return 'bg-emerald-900/40 border-emerald-800';
+        if (val < -0.3) return 'bg-rose-600/80 border-rose-500/50';
+        if (val < 0) return 'bg-rose-900/40 border-rose-800';
+        return 'bg-slate-800 border-slate-700';
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center select-none">
             <div className="grid grid-cols-6 gap-2">
-                <div className="w-16 h-12"></div>
-                {features.map(f => <div key={f} className="w-16 h-12 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase">{f}</div>)}
+                {/* Header Row */}
+                <div className="w-12 h-10 md:w-16 md:h-12"></div>
+                {features.map(f => (
+                    <div key={f} className="w-12 h-10 md:w-16 md:h-12 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase tracking-widest">{f}</div>
+                ))}
                 
+                {/* Data Rows */}
                 {matrix.map((row, i) => (
                     <React.Fragment key={i}>
-                        <div className="w-16 h-12 flex items-center justify-end pr-2 text-[10px] font-black text-slate-500 uppercase">{features[i]}</div>
+                        <div className="w-12 h-10 md:w-16 md:h-12 flex items-center justify-end pr-3 text-[10px] font-black text-slate-500 uppercase tracking-widest">{features[i]}</div>
                         {row.map((val, j) => (
-                            <div key={j} className={`w-16 h-12 flex items-center justify-center rounded-lg border border-white/5 transition-all hover:scale-105 ${getColor(val)}`}>
-                                <span className="text-[10px] font-mono font-bold text-white/90">{val.toFixed(1)}</span>
+                            <div 
+                                key={j} 
+                                className={`w-12 h-10 md:w-16 md:h-12 flex items-center justify-center rounded-lg border transition-all hover:scale-110 hover:z-10 cursor-help group relative ${getColor(val)}`}
+                            >
+                                <span className={`text-[10px] font-mono font-bold ${val === 1 ? 'text-slate-600' : 'text-white/90'}`}>
+                                    {val.toFixed(1)}
+                                </span>
+                                {val !== 1 && (
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20 border border-slate-700">
+                                        {features[i]} vs {features[j]}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </React.Fragment>
@@ -112,6 +128,53 @@ export const ProjectLabView: React.FC = () => {
       </div>
 
       <AnimatePresence mode="wait">
+        {activeTab === 'eda' && (
+             <motion.div
+                key="eda"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="space-y-8"
+             >
+                <div className="p-8 rounded-3xl border border-slate-800 bg-slate-900/50">
+                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <BarChart3 className="text-indigo-400" /> Feature Correlation Matrix
+                    </h3>
+                    <div className="flex flex-col lg:flex-row items-center gap-16">
+                        <CorrelationHeatmap />
+                        <div className="flex-1 space-y-6">
+                            <div className="space-y-2">
+                                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Analysis</h4>
+                                <p className="text-slate-300 leading-relaxed font-light">
+                                    The heatmap reveals critical dependencies. Values close to <span className="text-emerald-400 font-bold">1.0</span> indicate strong positive correlation, while <span className="text-rose-400 font-bold">-1.0</span> indicates strong negative correlation.
+                                </p>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Key Insights</h4>
+                                <ul className="space-y-4">
+                                    <li className="flex gap-4 text-slate-400 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0" />
+                                        <span>
+                                            <strong className="text-rose-400 block mb-1">Age vs. HR (-0.4)</strong>
+                                            Maximum heart rate clearly decreases as patient age increases, a standard physiological trend.
+                                        </span>
+                                    </li>
+                                    <li className="flex gap-4 text-slate-400 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                                        <span>
+                                            <strong className="text-emerald-400 block mb-1">BP vs. Target (0.4)</strong>
+                                            Elevated blood pressure shows a significant positive correlation with the heart disease target variable.
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </motion.div>
+        )}
+
         {activeTab === 'performance' && (
           <motion.div 
             key="perf"
@@ -120,7 +183,7 @@ export const ProjectLabView: React.FC = () => {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-12"
           >
-            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative">
+            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative bg-slate-900/30 border border-slate-800">
               <AnimatePresence>
                 {showSuccess && (
                   <motion.div 
@@ -205,6 +268,20 @@ export const ProjectLabView: React.FC = () => {
               </motion.div>
             )}
           </motion.div>
+        )}
+
+        {activeTab === 'code' && (
+             <motion.div
+                key="code"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-slate-800 rounded-3xl bg-slate-900/20"
+             >
+                <Code size={48} className="text-slate-700 mb-4" />
+                <h3 className="text-xl font-bold text-slate-400">Notebook View</h3>
+                <p className="text-slate-600 mt-2">To access the full code environment, please start the Lab from the main topic page.</p>
+             </motion.div>
         )}
       </AnimatePresence>
     </div>
