@@ -18,13 +18,13 @@ const CorrelationHeatmap = () => {
     ];
 
     const getColor = (val: number) => {
-        if (val === 1.0) return 'bg-slate-800 border-slate-700';
-        if (val > 0.7) return 'bg-emerald-500 border-emerald-400';
-        if (val > 0.3) return 'bg-emerald-600/80 border-emerald-500/50';
-        if (val > 0) return 'bg-emerald-900/40 border-emerald-800';
-        if (val < -0.3) return 'bg-rose-600/80 border-rose-500/50';
-        if (val < 0) return 'bg-rose-900/40 border-rose-800';
-        return 'bg-slate-800 border-slate-700';
+        if (val === 1.0) return 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700';
+        if (val > 0.7) return 'bg-emerald-400/80 dark:bg-emerald-500 border-emerald-300 dark:border-emerald-400';
+        if (val > 0.3) return 'bg-emerald-200 dark:bg-emerald-600/80 border-emerald-300 dark:border-emerald-500/50';
+        if (val > 0) return 'bg-emerald-100 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-800';
+        if (val < -0.3) return 'bg-rose-300 dark:bg-rose-600/80 border-rose-300 dark:border-rose-500/50';
+        if (val < 0) return 'bg-rose-100 dark:bg-rose-900/40 border-rose-200 dark:border-rose-800';
+        return 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700';
     };
 
     return (
@@ -45,7 +45,7 @@ const CorrelationHeatmap = () => {
                                 key={j} 
                                 className={`w-12 h-10 md:w-16 md:h-12 flex items-center justify-center rounded-lg border transition-all hover:scale-110 hover:z-10 cursor-help group relative ${getColor(val)}`}
                             >
-                                <span className={`text-[10px] font-mono font-bold ${val === 1 ? 'text-slate-600' : 'text-white/90'}`}>
+                                <span className={`text-[10px] font-mono font-bold ${val === 1 ? 'text-slate-400 dark:text-slate-600' : 'text-slate-800 dark:text-white/90'}`}>
                                     {val.toFixed(1)}
                                 </span>
                                 {val !== 1 && (
@@ -102,16 +102,16 @@ export const ProjectLabView: React.FC = () => {
   return (
     <div className="pb-24 space-y-16">
       <header className="relative">
-        <h1 className="text-6xl font-serif font-bold text-white flex items-center gap-6">
-          <span className="bg-indigo-600 px-5 py-2 rounded-2xl text-xl shadow-2xl shadow-indigo-600/30">Lab</span>
+        <h1 className="text-6xl font-serif font-bold text-slate-900 dark:text-white flex items-center gap-6">
+          <span className="bg-indigo-600 px-5 py-2 rounded-2xl text-xl shadow-2xl shadow-indigo-600/30 text-white">Lab</span>
           Medical Case Study
         </h1>
-        <p className="text-slate-400 mt-6 text-xl font-light leading-relaxed max-w-3xl">
+        <p className="text-slate-500 dark:text-slate-400 mt-6 text-xl font-light leading-relaxed max-w-3xl">
           Simulating a clinical heart disease diagnostic tool. Select algorithms and analyze metrics to find the most reliable predictor.
         </p>
       </header>
 
-      <div className="flex bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800/50 max-w-md">
+      <div className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md">
          {[
            { id: 'eda', icon: <BarChart3 size={16} />, label: 'Data EDA' },
            { id: 'performance', icon: <TrendingUp size={16} />, label: 'Benchmarks' },
@@ -120,7 +120,7 @@ export const ProjectLabView: React.FC = () => {
            <button 
              key={tab.id}
              onClick={() => setActiveTab(tab.id as any)}
-             className={`flex-1 py-3 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-500 hover:text-slate-300'}`}
+             className={`flex-1 py-3 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
            >
              {tab.icon} {tab.label}
            </button>
@@ -136,34 +136,34 @@ export const ProjectLabView: React.FC = () => {
                 exit={{ opacity: 0, x: 20 }}
                 className="space-y-8"
              >
-                <div className="p-8 rounded-3xl border border-slate-800 bg-slate-900/50">
-                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                        <BarChart3 className="text-indigo-400" /> Feature Correlation Matrix
+                <div className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-xl">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+                        <BarChart3 className="text-indigo-500" /> Feature Correlation Matrix
                     </h3>
                     <div className="flex flex-col lg:flex-row items-center gap-16">
                         <CorrelationHeatmap />
                         <div className="flex-1 space-y-6">
                             <div className="space-y-2">
                                 <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Analysis</h4>
-                                <p className="text-slate-300 leading-relaxed font-light">
-                                    The heatmap reveals critical dependencies. Values close to <span className="text-emerald-400 font-bold">1.0</span> indicate strong positive correlation, while <span className="text-rose-400 font-bold">-1.0</span> indicates strong negative correlation.
+                                <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-light">
+                                    The heatmap reveals critical dependencies. Values close to <span className="text-emerald-500 dark:text-emerald-400 font-bold">1.0</span> indicate strong positive correlation, while <span className="text-rose-500 dark:text-rose-400 font-bold">-1.0</span> indicates strong negative correlation.
                                 </p>
                             </div>
                             
                             <div className="space-y-3">
                                 <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Key Insights</h4>
                                 <ul className="space-y-4">
-                                    <li className="flex gap-4 text-slate-400 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
+                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50">
                                         <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0" />
                                         <span>
-                                            <strong className="text-rose-400 block mb-1">Age vs. HR (-0.4)</strong>
+                                            <strong className="text-rose-500 dark:text-rose-400 block mb-1">Age vs. HR (-0.4)</strong>
                                             Maximum heart rate clearly decreases as patient age increases, a standard physiological trend.
                                         </span>
                                     </li>
-                                    <li className="flex gap-4 text-slate-400 text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800/50">
+                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
                                         <span>
-                                            <strong className="text-emerald-400 block mb-1">BP vs. Target (0.4)</strong>
+                                            <strong className="text-emerald-500 dark:text-emerald-400 block mb-1">BP vs. Target (0.4)</strong>
                                             Elevated blood pressure shows a significant positive correlation with the heart disease target variable.
                                         </span>
                                     </li>
@@ -183,18 +183,18 @@ export const ProjectLabView: React.FC = () => {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-12"
           >
-            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative bg-slate-900/30 border border-slate-800">
+            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 shadow-xl">
               <AnimatePresence>
                 {showSuccess && (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-indigo-600/10 backdrop-blur-sm z-20 flex items-center justify-center rounded-3xl border-2 border-indigo-500/50"
+                    className="absolute inset-0 bg-indigo-50/90 dark:bg-indigo-600/10 backdrop-blur-sm z-20 flex items-center justify-center rounded-3xl border-2 border-indigo-500/50"
                   >
                     <div className="text-center">
-                       <CheckCircle size={48} className="text-indigo-400 mx-auto mb-4" />
-                       <h3 className="text-xl font-bold text-white">Analysis Complete</h3>
+                       <CheckCircle size={48} className="text-indigo-500 dark:text-indigo-400 mx-auto mb-4" />
+                       <h3 className="text-xl font-bold text-indigo-900 dark:text-white">Analysis Complete</h3>
                     </div>
                   </motion.div>
                 )}
@@ -202,12 +202,12 @@ export const ProjectLabView: React.FC = () => {
 
               <div className="w-full lg:w-1/3 space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">Select Algorithm</label>
+                  <label className="block text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-4">Select Algorithm</label>
                   <select 
                     value={selectedModel} 
                     onChange={(e) => setSelectedModel(e.target.value as MLModelType)} 
                     disabled={isTraining} 
-                    className="w-full bg-slate-950/80 text-white border-2 border-slate-800 rounded-2xl p-4 font-black text-sm cursor-pointer hover:border-indigo-500/50 transition-all focus:outline-none"
+                    className="w-full bg-slate-50 dark:bg-slate-950/80 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-4 font-black text-sm cursor-pointer hover:border-indigo-500/50 transition-all focus:outline-none"
                   >
                     {Object.values(MLModelType).map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
@@ -228,11 +228,11 @@ export const ProjectLabView: React.FC = () => {
                 {[
                   { label: 'Accuracy', key: 'accuracy', color: 'emerald' },
                   { label: 'Precision', key: 'precision', color: 'indigo' },
-                  { label: 'Recall', key: 'recall', color: 'fuchsia' }
+                  { label: 'Recall', key: 'recall', color: 'rose' }
                 ].map((metric) => (
-                  <div key={metric.label} className="bg-slate-950/50 p-8 rounded-3xl border border-slate-800 text-center relative group overflow-hidden">
+                  <div key={metric.label} className="bg-slate-50 dark:bg-slate-950/50 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative group overflow-hidden">
                     <div className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-2">{metric.label}</div>
-                    <div className={`text-4xl font-mono font-black text-${metric.color}-400`}>
+                    <div className={`text-4xl font-mono font-black text-${metric.color}-600 dark:text-${metric.color}-400`}>
                       {isTraining ? (
                         <span className="inline-block animate-pulse">--</span>
                       ) : (
@@ -248,9 +248,9 @@ export const ProjectLabView: React.FC = () => {
               <motion.div 
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="bg-slate-950 rounded-2xl border border-slate-800 p-6 overflow-hidden shadow-2xl"
+                className="bg-slate-900 rounded-2xl border border-slate-800 p-6 overflow-hidden shadow-2xl"
               >
-                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-900">
+                <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-800">
                    <Terminal size={16} className="text-indigo-400" />
                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Training_Log_Stream.txt</span>
                 </div>
@@ -260,7 +260,7 @@ export const ProjectLabView: React.FC = () => {
                 >
                   {logs.map((log, i) => (
                     <div key={i} className="mb-1 flex gap-4">
-                       <span className="text-slate-700">[{new Date().toLocaleTimeString()}]</span>
+                       <span className="text-slate-600">[{new Date().toLocaleTimeString()}]</span>
                        <span>{log}</span>
                     </div>
                   ))}
@@ -276,11 +276,11 @@ export const ProjectLabView: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-slate-800 rounded-3xl bg-slate-900/20"
+                className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50 dark:bg-slate-900/20"
              >
-                <Code size={48} className="text-slate-700 mb-4" />
-                <h3 className="text-xl font-bold text-slate-400">Notebook View</h3>
-                <p className="text-slate-600 mt-2">To access the full code environment, please start the Lab from the main topic page.</p>
+                <Code size={48} className="text-slate-400 dark:text-slate-700 mb-4" />
+                <h3 className="text-xl font-bold text-slate-500 dark:text-slate-400">Notebook View</h3>
+                <p className="text-slate-400 dark:text-slate-600 mt-2">To access the full code environment, please start the Lab from the main topic page.</p>
              </motion.div>
         )}
       </AnimatePresence>

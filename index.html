@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- KaTeX for Mathematics -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -29,45 +29,85 @@
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
               serif: ['Merriweather', 'serif'],
-              mono: ['Fira Code', 'monospace'],
+              mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
             },
             colors: {
+              // Replacing Slate with Zinc for a cleaner, modern neutral
               slate: {
-                850: '#1e293b',
-                900: '#0f172a',
-                950: '#020617',
+                50: '#fafafa',
+                100: '#f4f4f5',
+                200: '#e4e4e7',
+                300: '#d4d4d8',
+                400: '#a1a1aa',
+                500: '#71717a',
+                600: '#52525b',
+                700: '#3f3f46',
+                800: '#27272a',
+                850: '#202023', // Custom depth
+                900: '#18181b',
+                950: '#09090b',
               },
+              // Replacing Indigo with Teal for a "Scientific/Lab" aesthetic
               indigo: {
-                400: '#818cf8',
-                500: '#6366f1',
-                600: '#4f46e5',
+                50: '#f0fdfa',
+                100: '#ccfbf1',
+                200: '#99f6e4',
+                300: '#5eead4',
+                400: '#2dd4bf',
+                500: '#14b8a6', // Primary Brand Color (Teal)
+                600: '#0d9488',
+                700: '#0f766e',
+                800: '#115e59',
+                900: '#134e4a',
+                950: '#042f2e',
+              },
+              // Secondary Accent (Rose/Coral)
+              rose: {
+                400: '#fb7185',
+                500: '#f43f5e',
               }
             },
             typography: (theme) => ({
               DEFAULT: {
                 css: {
-                  color: theme('colors.slate.600'), // Adjusted for light mode default
+                  color: theme('colors.slate.600'),
                   '--tw-prose-headings': theme('colors.slate.900'),
+                  '--tw-prose-links': theme('colors.indigo.600'),
+                  '--tw-prose-bold': theme('colors.slate.900'),
+                  '--tw-prose-counters': theme('colors.slate.500'),
+                  '--tw-prose-bullets': theme('colors.slate.300'),
+                  '--tw-prose-quotes': theme('colors.slate.900'),
+                  '--tw-prose-quote-borders': theme('colors.indigo.500'),
+                  '--tw-prose-code': theme('colors.indigo.600'),
                   a: {
-                    color: theme('colors.indigo.600'),
-                    '&:hover': { color: theme('colors.indigo.500') },
+                    textDecoration: 'none',
+                    borderBottom: '1px solid ' + theme('colors.indigo.200'),
+                    transition: 'border-color 0.2s',
+                    '&:hover': { 
+                        color: theme('colors.indigo.700'),
+                        borderBottomColor: theme('colors.indigo.600'),
+                    },
                   },
                 },
               },
               invert: {
                 css: {
-                  color: theme('colors.slate.300'),
+                  color: theme('colors.slate.400'),
                   '--tw-prose-headings': theme('colors.white'),
+                  '--tw-prose-links': theme('colors.indigo.400'),
+                  '--tw-prose-bold': theme('colors.white'),
+                  '--tw-prose-counters': theme('colors.slate.400'),
+                  '--tw-prose-bullets': theme('colors.slate.600'),
+                  '--tw-prose-quotes': theme('colors.slate.100'),
+                  '--tw-prose-quote-borders': theme('colors.indigo.500'),
+                  '--tw-prose-code': theme('colors.indigo.300'),
                   a: {
-                    color: theme('colors.indigo.400'),
-                    '&:hover': { color: theme('colors.indigo.300') },
+                    borderBottomColor: theme('colors.indigo.800'),
+                    '&:hover': { 
+                        color: theme('colors.indigo.300'),
+                        borderBottomColor: theme('colors.indigo.400'),
+                    },
                   },
-                  h1: { color: theme('colors.white'), fontFamily: theme('fontFamily.serif') },
-                  h2: { color: theme('colors.slate.100'), fontFamily: theme('fontFamily.serif') },
-                  h3: { color: theme('colors.slate.200') },
-                  strong: { color: theme('colors.white') },
-                  code: { color: theme('colors.indigo.300') },
-                  blockquote: { borderLeftColor: theme('colors.indigo.500'), color: theme('colors.slate.400') },
                 },
               },
             }),
@@ -75,6 +115,7 @@
               'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'flow': 'flow 1.5s linear infinite',
               'shimmer': 'shimmer 2s linear infinite',
+              'fade-in': 'fadeIn 0.5s ease-out',
             },
             keyframes: {
               flow: {
@@ -83,6 +124,10 @@
               },
               shimmer: {
                 '100%': { transform: 'translateX(100%)' }
+              },
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
           }
@@ -92,12 +137,12 @@
     <style>
       ::-webkit-scrollbar { width: 6px; height: 6px; }
       ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-      .dark ::-webkit-scrollbar-track { background: #020617; }
-      .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
+      ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
+      .dark ::-webkit-scrollbar-track { background: #09090b; }
+      .dark ::-webkit-scrollbar-thumb { background: #27272a; }
       
-      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-      .dark ::-webkit-scrollbar-thumb:hover { background: #334155; }
+      ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+      .dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }
       
       .math-serif { font-family: 'Times New Roman', serif; }
       html { scroll-behavior: smooth; }
@@ -119,6 +164,11 @@
         margin: 0 !important;
         background: transparent !important;
         text-shadow: none !important;
+      }
+      
+      /* Light mode specific Prism adjustments if needed */
+      html:not(.dark) pre[class*="language-"] {
+         text-shadow: none;
       }
     </style>
   <script type="importmap">

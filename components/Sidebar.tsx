@@ -17,7 +17,7 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
   const completed = isCompleted(topic.id);
   
   const getIcon = () => {
-    if (completed) return <CheckCircle size={12} className="text-emerald-500" />;
+    if (completed) return <CheckCircle size={12} className="text-emerald-600 dark:text-emerald-500" />;
     
     // Check if topic.icon is a React component (Lucide icon)
     if (topic.icon) {
@@ -37,18 +37,18 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
       onClick={() => onNavigate(topic.id)}
       className={`
         w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-medium transition-all duration-200 group relative z-10 ml-2 text-left
-        ${isActive ? 'text-indigo-300' : 'text-slate-400 hover:text-slate-200'}
+        ${isActive ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}
       `}
     >
       {/* Active Indicator */}
       {isActive && (
         <motion.div 
           layoutId="sidebar-active"
-          className="absolute inset-0 bg-indigo-500/10 border border-indigo-500/20 rounded-lg -z-10 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
+          className="absolute inset-0 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 rounded-lg -z-10"
         />
       )}
       
-      <span className={`shrink-0 ${isActive ? "text-indigo-400" : "text-slate-600 group-hover:text-slate-400"}`}>
+      <span className={`shrink-0 ${isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-600 group-hover:text-slate-600 dark:group-hover:text-slate-400"}`}>
         {getIcon()}
       </span>
       <span className="truncate leading-tight">{topic.title}</span>
@@ -69,7 +69,7 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
     <div className="mb-2">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 w-full text-left px-2 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${hasActiveChild ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
+        className={`flex items-center gap-2 w-full text-left px-2 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${hasActiveChild ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
       >
         <span className="opacity-70">{isOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}</span>
         {chapter.title}
@@ -81,7 +81,7 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden pl-2 border-l border-slate-800 ml-3 space-y-1"
+            className="overflow-hidden pl-2 border-l border-slate-200 dark:border-slate-800 ml-3 space-y-1"
           >
             {chapter.topics.map(topic => (
               <TopicItem key={topic.id} topic={topic} currentPath={currentPath} onNavigate={onNavigate} />
@@ -97,8 +97,8 @@ const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (p
   const Icon = module.icon;
   return (
     <div className="mb-8">
-      <div className="flex items-center gap-3 px-2 mb-3 text-slate-200 sticky top-0 bg-[#060810]/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
-        <span className="text-indigo-500">{Icon ? <Icon size={16} /> : null}</span>
+      <div className="flex items-center gap-3 px-2 mb-3 text-slate-800 dark:text-slate-200 sticky top-0 bg-white/95 dark:bg-[#060810]/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
+        <span className="text-indigo-600 dark:text-indigo-500">{Icon ? <Icon size={16} /> : null}</span>
         <h3 className="text-sm font-serif font-bold tracking-tight">{module.title}</h3>
       </div>
       <div className="space-y-1">
