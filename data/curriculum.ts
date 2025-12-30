@@ -201,6 +201,73 @@ llm.predict(f"Context: {results}\\nQuestion: {query}")`,
       ]
     },
     {
+      id: "mod-rl-basics",
+      title: "Reinforcement Learning Basics",
+      icon: BrainCircuit,
+      chapters: [
+        {
+          id: "chap-mdp",
+          title: "Markov Decision Processes",
+          topics: [
+            {
+              id: "rl-mdp",
+              title: "The RL Cycle",
+              type: "doc",
+              icon: BrainCircuit,
+              description: "States, Actions, Rewards, and the Markov Property.",
+              details: {
+                theory: "Markov Decision Processes (MDPs) provide the formal framework for modeling decision-making in situations where outcomes are partly random and partly under the control of a decision maker. An MDP is defined by the tuple (S, A, P, R, γ).",
+                math: "G_t = \\sum_{k=0}^{\\infty} \\gamma^k R_{t+k+1}",
+                mathLabel: "Cumulative Discounted Return",
+                code: "state = env.reset()\nwhile not done:\n    action = agent.policy(state)\n    next_state, reward, done, _ = env.step(action)\n    state = next_state",
+                codeLanguage: "python"
+              }
+            }
+          ]
+        },
+        {
+          id: "chap-qlearning",
+          title: "Q-Learning",
+          topics: [
+            {
+              id: "rl-qlearning",
+              title: "Value-Based Control",
+              type: "doc",
+              icon: BrainCircuit,
+              description: "Model-free value estimation and the Bellman Equation.",
+              details: {
+                theory: "Q-Learning is an off-policy algorithm that learns the value of an action in a particular state. It iteratively updates the Q-values using the Bellman equation to minimize the Temporal Difference (TD) error.",
+                math: "Q(s,a) \\leftarrow Q(s,a) + \\alpha [r + \\gamma \\max_{a'} Q(s',a') - Q(s,a)]",
+                mathLabel: "Q-Learning Update Rule",
+                code: "# Update Q-Table\nbest_next_action = np.argmax(Q[next_state])\ntd_target = reward + gamma * Q[next_state][best_next_action]\ntd_error = td_target - Q[state][action]\nQ[state][action] += alpha * td_error",
+                codeLanguage: "python"
+              }
+            }
+          ]
+        },
+        {
+          id: "chap-policy",
+          title: "Policy Gradients",
+          topics: [
+            {
+              id: "rl-policy-gradients",
+              title: "Policy Gradient Methods",
+              type: "doc",
+              icon: BrainCircuit,
+              description: "Optimizing the policy directly via gradient ascent.",
+              details: {
+                theory: "Policy Gradient methods parameterize the policy directly as π(a|s;θ) and optimize the parameters θ to maximize expected return. This is often done using the REINFORCE algorithm or Actor-Critic methods.",
+                math: "\\nabla J(\\theta) \\approx \\frac{1}{N} \\sum_{i=1}^N \\sum_{t=0}^T \\nabla_\\theta \\log \\pi_\\theta(a_t|s_t) G_t",
+                mathLabel: "Policy Gradient Theorem (REINFORCE)",
+                code: "log_probs = []\nrewards = []\nfor state in trajectory:\n    action, log_prob = policy_net(state)\n    next_state, reward, done, _ = env.step(action)\n    log_probs.append(log_prob)\n    rewards.append(reward)\n\nloss = -torch.sum(torch.stack(log_probs) * discount_rewards(rewards))\nloss.backward()",
+                codeLanguage: "python"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       id: "mod-lab",
       title: "Project Lab",
       icon: FlaskConical,
