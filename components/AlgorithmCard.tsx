@@ -4,6 +4,7 @@ import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
 import { Check, X, Info, Sparkles, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { AlgorithmSkeleton } from './Skeletons';
 
 export interface Hyperparameter {
   name: string;
@@ -24,6 +25,7 @@ interface AlgorithmCardProps {
   complexity?: 'Fundamental' | 'Intermediate' | 'Advanced';
   hyperparameters?: Hyperparameter[];
   children?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 const itemVariants: Variants = {
@@ -46,9 +48,14 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   cons,
   complexity = 'Intermediate',
   hyperparameters,
-  children
+  children,
+  isLoading = false
 }) => {
   const [showAI, setShowAI] = useState(false);
+
+  if (isLoading) {
+    return <AlgorithmSkeleton />;
+  }
 
   const complexityColors = {
     'Fundamental': 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',

@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CURRICULUM } from '../data/curriculum';
 import { useCourseProgress } from '../hooks/useCourseProgress';
 import { Play, CheckCircle, Circle, Trophy } from 'lucide-react';
+import { DashboardSkeleton } from './Skeletons';
 
 interface DashboardProps {
   onNavigate: (path: string) => void;
@@ -12,6 +13,13 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const { getModuleProgress, isCompleted, lastActiveTopic, getOverallProgress } = useCourseProgress();
   const overallProgress = getOverallProgress();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading for skeleton demonstration
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleResume = () => {
     if (lastActiveTopic) {
@@ -22,6 +30,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       if (firstTopic) onNavigate(firstTopic);
     }
   };
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="pb-20 animate-fade-in space-y-12">

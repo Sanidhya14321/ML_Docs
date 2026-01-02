@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Calendar, Clock, BarChart, Share2, ArrowRight, FlaskConical, BookOpen } from 'lucide-react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
@@ -7,6 +7,7 @@ import { Callout } from './Callout';
 import { LatexRenderer } from './LatexRenderer';
 import { DocPagination } from './DocPagination';
 import { getTopicById } from '../lib/contentHelpers';
+import { DocSkeleton } from './Skeletons';
 
 interface DocViewerProps {
   topicId: string;
@@ -26,6 +27,15 @@ const getMockData = (id: string, title: string) => {
 };
 
 export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact = false }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate granular loading for docs (e.g., fetching MDX/Remote content)
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, [topicId]);
+
   // Get real topic data
   const topic = getTopicById(topicId);
   const displayTitle = topic?.title || title;
@@ -36,6 +46,10 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
   
   const tags = topicId.split('/');
   const showStartLab = topic?.type === 'lab' || !!topic?.labConfig;
+
+  if (isLoading && !isCompact) {
+      return <DocSkeleton />;
+  }
 
   return (
     <div className={`mx-auto ${isCompact ? 'max-w-none px-2' : 'max-w-4xl pb-24'}`}>
