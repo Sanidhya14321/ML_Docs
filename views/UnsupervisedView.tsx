@@ -1,8 +1,8 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ReferenceLine, ComposedChart, Line } from 'recharts';
+import React, { useState, useMemo } from 'react';
+import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ComposedChart, Line } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { RefreshCcw, Fingerprint, Activity, Scan, Network } from 'lucide-react';
+import { Network } from 'lucide-react';
 
 // --- HELPERS ---
 
@@ -201,8 +201,6 @@ const DBSCANViz = () => {
                         <XAxis type="number" dataKey="x" domain={[0, 120]} hide />
                         <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
                         <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
-                        
-                        {/* Render neighborhood radius for mouse hover could go here, but omitted for perf */}
                         
                         <Scatter name="Data" data={clusteredData} shape="circle">
                             {clusteredData.map((entry, index) => (

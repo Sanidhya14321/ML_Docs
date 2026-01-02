@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { LatexRenderer } from '../components/LatexRenderer';
 import { MOTION_VARIANTS } from '../constants';
-import { ResponsiveContainer, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ComposedChart, Scatter, ReferenceDot } from 'recharts';
+import { ResponsiveContainer, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ComposedChart, ReferenceDot } from 'recharts';
 
 // --- VISUALIZATIONS ---
 
@@ -264,13 +264,13 @@ posterior = (likelihood * prior) / 1.0 # simplified`}
                 Algorithms like <strong>Gradient Descent</strong> and <strong>Adam</strong> navigate these valleys.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
                     <h4 className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-2">Convex Optimization</h4>
                     <p className="text-xs text-slate-500">
                         Problems where there is only one global minimum (e.g., Linear Regression). These are easy to solve and guaranteed to converge.
                     </p>
                 </div>
-                <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
                     <h4 className="text-sm font-bold text-rose-400 uppercase tracking-widest mb-2">Non-Convex Optimization</h4>
                     <p className="text-xs text-slate-500">
                         Deep Learning landscapes are rugged with many local minima and saddle points. We need adaptive learning rates to navigate them.

@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Line, BarChart, Bar, Legend, ComposedChart, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Line, BarChart, Bar, Legend, ComposedChart } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -92,112 +92,124 @@ const PolyViz = () => {
       });
   }, [baseData, degree]);
 
-  let label = "Balanced";
-  let color = "#f59e0b"; 
-  if (degree === 1) { label = "Underfitting"; color = "#ef4444"; } 
-  else if (degree > 5) { label = "Overfitting"; color = "#818cf8"; }
-
   return (
-      <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-             <div className="w-1/2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Degree: <span className="text-indigo-400 text-sm ml-2">{degree}</span></label>
-                <input 
-                  type="range" min="1" max="10" step="1" 
-                  value={degree} onChange={(e) => setDegree(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                />
-             </div>
-             <div className="text-[10px] font-mono font-bold px-3 py-1 rounded bg-slate-900 border border-slate-700" style={{ color }}>
-                {label}
-             </div>
-          </div>
-
-          <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
-            <ResponsiveContainer width="100%" height="100%">
+    <div className="space-y-4">
+        <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                Polynomial Degree: <span className="text-indigo-400 ml-2">{degree}</span>
+            </label>
+            <input 
+                type="range" min="1" max="15" step="1" 
+                value={degree} onChange={(e) => setDegree(Number(e.target.value))}
+                className="w-32 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+            />
+        </div>
+        <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative">
+             <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis type="number" dataKey="x" hide />
-                    <YAxis type="number" hide />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f1f5f9' }} />
-                    <Scatter name="Data" dataKey="y" fill="#94a3b8" opacity={0.6} />
-                    <Line type="monotone" dataKey="curve" stroke={color} strokeWidth={3} dot={false} animationDuration={300} />
+                    <XAxis type="number" dataKey="x" stroke="#475569" hide />
+                    <YAxis type="number" stroke="#475569" hide />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
+                    <Scatter name="Data" dataKey="y" fill="#818cf8" />
+                    <Line type="monotone" dataKey="curve" stroke="#f43f5e" strokeWidth={3} dot={false} animationDuration={300} />
                 </ComposedChart>
             </ResponsiveContainer>
-          </div>
-      </div>
+        </div>
+         <p className="text-[10px] text-center text-slate-500 uppercase tracking-widest font-mono">
+            {degree === 1 ? "Underfitting (High Bias)" : degree > 8 ? "Overfitting (High Variance)" : "Balanced Fit"}
+        </p>
+    </div>
   );
 };
 
-export const RegressionView: React.FC = () => {
-  return (
-    <div className="space-y-12 animate-fade-in pb-20">
-      <header className="mb-12 border-b border-slate-800 pb-8">
-        <h1 className="text-5xl font-serif font-bold text-white mb-4">Supervised: Regression</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
-          Predicting continuous quantity. Regression models find the functional relationship between independent features and a numerical target variable.
-        </p>
-      </header>
-
-      <AlgorithmCard
-        id="linear-regression"
-        title="Linear Regression"
-        complexity="Fundamental"
-        theory="The foundation of statistical modeling. It assumes a linear relationship between input features and target output, aiming to find the weights that minimize the squared differences between observed data and predictions."
-        math={<span>J(&theta;) = <sup>1</sup>&frasl;<sub>2m</sub> &Sigma; (h<sub>&theta;</sub>(x) - y)<sup>2</sup></span>}
-        mathLabel="Mean Squared Error (MSE)"
-        code={`from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(X, y)`}
-        pros={['Extremely fast and simple', 'Highly interpretable weights', 'Base for most advanced models']}
-        cons={['Assumes strict linearity', 'Highly sensitive to outliers', 'Affected by multicollinearity']}
-        hyperparameters={[
-          { name: 'fit_intercept', description: 'Whether to calculate the bias term for this model.', default: 'True' }
-        ]}
-      >
-        <LinearViz />
-      </AlgorithmCard>
-
-      <AlgorithmCard
-        id="ridge-lasso"
-        title="Regularized Regression"
-        complexity="Intermediate"
-        theory="Techniques to prevent overfitting by penalizing large weights. Ridge (L2) adds a squared penalty to discourage large coefficients, while Lasso (L1) adds an absolute penalty that can force coefficients to exactly zero, performing feature selection."
-        math={<span>J(&theta;) = MSE + &lambda; ||&theta;||<sub>p</sub></span>}
-        mathLabel="Penalty Term (p=1 Lasso, p=2 Ridge)"
-        code={`from sklearn.linear_model import Ridge, Lasso\nridge = Ridge(alpha=1.0).fit(X, y)\nlasso = Lasso(alpha=0.1).fit(X, y)`}
-        pros={['Prevents overfitting on complex data', 'Lasso provides automatic feature selection', 'Robust to collinearity (Ridge)']}
-        cons={['Alpha (lambda) requires cross-validation tuning', 'May underestimate true weights']}
-        hyperparameters={[
-          { name: 'alpha', description: 'Regularization strength; higher means simpler model.', default: '1.0' }
-        ]}
-      >
-        <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
+const RegularizationViz = () => {
+    return (
+      <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={coefficientData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-              <XAxis dataKey="feature" stroke="#475569" fontSize={10} />
-              <YAxis stroke="#475569" fontSize={10} />
-              <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
-              <Legend />
-              <Bar dataKey="Linear" fill="#475569" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Ridge" fill="#818cf8" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Lasso" fill="#ef4444" radius={[4, 4, 0, 0]} />
-            </BarChart>
+              <BarChart data={coefficientData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                  <XAxis dataKey="feature" stroke="#475569" />
+                  <YAxis stroke="#475569" />
+                  <Tooltip cursor={{fill: '#1e293b'}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                  <Legend />
+                  <Bar dataKey="Linear" fill="#94a3b8" />
+                  <Bar dataKey="Ridge" fill="#6366f1" />
+                  <Bar dataKey="Lasso" fill="#f43f5e" />
+              </BarChart>
           </ResponsiveContainer>
-        </div>
-      </AlgorithmCard>
+          <p className="text-[10px] text-center text-slate-500 mt-4 uppercase tracking-widest font-mono">
+              Lasso (Red) drives coefficients to zero (Feature Selection). Ridge (Purple) shrinks them.
+          </p>
+      </div>
+    );
+};
 
-      <AlgorithmCard
-        id="polynomial-regression"
-        title="Polynomial Regression"
-        complexity="Fundamental"
-        theory="Captures non-linear relationships by creating synthetic polynomial features (x², x³...) before applying a linear solver. It enables linear models to 'curve' into the data space."
-        math={<span>y = &theta;<sub>0</sub> + &theta;<sub>1</sub>x + &theta;<sub>2</sub>x<sup>2</sup> + ...</span>}
-        code={`from sklearn.preprocessing import PolynomialFeatures\nX_poly = PolynomialFeatures(degree=2).fit_transform(X)`}
-        pros={['Fits non-linear data easily', 'Maintains linear solver speed']}
-        cons={['High degree leads to extreme overfitting', 'Extrapolates poorly outside train range']}
-      >
-        <PolyViz />
-      </AlgorithmCard>
-    </div>
-  );
+export const RegressionView: React.FC = () => {
+    return (
+      <div className="space-y-12 animate-fade-in pb-20">
+        <header className="mb-12 border-b border-slate-800 pb-8">
+          <h1 className="text-5xl font-serif font-bold text-white mb-4">Supervised: Regression</h1>
+          <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
+            Predicting continuous values. From simple trend lines to complex polynomial curves, regression is the workhorse of forecasting and quantification.
+          </p>
+        </header>
+  
+        <AlgorithmCard
+          id="linear-regression"
+          title="Linear Regression"
+          complexity="Fundamental"
+          theory="The process of finding the optimal straight line that minimizes the distance (residual) between the predicted points and actual data points. It assumes a linear relationship between input variables and the single output variable."
+          math={<span>y = \beta_0 + \beta_1 x + \epsilon</span>}
+          mathLabel="Linear Equation"
+          code={`from sklearn.linear_model import LinearRegression
+model = LinearRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)`}
+          pros={['Simple and interpretable', 'Fast to train', 'Basis for many other methods']}
+          cons={['Assumes linearity', 'Sensitive to outliers']}
+        >
+          <LinearViz />
+        </AlgorithmCard>
+  
+        <AlgorithmCard
+          id="polynomial-regression"
+          title="Polynomial Regression"
+          complexity="Intermediate"
+          theory="Extends linear models to model non-linear relationships by transforming the original features into polynomial features (e.g., x², x³). It fits a curve rather than a straight line."
+          math={<span>y = \beta_0 + \beta_1 x + \beta_2 x^2 + ... + \beta_n x^n</span>}
+          mathLabel="Polynomial Equation"
+          code={`from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+model.fit(X_poly, y)`}
+          pros={['Models non-linear data', 'Still uses linear optimization under hood']}
+          cons={['Prone to overfitting with high degrees', 'Feature explosion']}
+          hyperparameters={[
+              { name: 'degree', description: 'The degree of the polynomial features.', default: '2' }
+          ]}
+        >
+          <PolyViz />
+        </AlgorithmCard>
+
+        <AlgorithmCard
+            id="regularization"
+            title="Regularization (Ridge & Lasso)"
+            complexity="Intermediate"
+            theory="Regularization adds a penalty term to the loss function to prevent overfitting. Ridge (L2) shrinks coefficients evenly, while Lasso (L1) can shrink coefficients to zero, effectively performing feature selection."
+            math={<span>J(\theta) = MSE + \lambda \Sigma |\beta_i|</span>}
+            mathLabel="L1 (Lasso) Cost Function"
+            code={`from sklearn.linear_model import Ridge, Lasso
+ridge = Ridge(alpha=1.0)
+lasso = Lasso(alpha=0.1)`}
+            pros={['Prevents overfitting', 'Lasso handles feature selection', 'Ridge handles multicollinearity']}
+            cons={['Requires hyperparameter tuning (alpha)', 'Introduces bias to reduce variance']}
+            hyperparameters={[
+                { name: 'alpha', description: 'Regularization strength; must be a positive float.', default: '1.0' }
+            ]}
+        >
+            <RegularizationViz />
+        </AlgorithmCard>
+      </div>
+    );
 };

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { NeuralNetworkViz } from '../components/NeuralNetworkViz';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
+import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
 
 // Data for RNN
 const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({

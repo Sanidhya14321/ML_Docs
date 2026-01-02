@@ -1,10 +1,8 @@
 
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect, useRef } from 'react';
 import { MLModelType, ModelMetrics } from '../types';
 import { MEDICAL_MODEL_DATA } from '../constants';
-import { Loader2, Code, Activity, Database, TrendingUp, BarChart3, Play, Terminal, CheckCircle, Info } from 'lucide-react';
-import { CodeBlock } from '../components/CodeBlock';
+import { Loader2, Code, TrendingUp, BarChart3, Play, Terminal, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CorrelationHeatmap = () => {

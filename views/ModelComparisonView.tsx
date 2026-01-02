@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area, BarChart, Bar, ScatterChart, Scatter, ReferenceLine, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend } from 'recharts';
+import React, { useState, useMemo } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Tooltip } from 'recharts';
 import { MLModelType } from '../types';
-import { Sliders, Activity, TrendingUp, Info, Swords, Zap } from 'lucide-react';
+import { Swords, Zap } from 'lucide-react';
 
 const comparisonData = {
   [MLModelType.LOGISTIC_REGRESSION]: {
