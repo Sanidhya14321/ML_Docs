@@ -1,8 +1,9 @@
 
-import React, { useState, useMemo } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Tooltip } from 'recharts';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Tooltip, ScatterChart, Scatter, ReferenceLine, Label } from 'recharts';
 import { MLModelType } from '../types';
-import { Swords, Zap } from 'lucide-react';
+import { MEDICAL_MODEL_DATA } from '../constants';
+import { Swords, Zap, Activity, Grid } from 'lucide-react';
 
 const comparisonData = {
   [MLModelType.LOGISTIC_REGRESSION]: {
@@ -95,6 +96,100 @@ const MODEL_IMPACTS: Record<MLModelType, any[]> = {
   ]
 };
 
+// --- VISUALIZATION HELPERS ---
+
+const generatePoints = (count: number) => {
+  const points = [];
+  // Class 0 Cluster
+  for (let i = 0; i < count / 2; i++) {
+    points.push({ x: 30 + Math.random() * 20, y: 30 + Math.random() * 20, c: 0 });
+  }
+  // Class 1 Cluster
+  for (let i = 0; i < count / 2; i++) {
+    points.push({ x: 60 + Math.random() * 30, y: 60 + Math.random() * 30, c: 1 });
+  }
+  return points;
+};
+
+const staticPoints = generatePoints(40);
+
+const getPrediction = (model: MLModelType, x: number, y: number) => {
+  // Normalize coords 0-100
+  switch (model) {
+    case MLModelType.LOGISTIC_REGRESSION:
+      // Linear Separation
+      return (-0.8 * x + 90) < y ? 1 : 0;
+    case MLModelType.SVM:
+      // Wider Margin / Polynomial
+      return Math.pow(x - 65, 2) + Math.pow(y - 65, 2) < 900 ? 1 : 0;
+    case MLModelType.RANDOM_FOREST:
+      // Boxy, axis-aligned splits
+      if (x > 50 && y > 50) return 1;
+      if (x < 20) return 0;
+      if (x > 80) return 1;
+      if (y > 80 && x > 40) return 1;
+      return 0;
+    case MLModelType.KNN:
+      // Distance based (approximate for vis)
+      const dist0 = Math.hypot(x - 40, y - 40);
+      const dist1 = Math.hypot(x - 75, y - 75);
+      return dist1 < dist0 ? 1 : 0;
+    case MLModelType.XGBOOST:
+      // Complex, fragmented islands
+      if (Math.hypot(x - 70, y - 70) < 25) return 1;
+      if (x > 85 && y > 10) return 1;
+      return 0;
+    default:
+      return 0;
+  }
+};
+
+const DecisionBoundaryViz = ({ model, colorHex }: { model: MLModelType, colorHex: string }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const resolution = 4; // Pixel size for grid
+
+    // Draw Decision Boundary Background
+    for (let x = 0; x < width; x += resolution) {
+      for (let y = 0; y < height; y += resolution) {
+        // Map canvas coord to 0-100 model space
+        const mx = (x / width) * 100;
+        const my = 100 - (y / height) * 100; // Flip Y for cartesian feel
+        
+        const pred = getPrediction(model, mx, my);
+        
+        ctx.fillStyle = pred === 1 ? `${colorHex}33` : '#1e293b'; // Hex with opacity or Slate-800
+        ctx.fillRect(x, y, resolution, resolution);
+      }
+    }
+
+    // Draw Data Points
+    staticPoints.forEach(p => {
+        const px = (p.x / 100) * width;
+        const py = height - (p.y / 100) * height;
+        
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fillStyle = p.c === 1 ? colorHex : '#94a3b8';
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
+
+  }, [model, colorHex]);
+
+  return <canvas ref={canvasRef} width={300} height={300} className="w-full h-full object-cover" />;
+};
+
 const SensitivityPanel = ({ model, impacts, color }: any) => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const currentParam = impacts[0];
@@ -132,9 +227,9 @@ const SensitivityPanel = ({ model, impacts, color }: any) => {
 
 export const ModelComparisonView: React.FC = () => {
   const [modelA, setModelA] = useState<MLModelType>(MLModelType.LOGISTIC_REGRESSION);
-  const [modelB, setModelB] = useState<MLModelType>(MLModelType.XGBOOST);
+  const [modelB, setModelB] = useState<MLModelType>(MLModelType.RANDOM_FOREST);
 
-  // useMemo hook used to calculate radarData based on selected models.
+  // Radar Data
   const radarData = useMemo(() => {
     const metricsA = (comparisonData[modelA] as any).metrics;
     const metricsB = (comparisonData[modelB] as any).metrics;
@@ -144,6 +239,10 @@ export const ModelComparisonView: React.FC = () => {
       B: metricsB[i].A
     }));
   }, [modelA, modelB]);
+
+  // ROC Data
+  const rocDataA = MEDICAL_MODEL_DATA[modelA].rocCurve;
+  const rocDataB = MEDICAL_MODEL_DATA[modelB].rocCurve;
 
   return (
     <div className="space-y-12 animate-fade-in pb-20">
@@ -157,6 +256,7 @@ export const ModelComparisonView: React.FC = () => {
         </p>
       </header>
 
+      {/* Model Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-1 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-3xl">
            <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-[22px] border border-white/5">
@@ -176,6 +276,7 @@ export const ModelComparisonView: React.FC = () => {
         </div>
       </div>
 
+      {/* Radar + Metrics */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 shadow-2xl overflow-hidden relative">
          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-rose-500 to-emerald-500 opacity-30"></div>
          <div className="flex flex-col lg:flex-row items-center gap-12">
@@ -217,6 +318,70 @@ export const ModelComparisonView: React.FC = () => {
          </div>
       </div>
 
+      {/* Decision Boundaries */}
+      <section>
+        <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                <Grid size={20} />
+            </div>
+            <h2 className="text-2xl font-bold text-white">Decision Boundaries</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+                <div className="flex justify-between items-center px-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-indigo-400">{modelA}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">2D Feature Space</span>
+                </div>
+                <div className="aspect-square w-full bg-slate-950 rounded-2xl border-4 border-slate-800 overflow-hidden shadow-inner relative group">
+                    <div className="absolute top-2 left-2 z-10 text-[9px] font-bold text-slate-500 bg-slate-900/80 px-2 py-1 rounded">Accuracy: {MEDICAL_MODEL_DATA[modelA].accuracy}%</div>
+                    <DecisionBoundaryViz model={modelA} colorHex="#6366f1" />
+                </div>
+            </div>
+            <div className="space-y-4">
+                <div className="flex justify-between items-center px-2">
+                    <span className="text-xs font-black uppercase tracking-widest text-emerald-400">{modelB}</span>
+                    <span className="text-[10px] text-slate-500 font-mono">2D Feature Space</span>
+                </div>
+                <div className="aspect-square w-full bg-slate-950 rounded-2xl border-4 border-slate-800 overflow-hidden shadow-inner relative group">
+                    <div className="absolute top-2 left-2 z-10 text-[9px] font-bold text-slate-500 bg-slate-900/80 px-2 py-1 rounded">Accuracy: {MEDICAL_MODEL_DATA[modelB].accuracy}%</div>
+                    <DecisionBoundaryViz model={modelB} colorHex="#10b981" />
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* ROC Curves */}
+      <section>
+        <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                <Activity size={20} />
+            </div>
+            <h2 className="text-2xl font-bold text-white">ROC Analysis</h2>
+        </div>
+        <div className="h-80 w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                    <XAxis type="number" dataKey="fpr" name="False Positive Rate" domain={[0, 1]} stroke="#475569" fontSize={12}>
+                        <Label value="False Positive Rate" offset={-10} position="insideBottom" fill="#475569" fontSize={10} />
+                    </XAxis>
+                    <YAxis type="number" dataKey="tpr" name="True Positive Rate" domain={[0, 1]} stroke="#475569" fontSize={12}>
+                        <Label value="True Positive Rate" angle={-90} position="insideLeft" fill="#475569" fontSize={10} />
+                    </YAxis>
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
+                    <Legend />
+                    
+                    {/* Random Classifier Line */}
+                    <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 1, y: 1 }]} stroke="#475569" strokeDasharray="5 5" label={{ value: 'Random', fill: '#475569', fontSize: 10, position: 'insideBottomRight' }} />
+
+                    <Scatter name={modelA} data={rocDataA} fill="#6366f1" line={{ stroke: '#6366f1', strokeWidth: 3 }} shape="circle" />
+                    <Scatter name={modelB} data={rocDataB} fill="#10b981" line={{ stroke: '#10b981', strokeWidth: 3 }} shape="circle" />
+                </ScatterChart>
+            </ResponsiveContainer>
+        </div>
+      </section>
+
+      {/* Sensitivity Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
          <SensitivityPanel model={modelA} impacts={MODEL_IMPACTS[modelA]} color="#6366f1" />
          <SensitivityPanel model={modelB} impacts={MODEL_IMPACTS[modelB]} color="#10b981" />
