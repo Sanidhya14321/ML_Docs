@@ -22,6 +22,8 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   const topic = getTopicById(topicId);
   const initialCode = topic?.labConfig?.initialCode || DEFAULT_CODE;
 
+  // Initialize with empty string, load from effect to avoid SSR mismatches if we were doing SSR,
+  // but here it also helps separate the "default" from the "saved".
   const [code, setCode] = useState(initialCode);
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
   const [isMobile, setIsMobile] = useState(false);
@@ -39,17 +41,28 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Reset code when topic changes
+  // Load saved code or reset when topic changes
   useEffect(() => {
-    setCode(initialCode);
+    const savedCode = localStorage.getItem(`ai-codex-lab-${topicId}`);
+    if (savedCode) {
+      setCode(savedCode);
+    } else {
+      setCode(initialCode);
+    }
     clearLogs();
   }, [topicId, initialCode, clearLogs]);
 
-  // Auto-complete logic
+  // Save code on change
+  useEffect(() => {
+    localStorage.setItem(`ai-codex-lab-${topicId}`, code);
+  }, [code, topicId]);
+
+  // Auto-complete logic based on execution logs
   useEffect(() => {
     if (!isRunning && logs.length > 0) {
        const lastLog = logs[logs.length - 1];
        if (lastLog.type === 'system' && lastLog.content.includes('Execution completed')) {
+           // If the code ran successfully, we mark it as complete
            if (!isCompleted(topicId)) {
                markAsCompleted(topicId);
                triggerConfetti();
@@ -68,8 +81,11 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   };
 
   const handleReset = () => {
-    setCode(initialCode);
-    clearLogs();
+    if (window.confirm("Reset code to default? This will lose your changes.")) {
+      setCode(initialCode);
+      localStorage.removeItem(`ai-codex-lab-${topicId}`);
+      clearLogs();
+    }
   };
 
   return (

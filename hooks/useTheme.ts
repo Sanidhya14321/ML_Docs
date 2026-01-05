@@ -1,27 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('ai-codex-theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-      // Default to dark for this specific app aesthetic
-      return 'dark'; 
-    }
-    return 'dark';
-  });
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem('ai-codex-theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  };
-
-  return { theme, toggleTheme, setTheme };
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 };
