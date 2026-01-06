@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Check, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Declare Prism global
+// Declare Prism global since it's loaded via CDN in index.html
 declare const Prism: any;
 
 interface CodeBlockProps {
@@ -33,39 +33,42 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
   };
 
   return (
-    <div className="my-8 rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-[#1e222a] group relative">
+    <div className="my-8 rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-[#1e222a] group relative font-mono text-sm">
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#282c34] border-b border-black/20">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#282c34] border-b border-black/20 select-none">
         <div className="flex items-center gap-4">
-          <div className="flex space-x-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+          <div className="flex space-x-2">
+            <div className="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
+            <div className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
+            <div className="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-2">
             {filename && (
-                <>
-                    <Terminal size={10} className="text-slate-500" />
-                    <span className="text-[10px] text-slate-400 font-mono tracking-wide">{filename}</span>
-                </>
+                <div className="flex items-center gap-2 opacity-60">
+                    <Terminal size={12} className="text-slate-400" />
+                    <span className="text-xs text-slate-300 font-medium tracking-wide">{filename}</span>
+                </div>
             )}
           </div>
         </div>
         <div className="flex items-center gap-3">
-             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{language}</span>
+             <div className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                {language}
+             </div>
              <button 
                 onClick={handleCopy}
-                className="p-1.5 rounded-md hover:bg-slate-700/50 transition-all text-slate-400 hover:text-white"
+                className="p-1.5 rounded-md hover:bg-white/10 transition-all text-slate-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                 title="Copy Code"
+                aria-label="Copy code to clipboard"
                 >
                 <AnimatePresence mode="wait">
                     {copied ? (
                     <motion.div key="check" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <Check size={12} className="text-emerald-400" />
+                        <Check size={14} className="text-emerald-400" />
                     </motion.div>
                     ) : (
                     <motion.div key="copy" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <Copy size={12} />
+                        <Copy size={14} />
                     </motion.div>
                     )}
                 </AnimatePresence>
@@ -74,8 +77,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
       </div>
 
       {/* Code Area */}
-      <div className="relative overflow-x-auto custom-scrollbar">
-        <pre className={`language-${language} !bg-transparent !m-0 !p-6 text-sm`}>
+      <div className="relative overflow-x-auto custom-scrollbar bg-[#1e222a]">
+        <pre className={`language-${language} !bg-transparent !m-0 !p-6 !font-mono leading-relaxed`}>
           <code ref={codeRef} className={`language-${language}`}>
             {code.trim()}
           </code>
