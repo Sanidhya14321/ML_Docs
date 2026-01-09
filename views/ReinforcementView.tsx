@@ -1,7 +1,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database } from 'lucide-react';
+import { LatexRenderer } from '../components/LatexRenderer';
+import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database, TrendingUp, Coins, Trophy } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell, ReferenceLine } from 'recharts';
 
 // --- VISUALIZATIONS ---
 
@@ -48,6 +50,181 @@ const RLLoopViz = () => {
         </div>
         <span className={`absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest transition-colors ${phase === 0 ? 'text-emerald-400 font-bold' : 'text-slate-600'}`}>STATE/REWARD (Sₜ₊₁, Rₜ)</span>
       </div>
+    </div>
+  );
+};
+
+const BanditViz = () => {
+  // True probabilities of winning for 3 arms (Hidden from agent)
+  const TRUE_PROBS = [0.3, 0.7, 0.5];
+  
+  const [history, setHistory] = useState<{step: number, avgReward: number}[]>([]);
+  const [armStats, setArmStats] = useState([
+    { id: 0, pulls: 0, wins: 0, estimatedVal: 0.5 },
+    { id: 1, pulls: 0, wins: 0, estimatedVal: 0.5 },
+    { id: 2, pulls: 0, wins: 0, estimatedVal: 0.5 },
+  ]);
+  const [epsilon, setEpsilon] = useState(0.1);
+  const [totalScore, setTotalScore] = useState(0);
+  const [lastAction, setLastAction] = useState<{arm: number, result: 'win' | 'loss'} | null>(null);
+  const [autoPlaying, setAutoPlaying] = useState(false);
+
+  const pullArm = (armIndex: number) => {
+    // Simulate environment
+    const isWin = Math.random() < TRUE_PROBS[armIndex];
+    const reward = isWin ? 1 : 0;
+
+    setLastAction({ arm: armIndex, result: isWin ? 'win' : 'loss' });
+    setTotalScore(prev => prev + reward);
+
+    // Update agent knowledge (Q-value update)
+    setArmStats(prev => {
+      const newStats = [...prev];
+      const arm = newStats[armIndex];
+      arm.pulls += 1;
+      arm.wins += reward;
+      // Q_new = Q_old + (1/N) * (Reward - Q_old)  [Incremental Average]
+      arm.estimatedVal = arm.estimatedVal + (1 / arm.pulls) * (reward - arm.estimatedVal);
+      return newStats;
+    });
+
+    setHistory(prev => {
+      const step = prev.length + 1;
+      const currentTotal = prev.length > 0 ? prev[prev.length - 1].avgReward * (step - 1) : 0;
+      const newAvg = (currentTotal + reward) / step;
+      // Keep history manageable
+      const newHist = [...prev, { step, avgReward: newAvg }];
+      return newHist.slice(-50); 
+    });
+  };
+
+  const agentStep = () => {
+    let armToPull;
+    // Epsilon-Greedy Logic
+    if (Math.random() < epsilon) {
+      // Explore
+      armToPull = Math.floor(Math.random() * 3);
+    } else {
+      // Exploit
+      let bestVal = -1;
+      let bestArms: number[] = [];
+      armStats.forEach((arm, idx) => {
+        if (arm.estimatedVal > bestVal) {
+          bestVal = arm.estimatedVal;
+          bestArms = [idx];
+        } else if (arm.estimatedVal === bestVal) {
+          bestArms.push(idx);
+        }
+      });
+      armToPull = bestArms[Math.floor(Math.random() * bestArms.length)];
+    }
+    pullArm(armToPull);
+  };
+
+  useEffect(() => {
+    let interval: any;
+    if (autoPlaying) {
+      interval = setInterval(agentStep, 200);
+    }
+    return () => clearInterval(interval);
+  }, [autoPlaying, armStats, epsilon]); // Depend on stats to make new decisions
+
+  const reset = () => {
+    setHistory([]);
+    setArmStats([
+      { id: 0, pulls: 0, wins: 0, estimatedVal: 0.5 },
+      { id: 1, pulls: 0, wins: 0, estimatedVal: 0.5 },
+      { id: 2, pulls: 0, wins: 0, estimatedVal: 0.5 },
+    ]);
+    setTotalScore(0);
+    setLastAction(null);
+    setAutoPlaying(false);
+  };
+
+  return (
+    <div className="space-y-8">
+       {/* Controls */}
+       <div className="flex flex-col md:flex-row justify-between items-center bg-slate-900/50 p-4 rounded-xl border border-slate-800 gap-6">
+          <div className="flex-1 w-full md:w-auto">
+             <div className="flex justify-between mb-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Exploration Rate (ε)</label>
+                <span className="text-xs font-mono text-indigo-400">{epsilon.toFixed(2)}</span>
+             </div>
+             <input 
+                type="range" min="0" max="1" step="0.05" 
+                value={epsilon} onChange={(e) => setEpsilon(parseFloat(e.target.value))}
+                className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+             />
+             <div className="flex justify-between text-[9px] text-slate-600 mt-1 uppercase">
+                <span>Pure Greed</span>
+                <span>Random</span>
+             </div>
+          </div>
+          <div className="flex gap-3">
+             <button onClick={() => setAutoPlaying(!autoPlaying)} className={`px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition-all ${autoPlaying ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}>
+                {autoPlaying ? <span className="animate-pulse">Running...</span> : <><Play size={14} /> Auto-Run Agent</>}
+             </button>
+             <button onClick={reset} className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                <RotateCcw size={16} />
+             </button>
+          </div>
+       </div>
+
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Bandits Interface */}
+          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 flex flex-col items-center justify-center gap-8 relative overflow-hidden">
+             {/* Score Counter */}
+             <div className="absolute top-4 right-4 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 flex items-center gap-2">
+                <Coins size={14} className="text-amber-400" />
+                <span className="font-mono font-bold text-white">{totalScore}</span>
+             </div>
+
+             <div className="flex gap-4">
+               {armStats.map((arm, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => pullArm(i)}
+                    className={`
+                      relative group flex flex-col items-center gap-2 w-24 p-2 rounded-xl border-2 transition-all duration-100 active:scale-95
+                      ${lastAction?.arm === i ? (lastAction.result === 'win' ? 'border-emerald-500 bg-emerald-900/10' : 'border-rose-500 bg-rose-900/10') : 'border-slate-800 bg-slate-900 hover:border-slate-600'}
+                    `}
+                  >
+                     <div className="w-16 h-20 bg-slate-800 rounded-lg flex items-center justify-center relative shadow-inner overflow-hidden">
+                        <div className={`text-2xl font-bold transition-all ${lastAction?.arm === i ? 'scale-125' : 'scale-100'} ${lastAction?.arm === i ? (lastAction.result === 'win' ? 'text-emerald-400' : 'text-rose-400') : 'text-slate-600'}`}>
+                           {lastAction?.arm === i ? (lastAction.result === 'win' ? '$' : 'X') : '?'}
+                        </div>
+                        {/* Probability "Peek" for learning viz */}
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
+                           <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${arm.estimatedVal * 100}%` }} />
+                        </div>
+                     </div>
+                     <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Arm {i+1}</span>
+                     <div className="text-[9px] font-mono text-slate-400">Est: {arm.estimatedVal.toFixed(2)}</div>
+                  </button>
+               ))}
+             </div>
+             <p className="text-xs text-slate-500 text-center max-w-xs">
+                Click an arm to "Explore", or use Auto-Run to see Epsilon-Greedy in action. The bars show the agent's <span className="text-indigo-400">estimated value</span>.
+             </p>
+          </div>
+
+          {/* Performance Chart */}
+          <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col">
+             <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-4">Average Reward over Time</span>
+             <div className="flex-1 w-full min-h-[160px]">
+                <ResponsiveContainer width="100%" height="100%">
+                   <LineChart data={history}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                      <XAxis hide />
+                      <YAxis domain={[0, 1]} tick={{fontSize: 10}} stroke="#475569" />
+                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '8px' }} itemStyle={{ fontSize: '12px' }} />
+                      <ReferenceLine y={Math.max(...TRUE_PROBS)} stroke="#10b981" strokeDasharray="3 3" label={{ value: 'Optimal', fill: '#10b981', fontSize: 10 }} />
+                      <Line type="monotone" dataKey="avgReward" stroke="#6366f1" strokeWidth={2} dot={false} isAnimationActive={false} />
+                   </LineChart>
+                </ResponsiveContainer>
+             </div>
+          </div>
+       </div>
     </div>
   );
 };
@@ -248,9 +425,40 @@ for _ in range(steps):
          </AlgorithmCard>
       </section>
 
+      <section id="exploration-exploitation" className="scroll-mt-24">
+         <div className="flex items-center gap-3 mb-10">
+            <h2 className="text-3xl font-bold text-white">02. Exploration vs. Exploitation</h2>
+            <div className="h-px bg-slate-800 flex-1"></div>
+         </div>
+         <AlgorithmCard
+            id="bandits"
+            title="Multi-Armed Bandits"
+            complexity="Fundamental"
+            theory={`Before tackling complex environments, agents must solve the fundamental dilemma: Do I 'Exploit' my current knowledge to get the best known reward, or 'Explore' new options to potentially find something better?
+
+### Epsilon-Greedy Strategy
+With probability ε, choose a random action (Explore).
+With probability 1-ε, choose the best known action (Exploit).`}
+            math={<LatexRenderer formula="Q_{n+1} = Q_n + \frac{1}{n}(R_n - Q_n)" />}
+            mathLabel="Incremental Value Update"
+            code={`# Epsilon-Greedy Logic
+if random.random() < epsilon:
+    action = random.choice(actions) # Explore
+else:
+    action = argmax(Q_values)       # Exploit`}
+            pros={['Simple but effective baseline', 'Guarantees exploration', 'Tunable via Epsilon']}
+            cons={['Exploration is random (inefficient)', 'Performance drops if Epsilon is not decayed']}
+            hyperparameters={[
+              { name: 'epsilon', description: 'Probability of choosing a random action (Exploration Rate).', default: '0.1' }
+            ]}
+         >
+            <BanditViz />
+         </AlgorithmCard>
+      </section>
+
       <section id="value-based" className="scroll-mt-24">
         <div className="flex items-center gap-3 mb-10">
-            <h2 className="text-3xl font-bold text-white">02. Value-Based Methods</h2>
+            <h2 className="text-3xl font-bold text-white">03. Value-Based Methods</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
          </div>
         <AlgorithmCard
@@ -275,7 +483,7 @@ Q[state, action] += alpha * error`}
 
       <section id="actor-critic" className="scroll-mt-24">
          <div className="flex items-center gap-3 mb-10">
-            <h2 className="text-3xl font-bold text-white">03. Advanced Paradigms</h2>
+            <h2 className="text-3xl font-bold text-white">04. Advanced Paradigms</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
          </div>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-slate-900 border border-slate-800 rounded-3xl p-10 shadow-2xl">
