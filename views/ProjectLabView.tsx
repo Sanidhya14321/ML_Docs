@@ -75,26 +75,60 @@ export const ProjectLabView: React.FC = () => {
     }
   }, [logs]);
 
-  const trainModel = () => {
+  // Helper to safely append logs during async operations
+  const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
+
+  const trainModel = async () => {
     setIsTraining(true);
     setShowSuccess(false);
-    setLogs(['[SYSTEM] Initializing training pipeline...', '[INFO] Loading heart_vitals.csv...', '[INFO] Standardizing features...']);
-    
-    let step = 0;
-    const interval = setInterval(() => {
-      step++;
-      if (step === 2) setLogs(prev => [...prev, '[DEBUG] Optimizing loss function (SGD)...']);
-      if (step === 10) {
-        setLogs(prev => [...prev, '[SUCCESS] Model convergence reached.', '[INFO] Calculating performance metrics...']);
-        clearInterval(interval);
-        setTimeout(() => {
-          setCurrentMetrics(MEDICAL_MODEL_DATA[selectedModel]);
-          setIsTraining(false);
-          setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 3000);
-        }, 500);
-      }
-    }, 400);
+    setLogs([]); // Clear logs start
+
+    try {
+        // 1. Simulate API Connection
+        addLog('[SYSTEM] Initializing secure connection to Training Cluster (us-east-1)...');
+        await new Promise(r => setTimeout(r, 600));
+
+        // 2. Simulate API Request
+        addLog(`[NETWORK] POST https://api.ai-codex.dev/v1/train`);
+        addLog(`[PAYLOAD] { model: "${selectedModel}", dataset: "heart_vitals_v2", hyperparams: "auto" }`);
+        
+        // Network Latency Simulation
+        await new Promise(r => setTimeout(r, 1200));
+
+        // 3. Simulate Server-Side Streamed Logs
+        const serverLogs = [
+            '[BACKEND] Request received. Allocating GPU instance...',
+            '[BACKEND] Dataset loaded: heart_vitals.csv (Size: 45KB, Rows: 303)',
+            '[BACKEND] Preprocessing: StandardScaler applied to numerical features.',
+            '[BACKEND] Preprocessing: OneHotEncoder applied to categorical features.',
+            '[BACKEND] Train/Test Split: 80/20 with random_state=42.',
+            `[BACKEND] Initializing ${selectedModel} estimator...`,
+            '[BACKEND] Fitting model to training set...',
+            '[BACKEND] Optimizing loss function...',
+            '[BACKEND] Validating model performance...',
+            '[SUCCESS] Training converged. Generating metrics report.'
+        ];
+
+        for (const log of serverLogs) {
+            // Variable delay to simulate real processing time
+            await new Promise(r => setTimeout(r, 300 + Math.random() * 500));
+            addLog(log);
+        }
+
+        // 4. "Fetch" the result
+        addLog('[NETWORK] Receiving response payload (200 OK)...');
+        await new Promise(r => setTimeout(r, 500));
+
+        // Update State
+        setCurrentMetrics(MEDICAL_MODEL_DATA[selectedModel]);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+
+    } catch (error) {
+        addLog('[ERROR] Connection timeout. Training failed.');
+    } finally {
+        setIsTraining(false);
+    }
   };
 
   return (
