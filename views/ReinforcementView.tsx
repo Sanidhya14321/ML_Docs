@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { LatexRenderer } from '../components/LatexRenderer';
-import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database, TrendingUp, Coins, Trophy } from 'lucide-react';
+import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database, TrendingUp, Coins, Trophy, ArrowRight, Zap } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell, ReferenceLine } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // --- VISUALIZATIONS ---
 
@@ -13,42 +14,95 @@ const RLLoopViz = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setPhase(p => (p + 1) % 4);
-    }, 1500);
+    }, 2000); // Slower cycle for clarity
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-12 gap-6 select-none w-full max-w-2xl mx-auto">
-      <div className="relative w-full h-12 flex items-center">
-        <div className="absolute left-[20%] right-[20%] h-1 bg-slate-800 rounded-full">
-             <div 
-               className={`absolute top-[-2px] w-6 h-6 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.8)] transition-all duration-1000 ease-in-out ${phase === 2 ? 'left-[95%] opacity-100' : 'left-[5%] opacity-0'}`}
-             ></div>
+    <div className="flex flex-col items-center justify-center p-8 gap-8 select-none w-full max-w-2xl mx-auto">
+      {/* Top Path: Action */}
+      <div className="relative w-full h-16 flex items-center justify-center">
+        <div className="absolute left-[20%] right-[20%] h-1.5 bg-slate-800/50 rounded-full overflow-hidden">
+             {/* Flow Animation */}
+             <motion.div 
+               className="h-full bg-gradient-to-r from-transparent via-indigo-500 to-transparent w-1/2"
+               animate={{ x: phase === 1 || phase === 2 ? "200%" : "-100%" }}
+               transition={{ duration: 1.5, ease: "easeInOut" }}
+             />
         </div>
-        <span className={`absolute top-[-20px] left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest transition-colors ${phase === 2 ? 'text-indigo-400 font-bold' : 'text-slate-600'}`}>ACTION (Aₜ)</span>
+        <motion.div 
+            className="absolute top-0 flex flex-col items-center"
+            animate={{ 
+                opacity: phase === 1 || phase === 2 ? 1 : 0.3,
+                scale: phase === 1 || phase === 2 ? 1.1 : 1
+            }}
+        >
+            <span className="text-xs font-mono font-bold text-indigo-400 tracking-widest bg-slate-900 px-2 py-1 rounded border border-indigo-500/30">ACTION (Aₜ)</span>
+        </motion.div>
       </div>
 
-      <div className="flex justify-between w-full items-center gap-12">
-        <div className={`relative z-10 p-8 rounded-3xl border-2 transition-all duration-700 flex flex-col items-center w-40 h-40 justify-center bg-slate-900 ${phase === 1 ? 'border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.2)] scale-110' : 'border-slate-800'}`}>
-           <BrainCircuit size={48} className={`transition-colors duration-500 ${phase === 1 ? 'text-indigo-400' : 'text-slate-700'}`} />
-           <span className="mt-3 font-bold text-slate-300">AGENT</span>
-           <span className="text-[8px] text-slate-500 font-mono">POLICY &pi;(a|s)</span>
-        </div>
+      <div className="flex justify-between w-full items-center gap-12 px-8">
+        {/* Agent */}
+        <motion.div 
+            animate={{ 
+                borderColor: phase === 0 || phase === 1 ? 'rgba(99,102,241,0.6)' : 'rgba(30,41,59,0.5)',
+                boxShadow: phase === 0 || phase === 1 ? '0 0 30px rgba(99,102,241,0.15)' : 'none',
+                scale: phase === 1 ? 1.05 : 1
+            }}
+            className="relative z-10 p-8 rounded-3xl border-2 bg-slate-900 flex flex-col items-center w-48 h-48 justify-center transition-colors duration-500"
+        >
+           <BrainCircuit size={56} className={`mb-4 transition-colors duration-500 ${phase === 0 || phase === 1 ? 'text-indigo-400' : 'text-slate-600'}`} />
+           <span className="text-sm font-bold text-slate-200">AGENT</span>
+           <span className="text-[10px] text-slate-500 font-mono mt-1">POLICY &pi;(a|s)</span>
+           
+           {/* Internal Thought Process */}
+           <AnimatePresence>
+             {phase === 0 && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="absolute -bottom-8 bg-indigo-500/10 text-indigo-300 text-[10px] px-2 py-1 rounded border border-indigo-500/20 whitespace-nowrap"
+                >
+                    Updating Weights...
+                </motion.div>
+             )}
+           </AnimatePresence>
+        </motion.div>
 
-        <div className={`relative z-10 p-8 rounded-3xl border-2 transition-all duration-700 flex flex-col items-center w-40 h-40 justify-center bg-slate-900 ${phase === 3 ? 'border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.2)] scale-110' : 'border-slate-800'}`}>
-           <Target size={48} className={`transition-colors duration-500 ${phase === 3 ? 'text-emerald-400' : 'text-slate-700'}`} />
-           <span className="mt-3 font-bold text-slate-300">ENV</span>
-           <span className="text-[8px] text-slate-500 font-mono">DYNAMICS P(s',r|s,a)</span>
-        </div>
+        {/* Env */}
+        <motion.div 
+            animate={{ 
+                borderColor: phase === 2 || phase === 3 ? 'rgba(16,185,129,0.6)' : 'rgba(30,41,59,0.5)',
+                boxShadow: phase === 2 || phase === 3 ? '0 0 30px rgba(16,185,129,0.15)' : 'none',
+                scale: phase === 3 ? 1.05 : 1
+            }}
+            className="relative z-10 p-8 rounded-3xl border-2 bg-slate-900 flex flex-col items-center w-48 h-48 justify-center transition-colors duration-500"
+        >
+           <Target size={56} className={`mb-4 transition-colors duration-500 ${phase === 2 || phase === 3 ? 'text-emerald-400' : 'text-slate-600'}`} />
+           <span className="text-sm font-bold text-slate-200">ENVIRONMENT</span>
+           <span className="text-[10px] text-slate-500 font-mono mt-1">DYNAMICS P(s',r|s,a)</span>
+        </motion.div>
       </div>
 
-      <div className="relative w-full h-12 flex items-center">
-        <div className="absolute left-[20%] right-[20%] h-1 bg-slate-800 rounded-full">
-             <div 
-               className={`absolute top-[-2px] w-12 h-6 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)] transition-all duration-1000 ease-in-out ${phase === 0 ? 'right-[95%] opacity-100' : 'right-[5%] opacity-0'}`}
-             ></div>
+      {/* Bottom Path: Reward/State */}
+      <div className="relative w-full h-16 flex items-center justify-center">
+        <div className="absolute left-[20%] right-[20%] h-1.5 bg-slate-800/50 rounded-full overflow-hidden">
+             {/* Flow Animation (Reverse Direction) */}
+             <motion.div 
+               className="h-full bg-gradient-to-l from-transparent via-emerald-500 to-transparent w-1/2"
+               initial={{ x: "200%" }}
+               animate={{ x: phase === 3 || phase === 0 ? "-100%" : "200%" }}
+               transition={{ duration: 1.5, ease: "easeInOut" }}
+             />
         </div>
-        <span className={`absolute bottom-[-20px] left-1/2 -translate-x-1/2 text-[10px] font-mono tracking-widest transition-colors ${phase === 0 ? 'text-emerald-400 font-bold' : 'text-slate-600'}`}>STATE/REWARD (Sₜ₊₁, Rₜ)</span>
+        <motion.div 
+            className="absolute bottom-0 flex flex-col items-center"
+            animate={{ 
+                opacity: phase === 3 || phase === 0 ? 1 : 0.3,
+                scale: phase === 3 || phase === 0 ? 1.1 : 1
+            }}
+        >
+            <span className="text-xs font-mono font-bold text-emerald-400 tracking-widest bg-slate-900 px-2 py-1 rounded border border-emerald-500/30">STATE, REWARD (S', R)</span>
+        </motion.div>
       </div>
     </div>
   );
@@ -127,7 +181,7 @@ const BanditViz = () => {
       interval = setInterval(agentStep, 200);
     }
     return () => clearInterval(interval);
-  }, [autoPlaying, armStats, epsilon]); // Depend on stats to make new decisions
+  }, [autoPlaying, armStats, epsilon]);
 
   const reset = () => {
     setHistory([]);
@@ -181,11 +235,12 @@ const BanditViz = () => {
 
              <div className="flex gap-4">
                {armStats.map((arm, i) => (
-                  <button 
+                  <motion.button 
                     key={i}
                     onClick={() => pullArm(i)}
+                    whileTap={{ scale: 0.95 }}
                     className={`
-                      relative group flex flex-col items-center gap-2 w-24 p-2 rounded-xl border-2 transition-all duration-100 active:scale-95
+                      relative group flex flex-col items-center gap-2 w-24 p-2 rounded-xl border-2 transition-all duration-100
                       ${lastAction?.arm === i ? (lastAction.result === 'win' ? 'border-emerald-500 bg-emerald-900/10' : 'border-rose-500 bg-rose-900/10') : 'border-slate-800 bg-slate-900 hover:border-slate-600'}
                     `}
                   >
@@ -195,12 +250,17 @@ const BanditViz = () => {
                         </div>
                         {/* Probability "Peek" for learning viz */}
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
-                           <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${arm.estimatedVal * 100}%` }} />
+                           <motion.div 
+                             className="h-full bg-indigo-500" 
+                             initial={{ width: "50%" }}
+                             animate={{ width: `${arm.estimatedVal * 100}%` }}
+                             transition={{ duration: 0.5 }}
+                           />
                         </div>
                      </div>
                      <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Arm {i+1}</span>
                      <div className="text-[9px] font-mono text-slate-400">Est: {arm.estimatedVal.toFixed(2)}</div>
-                  </button>
+                  </motion.button>
                ))}
              </div>
              <p className="text-xs text-slate-500 text-center max-w-xs">
@@ -237,7 +297,6 @@ const GridWorldViz = () => {
         [0, 'X', 0, 'G']
     ];
     
-    // Theoretical Value Function V(s) to show heatmap
     const values = [
         [0.4, 0.5, 0.6, 0.7],
         [0.3, 0.0, 0.7, 0.0],
@@ -257,7 +316,7 @@ const GridWorldViz = () => {
         if (isRunning) {
             timer = setInterval(() => {
                 setStep(prev => (prev >= optimalPath.length - 1 ? 0 : prev + 1));
-            }, 600);
+            }, 800);
         }
         return () => clearInterval(timer);
     }, [isRunning]);
@@ -270,48 +329,77 @@ const GridWorldViz = () => {
                 <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-2">
                     {grid.map((row, r) => row.map((cell, c) => (
                         <div key={`${r}-${c}`} className={`
-                            relative flex items-center justify-center rounded-lg border overflow-hidden
+                            relative flex items-center justify-center rounded-lg border overflow-hidden transition-colors duration-500
                             ${cell === 'X' ? 'bg-rose-950/20 border-rose-900/40' : 'border-slate-800/50'}
-                        `} style={{ backgroundColor: cell === 'X' ? undefined : `rgba(16, 185, 129, ${values[r][c] * 0.15})` }}>
-                            {cell !== 0 && <span className={`font-mono text-[10px] font-bold ${cell === 'X' ? 'text-rose-600' : 'text-slate-500'}`}>{cell}</span>}
-                            {!cell && <span className="text-[8px] text-slate-600 font-mono">{values[r][c].toFixed(1)}</span>}
+                            ${r === pos.r && c === pos.c ? 'bg-indigo-500/10 border-indigo-500/30' : ''}
+                        `}>
+                            {/* Heatmap Background */}
+                            {cell !== 'X' && (
+                                <div 
+                                    className="absolute inset-0 bg-emerald-500/20 transition-opacity duration-500" 
+                                    style={{ opacity: values[r][c] * 0.5 }} 
+                                />
+                            )}
+                            
+                            {cell !== 0 && <span className={`relative z-10 font-mono text-[10px] font-bold ${cell === 'X' ? 'text-rose-600' : 'text-slate-500'}`}>{cell}</span>}
+                            {!cell && <span className="relative z-10 text-[8px] text-slate-600 font-mono opacity-50">{values[r][c].toFixed(1)}</span>}
                         </div>
                     )))}
                 </div>
 
-                <div 
-                    className="absolute w-[20%] h-[20%] bg-indigo-500 rounded-xl shadow-[0_0_25px_rgba(99,102,241,0.6)] flex items-center justify-center transition-all duration-500 ease-in-out z-10 border-2 border-white/20"
-                    style={{ top: `${pos.r * 25 + 2.5}%`, left: `${pos.c * 25 + 2.5}%` }}
+                {/* Smoothly Moving Agent */}
+                <motion.div 
+                    className="absolute w-[20%] h-[20%] bg-indigo-500 rounded-xl shadow-[0_0_25px_rgba(99,102,241,0.6)] flex items-center justify-center z-20 border-2 border-white/20"
+                    animate={{ 
+                        top: `${pos.r * 25 + 2.5}%`, 
+                        left: `${pos.c * 25 + 2.5}%` 
+                    }}
+                    transition={{ 
+                        type: "spring", 
+                        stiffness: 200, 
+                        damping: 25 
+                    }}
                 >
-                    <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                </div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </motion.div>
             </div>
 
             <div className="flex flex-col gap-6 w-56">
                 <div className="bg-slate-900/50 p-5 rounded-xl border border-slate-800 shadow-xl">
                     <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <Database size={12} className="text-indigo-400" /> V-State Estimation
+                        <Database size={12} className="text-indigo-400" /> State Analysis
                     </h4>
-                    <div className="space-y-3">
-                        <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="text-slate-500">Coordinate:</span>
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center text-xs font-mono border-b border-slate-800 pb-2">
+                            <span className="text-slate-500">Coordinate</span>
                             <span className="text-indigo-400 font-bold">({pos.r}, {pos.c})</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="text-slate-500">Value V(s):</span>
-                            <span className="text-emerald-400 font-bold">{values[pos.r][pos.c].toFixed(2)}</span>
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center text-xs font-mono">
+                                <span className="text-slate-500">Current Q(s,a)</span>
+                                <span className="text-slate-300">{(values[pos.r][pos.c] * 0.8).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs font-mono">
+                                <span className="text-slate-500">Max Q(s')</span>
+                                <span className="text-emerald-400 font-bold">{(values[pos.r][pos.c]).toFixed(2)}</span>
+                            </div>
                         </div>
-                        <div className="pt-3 border-t border-slate-800">
-                             <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                                <div className="w-2 h-2 rounded bg-emerald-500 opacity-20"></div> Learned Heatmap
+                        
+                        <div className="pt-2">
+                             <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <motion.div 
+                                    className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500"
+                                    animate={{ width: `${values[pos.r][pos.c] * 100}%` }}
+                                />
                              </div>
+                             <div className="text-[9px] text-right mt-1 text-slate-600">Value Confidence</div>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex gap-3">
                     <button onClick={() => setIsRunning(!isRunning)} className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-lg shadow-lg shadow-indigo-900/40 font-bold flex items-center justify-center gap-2 transition-all active:scale-95">
-                        {isRunning ? <span className="w-3 h-3 bg-white"></span> : <Play size={16} fill="white" />} {isRunning ? "Pause" : "Learn"}
+                        {isRunning ? <span className="w-3 h-3 bg-white animate-pulse"></span> : <Play size={16} fill="white" />} {isRunning ? "Running" : "Start"}
                     </button>
                     <button onClick={() => { setStep(0); setIsRunning(false); }} className="p-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-all">
                         <RotateCcw size={20} />
@@ -324,11 +412,11 @@ const GridWorldViz = () => {
 
 const ActorCriticViz = () => {
     return (
-        <div className="w-full h-72 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden relative shadow-2xl select-none">
-            <svg width="100%" height="100%" viewBox="0 0 500 250">
+        <div className="w-full h-80 bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden relative shadow-2xl select-none flex items-center justify-center">
+            <svg width="600" height="300" viewBox="0 0 600 300" className="w-full h-full">
                 <defs>
-                    <marker id="arrow_head" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
+                    <marker id="arrow_head" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L6,3 z" fill="#475569" />
                     </marker>
                     <filter id="glow">
                         <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
@@ -336,52 +424,69 @@ const ActorCriticViz = () => {
                             <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
                         </feMerge>
                     </filter>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#6366f1" stopOpacity="0" />
+                        <stop offset="50%" stopColor="#6366f1" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                    </linearGradient>
                 </defs>
 
-                {/* Paths */}
-                <path d="M 120 125 L 200 125" stroke="#1e293b" strokeWidth="4" markerEnd="url(#arrow_head)" />
-                <path d="M 200 125 C 250 125, 300 70, 360 70" stroke="#1e293b" strokeWidth="4" markerEnd="url(#arrow_head)" />
-                <path d="M 200 125 C 250 125, 300 180, 360 180" stroke="#1e293b" strokeWidth="4" markerEnd="url(#arrow_head)" />
-                <path d="M 400 150 L 400 100" stroke="#f43f5e" strokeWidth="2" strokeDasharray="5 5" opacity="0.4" />
+                {/* --- Static Connections --- */}
+                {/* Env to Agent Split */}
+                <path d="M 150 150 L 220 150" stroke="#1e293b" strokeWidth="2" markerEnd="url(#arrow_head)" />
+                <path d="M 220 150 C 260 150, 260 80, 400 80" stroke="#1e293b" strokeWidth="2" fill="none" />
+                <path d="M 220 150 C 260 150, 260 220, 400 220" stroke="#1e293b" strokeWidth="2" fill="none" />
+                
+                {/* Feedback Loops */}
+                <path d="M 400 220 C 350 220, 400 80, 400 110" stroke="#f43f5e" strokeWidth="2" strokeDasharray="4 4" fill="none" opacity="0.3" />
 
-                {/* Environment */}
-                <g transform="translate(80, 125)">
-                    <circle r="40" fill="#0f172a" stroke="#1e293b" strokeWidth="3" />
-                    <Target size={32} x="-16" y="-16" className="text-emerald-500" />
-                    <text y="55" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="bold">ENV</text>
+                {/* --- Nodes --- */}
+                {/* Environment Node */}
+                <g transform="translate(100, 150)">
+                    <circle r="40" fill="#0f172a" stroke="#1e293b" strokeWidth="2" />
+                    <Target size={28} x="-14" y="-14" className="text-emerald-500" />
+                    <text y="55" textAnchor="middle" fill="#475569" fontSize="10" fontWeight="bold" letterSpacing="1px">ENVIRONMENT</text>
                 </g>
 
-                {/* Actor */}
-                <g transform="translate(400, 70)">
-                    <circle r="40" fill="#0f172a" stroke="#6366f1" strokeWidth="3" className="animate-pulse-slow" style={{ filter: 'url(#glow)' }} />
-                    <Shuffle size={32} x="-16" y="-16" className="text-indigo-400" />
-                    <text y="55" textAnchor="middle" fill="#818cf8" fontSize="10" fontWeight="bold">ACTOR (&pi;)</text>
+                {/* Actor Node */}
+                <g transform="translate(450, 80)">
+                    <circle r="40" fill="#0f172a" stroke="#6366f1" strokeWidth="2" className="animate-pulse-slow" style={{ filter: 'url(#glow)' }} />
+                    <Shuffle size={28} x="-14" y="-14" className="text-indigo-400" />
+                    <text y="55" textAnchor="middle" fill="#818cf8" fontSize="10" fontWeight="bold" letterSpacing="1px">ACTOR (&pi;)</text>
+                    <text x="50" y="5" fill="#6366f1" fontSize="10" fontWeight="bold">Action</text>
                 </g>
 
-                {/* Critic */}
-                <g transform="translate(400, 180)">
-                    <circle r="40" fill="#0f172a" stroke="#f43f5e" strokeWidth="3" />
-                    <Activity size={32} x="-16" y="-16" className="text-rose-400" />
-                    <text y="55" textAnchor="middle" fill="#f43f5e" fontSize="10" fontWeight="bold">CRITIC (V)</text>
+                {/* Critic Node */}
+                <g transform="translate(450, 220)">
+                    <circle r="40" fill="#0f172a" stroke="#f43f5e" strokeWidth="2" />
+                    <Activity size={28} x="-14" y="-14" className="text-rose-400" />
+                    <text y="55" textAnchor="middle" fill="#f43f5e" fontSize="10" fontWeight="bold" letterSpacing="1px">CRITIC (V)</text>
+                    <text x="50" y="5" fill="#f43f5e" fontSize="10" fontWeight="bold">TD Error</text>
                 </g>
 
-                {/* Flow Particles */}
+                {/* --- Dynamic Data Packets (Smooth Framer Motion logic simulated via CSS for infinite loops) --- */}
+                
+                {/* State Signal to Actor */}
                 <circle r="4" fill="#6366f1">
-                    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 120 125 L 200 125 C 250 125, 300 70, 360 70" />
+                    <animateMotion dur="2s" repeatCount="indefinite" path="M 140 150 L 220 150 C 260 150, 260 80, 410 80" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines="0.4 0 0.2 1" />
                 </circle>
+
+                {/* State Signal to Critic */}
                 <circle r="4" fill="#10b981">
-                    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 120 125 L 200 125 C 250 125, 300 180, 360 180" />
+                    <animateMotion dur="2s" repeatCount="indefinite" path="M 140 150 L 220 150 C 260 150, 260 220, 410 220" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines="0.4 0 0.2 1" />
                 </circle>
+
+                {/* Critique (Error) Signal Feedback */}
                 <circle r="3" fill="#f43f5e">
-                    <animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite" path="M 400 150 L 400 100" />
+                    <animateMotion dur="2s" begin="1s" repeatCount="indefinite" path="M 450 180 L 450 120" />
+                    <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1s" repeatCount="indefinite" />
                 </circle>
+
             </svg>
-            <div className="absolute top-1/2 left-44 -translate-y-1/2 flex flex-col gap-1">
-                <span className="text-[8px] font-mono text-indigo-400 tracking-widest bg-slate-900/80 px-1">STATE</span>
-                <span className="text-[8px] font-mono text-emerald-400 tracking-widest bg-slate-900/80 px-1">REWARD</span>
-            </div>
-             <div className="absolute top-1/2 right-12 -translate-y-1/2 bg-rose-950/40 px-2 py-0.5 rounded border border-rose-500/20">
-                <span className="text-[8px] font-mono text-rose-300 font-bold uppercase">TD-Error</span>
+
+            {/* Labels overlay */}
+            <div className="absolute top-[45%] left-[30%] bg-slate-900/90 px-2 py-1 rounded border border-slate-800 backdrop-blur-sm">
+                <span className="text-[10px] font-mono text-emerald-400 font-bold">State (Sₜ)</span>
             </div>
         </div>
     );
@@ -495,13 +600,19 @@ Q[state, action] += alpha * error`}
                      Actor-Critic methods solve the high variance problem of pure policy gradients by combining two networks:
                  </p>
                  <div className="space-y-4">
-                     <div className="flex gap-4 items-start">
+                     <div className="flex gap-4 items-start bg-slate-950/50 p-4 rounded-xl border border-slate-800">
                          <div className="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold flex-shrink-0">A</div>
-                         <p className="text-sm text-slate-500"><strong className="text-slate-300">The Actor</strong> proposes actions based on the current policy. It aims to maximize the reward feedback from the critic.</p>
+                         <div>
+                            <p className="text-sm font-bold text-slate-200 mb-1">The Actor (Policy)</p>
+                            <p className="text-xs text-slate-500">Proposes actions based on the current state. It tries to maximize the value estimated by the Critic.</p>
+                         </div>
                      </div>
-                     <div className="flex gap-4 items-start">
+                     <div className="flex gap-4 items-start bg-slate-950/50 p-4 rounded-xl border border-slate-800">
                          <div className="w-8 h-8 rounded bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold flex-shrink-0">C</div>
-                         <p className="text-sm text-slate-500"><strong className="text-slate-300">The Critic</strong> evaluates the action by estimating the value function. It calculates the 'Advantage'—how much better an action was compared to the average.</p>
+                         <div>
+                            <p className="text-sm font-bold text-slate-200 mb-1">The Critic (Value)</p>
+                            <p className="text-xs text-slate-500">Evaluates the action by computing the TD Error (Surprise). This error signal is used to update both networks.</p>
+                         </div>
                      </div>
                  </div>
              </div>
