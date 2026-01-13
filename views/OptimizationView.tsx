@@ -181,6 +181,10 @@ export const OptimizationView: React.FC = () => {
     return w - lr * g`}
           pros={['Globally optimal for convex spaces', 'Scalable to millions of parameters', 'The engine of modern AI']}
           cons={['Sensitive to learning rate', 'Can oscillate in ravines', 'Vanishing gradients in deep paths']}
+          hyperparameters={[
+            { name: 'Learning Rate (η)', description: 'Controls the step size at each iteration. Large values can overshoot the minimum; small values converge slowly.', default: '0.01' },
+            { name: 'Iterations (Epochs)', description: 'The number of passes through the entire training dataset.', default: '1000' }
+          ]}
         >
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
