@@ -22,14 +22,12 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   const topic = getTopicById(topicId);
   const initialCode = topic?.labConfig?.initialCode || DEFAULT_CODE;
 
-  // Initialize with empty string, load from effect to avoid SSR mismatches if we were doing SSR,
-  // but here it also helps separate the "default" from the "saved".
-  const [code, setCode] = useState(initialCode);
+  // Use updated hook which now manages code state and persistence
+  const { code, setCode, resetCode, logs, isRunning, runCode, clearLogs } = useCodeRunner(topicId, initialCode);
+
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
   const [isMobile, setIsMobile] = useState(false);
   
-  // Hooks
-  const { logs, isRunning, runCode, clearLogs } = useCodeRunner();
   const { markAsCompleted, isCompleted } = useCourseProgress();
   const completed = isCompleted(topicId);
 
@@ -40,22 +38,6 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  // Load saved code or reset when topic changes
-  useEffect(() => {
-    const savedCode = localStorage.getItem(`ai-codex-lab-${topicId}`);
-    if (savedCode) {
-      setCode(savedCode);
-    } else {
-      setCode(initialCode);
-    }
-    clearLogs();
-  }, [topicId, initialCode, clearLogs]);
-
-  // Save code on change
-  useEffect(() => {
-    localStorage.setItem(`ai-codex-lab-${topicId}`, code);
-  }, [code, topicId]);
 
   // Auto-complete logic based on execution logs
   useEffect(() => {
@@ -77,14 +59,12 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     } else {
         setActiveTab('console');
     }
-    runCode(code);
+    runCode();
   };
 
   const handleReset = () => {
     if (window.confirm("Reset code to default? This will lose your changes.")) {
-      setCode(initialCode);
-      localStorage.removeItem(`ai-codex-lab-${topicId}`);
-      clearLogs();
+      resetCode();
     }
   };
 

@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export type LogType = 'stdout' | 'error' | 'system';
 
@@ -10,9 +10,40 @@ export interface LogEntry {
   timestamp: number;
 }
 
-export const useCodeRunner = () => {
+export const useCodeRunner = (topicId: string, initialCode: string) => {
+  // Initialize state from localStorage or initialCode
+  const [code, setCodeState] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem(`ai-codex-lab-${topicId}`);
+        if (saved !== null) return saved;
+    }
+    return initialCode;
+  });
+
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isRunning, setIsRunning] = useState(false);
+
+  // Sync state when topicId or initialCode changes (handles navigation without remount if applicable)
+  useEffect(() => {
+    const saved = localStorage.getItem(`ai-codex-lab-${topicId}`);
+    if (saved !== null) {
+      setCodeState(saved);
+    } else {
+      setCodeState(initialCode);
+    }
+    setLogs([]); // Clear logs when switching topics
+  }, [topicId, initialCode]);
+
+  const setCode = useCallback((newCode: string) => {
+    setCodeState(newCode);
+    localStorage.setItem(`ai-codex-lab-${topicId}`, newCode);
+  }, [topicId]);
+
+  const resetCode = useCallback(() => {
+    setCodeState(initialCode);
+    localStorage.removeItem(`ai-codex-lab-${topicId}`);
+    setLogs([]);
+  }, [topicId, initialCode]);
 
   const addLog = (type: LogType, content: string) => {
     setLogs(prev => [...prev, {
@@ -25,7 +56,7 @@ export const useCodeRunner = () => {
 
   const clearLogs = useCallback(() => setLogs([]), []);
 
-  const runCode = useCallback(async (code: string) => {
+  const runCode = useCallback(async () => {
     setIsRunning(true);
     clearLogs();
     
@@ -77,7 +108,7 @@ export const useCodeRunner = () => {
     }
 
     setIsRunning(false);
-  }, [clearLogs]);
+  }, [code, clearLogs]);
 
-  return { logs, isRunning, runCode, clearLogs };
+  return { code, setCode, resetCode, logs, isRunning, runCode, clearLogs };
 };
