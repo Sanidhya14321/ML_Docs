@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, ComposedChart, Scatter, ReferenceLine } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
@@ -133,6 +134,14 @@ export const EnsembleView: React.FC = () => {
         code={`from sklearn.ensemble import RandomForestClassifier\nrf = RandomForestClassifier(n_estimators=100).fit(X_train, y_train)`}
         pros={['Extremely robust to outliers', 'Inherent feature importance calculation', 'Low risk of overfitting']}
         cons={['Slow inference time', 'Large storage requirements', 'Not easily interpretable']}
+        steps={[
+            "Open Google Colab. Import `RandomForestClassifier` from `sklearn.ensemble`.",
+            "Load and split your dataset.",
+            "Initialize: `model = RandomForestClassifier(n_estimators=100)`.",
+            "Fit the model to the training set.",
+            "Use `model.feature_importances_` to see which variables matter most.",
+            "Predict and evaluate accuracy."
+        ]}
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
              <DecisionBoundaryViz />
@@ -157,6 +166,14 @@ export const EnsembleView: React.FC = () => {
         code={`import xgboost as xgb\nmodel = xgb.XGBClassifier(learning_rate=0.1)`}
         pros={['Best-in-class performance on tabular data', 'Handles missing values natively', 'Flexible cost functions']}
         cons={['Requires careful hyperparameter tuning', 'Sensitive to noise', 'Sequential training is slower']}
+        steps={[
+            "Install XGBoost in Colab: `!pip install xgboost`.",
+            "Import `XGBClassifier` or `XGBRegressor`.",
+            "Prepare data. XGBoost can handle missing values, but encoding categoricals is still needed.",
+            "Initialize: `model = xgb.XGBClassifier(n_estimators=100, learning_rate=0.1)`.",
+            "Fit the model. Watch for overfitting if `n_estimators` is too high.",
+            "Evaluate performance."
+        ]}
       >
          <GradientBoostingViz />
       </AlgorithmCard>

@@ -168,6 +168,16 @@ model.fit(X_train, y_train)
 predictions = model.predict(X_test)`}
           pros={['Simple and interpretable', 'Fast to train', 'Basis for many other methods']}
           cons={['Assumes linearity', 'Sensitive to outliers']}
+          steps={[
+            "Start a new notebook in Google Colab.",
+            "Import `pandas` for dataframes and `sklearn.linear_model.LinearRegression`.",
+            "Load your dataset (e.g., `pd.read_csv('housing.csv')`).",
+            "Separate features (X) and target variable (y).",
+            "Instantiate the model: `reg = LinearRegression()`.",
+            "Fit the model: `reg.fit(X_train, y_train)`.",
+            "Predict outcomes: `y_pred = reg.predict(X_test)`.",
+            "Evaluate using `mean_squared_error` from `sklearn.metrics`."
+          ]}
         >
           <LinearViz />
         </AlgorithmCard>
@@ -188,6 +198,14 @@ model.fit(X_poly, y)`}
           hyperparameters={[
               { name: 'degree', description: 'The degree of the polynomial features.', default: '2' }
           ]}
+          steps={[
+            "Open Google Colab and import `PolynomialFeatures` from `sklearn.preprocessing`.",
+            "Define your input features X.",
+            "Create a polynomial transformer: `poly = PolynomialFeatures(degree=2)`.",
+            "Transform X: `X_poly = poly.fit_transform(X)`.",
+            "Treat `X_poly` as your new features and fit a standard `LinearRegression` model.",
+            "Visualize the fitted curve against the original data points."
+          ]}
         >
           <PolyViz />
         </AlgorithmCard>
@@ -206,6 +224,15 @@ lasso = Lasso(alpha=0.1)`}
             cons={['Requires hyperparameter tuning (alpha)', 'Introduces bias to reduce variance']}
             hyperparameters={[
                 { name: 'alpha', description: 'Regularization strength; must be a positive float.', default: '1.0' }
+            ]}
+            steps={[
+                "Load a dataset with many features in Colab.",
+                "Import `Ridge` and `Lasso` from `sklearn.linear_model`.",
+                "Instantiate `Ridge(alpha=1.0)` for L2 regularization.",
+                "Instantiate `Lasso(alpha=0.1)` for L1 regularization.",
+                "Fit both models to the training data.",
+                "Inspect coefficients (`model.coef_`). Notice how Lasso drives some to exactly zero.",
+                "Tune `alpha` to balance bias and variance."
             ]}
         >
             <RegularizationViz />

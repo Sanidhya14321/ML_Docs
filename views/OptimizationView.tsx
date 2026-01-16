@@ -185,6 +185,15 @@ export const OptimizationView: React.FC = () => {
             { name: 'Learning Rate (η)', description: 'Controls the step size at each iteration. Large values can overshoot the minimum; small values converge slowly.', default: '0.01' },
             { name: 'Iterations (Epochs)', description: 'The number of passes through the entire training dataset.', default: '1000' }
           ]}
+          steps={[
+            "Initialize a Google Colab notebook for the experiment.",
+            "Define your cost function J(θ) (e.g., Mean Squared Error) and its gradient ∇J(θ).",
+            "Initialize parameters θ randomly (e.g., weights and bias).",
+            "Create a training loop that runs for a set number of `epochs`.",
+            "Inside the loop, compute the gradient using the current parameters.",
+            "Update parameters: θ = θ - learning_rate * gradient.",
+            "Monitor the loss value; it should decrease with each iteration."
+          ]}
         >
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -223,6 +232,15 @@ export const OptimizationView: React.FC = () => {
             undo(val) # Backtrack`}
           pros={['Finds all possible solutions', 'Systematic pruning', 'Guaranteed completion']}
           cons={['Exponential worst-case complexity', 'High recursion depth']}
+          steps={[
+            "Identify the state representation (e.g., a Sudoku grid or N-Queens board).",
+            "Define a helper function `is_valid(state, move)` to check constraints.",
+            "Implement the recursive `solve(state)` function.",
+            "Base Case: If state is complete/goal reached, return True.",
+            "Recursive Step: Loop through possible moves. If valid, apply move and call `solve`.",
+            "Backtrack Step: If `solve` returns False, undo the move (reset state) and try the next option.",
+            "Trigger the initial call to `solve(initial_state)`."
+          ]}
         >
           <SudokuViz />
         </AlgorithmCard>

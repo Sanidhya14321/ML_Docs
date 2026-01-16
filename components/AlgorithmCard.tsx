@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
-import { Check, X, Info, Sparkles, ChevronDown } from 'lucide-react';
+import { Check, X, Info, Sparkles, ChevronDown, ListChecks } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { AlgorithmSkeleton } from './Skeletons';
 
@@ -24,6 +24,7 @@ interface AlgorithmCardProps {
   cons: string[];
   complexity?: 'Fundamental' | 'Intermediate' | 'Advanced';
   hyperparameters?: Hyperparameter[];
+  steps?: string[];
   children?: React.ReactNode;
   isLoading?: boolean;
 }
@@ -48,6 +49,7 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   cons,
   complexity = 'Intermediate',
   hyperparameters,
+  steps,
   children,
   isLoading = false
 }) => {
@@ -190,6 +192,26 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
                         <div className="text-[10px] text-slate-400 dark:text-slate-600 uppercase font-mono tracking-tighter">Default</div>
                         <div className="text-xs text-slate-600 dark:text-slate-300 font-mono">{param.default || 'N/A'}</div>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {steps && steps.length > 0 && (
+              <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800/50">
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <ListChecks size={14} className="text-indigo-500" /> Implementation Protocol
+                </h4>
+                <div className="space-y-3">
+                  {steps.map((step, idx) => (
+                    <div key={idx} className="flex gap-4">
+                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-0.5">
+                        {step}
+                      </p>
                     </div>
                   ))}
                 </div>

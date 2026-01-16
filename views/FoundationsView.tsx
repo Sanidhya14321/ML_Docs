@@ -193,6 +193,13 @@ W = np.array([[0.1, 0.5], [-0.3, 0.8]])
 output = np.matmul(W, a)`}
               pros={['Foundational for Neural Networks', 'Mathematically elegant', 'Highly parallelizable (GPUs)']}
               cons={['Computationally expensive at scale O(n³)', 'Susceptible to sparsity issues']}
+              steps={[
+                "Launch Google Colab.",
+                "Import NumPy: `import numpy as np`.",
+                "Create vectors: `v = np.array([1, 2, 3])`.",
+                "Perform operations: `np.dot(v1, v2)` for similarity, `np.matmul(matrix, vector)` for transformation.",
+                "Experiment with `np.linalg.eig` to find eigenvalues."
+              ]}
           >
               <GeometricDotProduct />
           </AlgorithmCard>
@@ -218,6 +225,13 @@ y.backward() # Compute gradients
 print(x.grad) # f'(2) = 2*2 = 4.0`}
               pros={['Enables Backpropagation', 'Universal optimization method', 'Handles millions of parameters']}
               cons={['Vanishing/Exploding gradients in deep nets', 'Can get stuck in local minima']}
+              steps={[
+                "Open Colab. Import `torch`.",
+                "Create a tensor with gradient tracking: `x = torch.tensor(2.0, requires_grad=True)`.",
+                "Define a function: `y = x**2 + 3*x`.",
+                "Perform backpropagation: `y.backward()`.",
+                "Inspect the gradient: `print(x.grad)`. This tells you how to adjust 'x' to minimize 'y'."
+              ]}
           >
               <CalculusViz />
           </AlgorithmCard>
@@ -246,6 +260,13 @@ likelihood = 0.8
 posterior = (likelihood * prior) / 1.0 # simplified`}
               pros={['Handles uncertainty explicitly', 'Robust with small data', 'Prevents overfitting via priors']}
               cons={['Computationally intractable integrals', 'Requires prior assumptions']}
+              steps={[
+                "Use `scipy.stats` in Colab.",
+                "Define a prior probability distribution.",
+                "Observe new data points.",
+                "Multiply Prior by Likelihood to get Posterior.",
+                "Visualize the distribution shift using `matplotlib`."
+              ]}
           >
               <ProbabilityViz />
           </AlgorithmCard>

@@ -518,6 +518,14 @@ labels = kmeans.labels_`}
             { name: 'n_clusters', description: 'The number of clusters to form as well as the number of centroids to generate.', default: '8' },
             { name: 'init', description: 'Method for initialization (k-means++ or random).', default: 'k-means++' }
         ]}
+        steps={[
+            "Open Google Colab. Import `KMeans` from `sklearn.cluster`.",
+            "Load data. Scaling (StandardScaler) is recommended as KMeans uses Euclidean distance.",
+            "Initialize: `model = KMeans(n_clusters=3)`.",
+            "Fit the model: `model.fit(X)`.",
+            "Access labels via `model.labels_` and centroids via `model.cluster_centers_`.",
+            "Use the 'Elbow Method' to find the optimal 'k' by plotting inertia vs. k."
+        ]}
       >
         <KMeansViz />
       </AlgorithmCard>
@@ -538,6 +546,14 @@ db = DBSCAN(eps=0.3, min_samples=5).fit(X)`}
         hyperparameters={[
             { name: 'eps', description: 'The maximum distance between two samples for one to be considered as in the neighborhood of the other.', default: '0.5' },
             { name: 'min_samples', description: 'The number of samples (or total weight) in a neighborhood for a point to be considered as a core point.', default: '5' }
+        ]}
+        steps={[
+            "Import `DBSCAN` from `sklearn.cluster`.",
+            "Data scaling is mandatory for distance-based calculations.",
+            "Initialize: `model = DBSCAN(eps=0.5, min_samples=5)`.",
+            "Fit: `model.fit(X)`. No predict method, labels are assigned during fit.",
+            "Check `model.labels_`. Noise points are labeled as -1.",
+            "Tune `eps` carefully; use a k-distance graph to find the knee point."
         ]}
       >
         <DBSCANViz />
@@ -560,6 +576,14 @@ X_reduced = pca.fit_transform(X_high_dim)`}
             { name: 'n_components', description: 'Number of components to keep. If None, all components are kept.', default: 'None' },
             { name: 'svd_solver', description: 'The solver to use (auto, full, arpack, randomized).', default: 'auto' }
         ]}
+        steps={[
+            "Import `PCA` from `sklearn.decomposition`.",
+            "Scale your data using `StandardScaler` (Mean=0, Var=1).",
+            "Initialize: `pca = PCA(n_components=0.95)` (retain 95% variance) or integer k.",
+            "Fit and Transform: `X_pca = pca.fit_transform(X)`.",
+            "Inspect `pca.explained_variance_ratio_` to see information retained.",
+            "Feed `X_pca` into your classifier/regressor."
+        ]}
       >
         <PCAViz />
       </AlgorithmCard>
@@ -581,6 +605,13 @@ outliers = clf.fit_predict(X)`}
             { name: 'contamination', description: 'The amount of contamination of the data set, i.e. the proportion of outliers in the data set.', default: 'auto' },
             { name: 'n_estimators', description: 'The number of base estimators in the ensemble.', default: '100' }
         ]}
+        steps={[
+            "Import `IsolationForest` from `sklearn.ensemble`.",
+            "Initialize: `clf = IsolationForest(contamination=0.05, random_state=42)`.",
+            "Fit to your data: `clf.fit(X)`.",
+            "Predict: `preds = clf.predict(X)`. Returns -1 for outliers, 1 for inliers.",
+            "Use `clf.decision_function(X)` to get raw anomaly scores."
+        ]}
       >
         <IsolationForestViz />
       </AlgorithmCard>
@@ -601,6 +632,14 @@ tsne = TSNE(n_components=2, perplexity=30)`}
         hyperparameters={[
             { name: 'perplexity', description: 'Related to the number of nearest neighbors that is used in other manifold learning algorithms.', default: '30.0' },
             { name: 'n_iter', description: 'Maximum number of iterations for the optimization.', default: '1000' }
+        ]}
+        steps={[
+            "Import `TSNE` from `sklearn.manifold`.",
+            "Reduce data dimensions to ~50 using PCA first if features > 50 (speed optimization).",
+            "Initialize: `tsne = TSNE(n_components=2, perplexity=30)`.",
+            "Fit transform: `X_embedded = tsne.fit_transform(X)`.",
+            "Plot `X_embedded` using matplotlib/seaborn to visualize clusters.",
+            "Experiment with `perplexity` (5-50) as it drastically changes results."
         ]}
       >
         <div className="bg-slate-950 p-8 rounded-3xl border border-slate-800 text-center">

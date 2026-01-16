@@ -249,6 +249,14 @@ model = models.Sequential([
 ])`}
         pros={['Universal function approximator', 'Scales with data', 'Foundational for all deep models']}
         cons={['Requires vast amounts of labeled data', 'Hyperparameter tuning is difficult', 'Difficult to explain decision logic']}
+        steps={[
+            "Open Google Colab. Import `tensorflow` or `torch`.",
+            "Preprocess data. Normalize inputs to [0,1] or [-1,1]. One-hot encode targets if categorical.",
+            "Build model: Use `keras.Sequential` or `nn.Module`.",
+            "Add Dense layers with 'relu' activation. Use 'softmax' (multi-class) or 'sigmoid' (binary) for the output layer.",
+            "Compile: Choose optimizer (Adam) and loss function (CrossEntropy).",
+            "Train: `model.fit(x, y, epochs=10, batch_size=32)`."
+        ]}
       >
         <NeuralNetworkViz />
         <div className="mt-12">
@@ -279,6 +287,14 @@ model = models.Sequential([
 ])`}
         pros={['Translation invariance', 'Automatic hierarchical feature extraction', 'Highly efficient for visual data']}
         cons={['High compute requirement', 'Loss of fine-grained spatial information through pooling', 'Adversarial vulnerability']}
+        steps={[
+            "Use Colab with GPU runtime (`Runtime > Change runtime type > GPU`).",
+            "Load image dataset (e.g., MNIST/CIFAR-10). Normalize pixel values.",
+            "Build: `Conv2D` layers (filters, kernel_size) followed by `MaxPooling2D`.",
+            "Flatten the output of convolutions.",
+            "Add Dense layers for classification.",
+            "Compile and Train. Watch accuracy increase as filters learn edges and shapes."
+        ]}
       >
         <ConvolutionViz />
       </AlgorithmCard>
@@ -301,6 +317,13 @@ h(t-1) --> [Cell A] --> h(t) --> [Cell A] --> h(t+1)
 ])`}
         pros={['Handles variable-length inputs', 'Captures temporal dependencies', 'Standard for audio/time-series']}
         cons={['Slow to train (non-parallelizable)', 'Vanishing gradient issues in vanilla versions', 'Memory limitations for very long sequences']}
+        steps={[
+            "Prepare sequence data (Time Series or Text). Pad sequences to same length.",
+            "Use `Embedding` layer if input is text.",
+            "Add `LSTM` or `GRU` layer. Set `return_sequences=True` if stacking layers.",
+            "End with Dense layer.",
+            "Compile with Adam optimizer. Train."
+        ]}
       >
          <BPTTViz />
       </AlgorithmCard>
@@ -319,6 +342,13 @@ h(t-1) --> [Cell A] --> h(t) --> [Cell A] --> h(t+1)
 layer = Embedding(input_dim=10000, output_dim=300)`}
         pros={['Dramatic dimensionality reduction', 'Captures semantic meaning', 'Transferable via pre-trained models']}
         cons={['Learns biases from training corpora', 'Static embeddings ignore context (e.g., "bank")']}
+        steps={[
+            "Tokenize text data (convert words to integers).",
+            "Define vocab size and embedding dimension (e.g., 300).",
+            "Use `layers.Embedding(vocab_size, embedding_dim)` as the first layer.",
+            "Train as part of a larger network (e.g., classifier).",
+            "Extract weights to visualize in 2D using PCA/t-SNE."
+        ]}
       >
         <EmbeddingsViz />
       </AlgorithmCard>
@@ -339,6 +369,13 @@ def attention(q, k, v):
     return matmul(softmax(scores), v)`}
         pros={['Massive parallel training capability', 'State-of-the-art across nearly all NLP benchmarks', 'Excellent long-range memory']}
         cons={['Quadratic compute cost with sequence length', 'Extreme data appetite', 'Complex implementation']}
+        steps={[
+            "Recommended: Use `Hugging Face Transformers` library in Colab.",
+            "Import `AutoTokenizer` and `AutoModel`.",
+            "Load a pre-trained model (e.g., 'bert-base-uncased').",
+            "Fine-tune on your specific dataset using `Trainer` API.",
+            "Or implement from scratch: Define Scaled Dot-Product Attention and Multi-Head layers manually in PyTorch/Keras."
+        ]}
       >
         <AttentionViz />
       </AlgorithmCard>

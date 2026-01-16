@@ -525,6 +525,13 @@ for _ in range(steps):
     state = next_state`}
             pros={['Provides mathematical guarantees', 'Handles long-term planning', 'Generalizes across domains']}
             cons={['Computationally hard for large state spaces', 'Sensitive to sparse rewards']}
+            steps={[
+                "Open Google Colab. Install `gym` environment: `!pip install gym`.",
+                "Import dependencies: `import gym`, `import numpy as np`.",
+                "Initialize environment: `env = gym.make('CartPole-v1')`.",
+                "Inspect Action and Observation spaces: `env.action_space`, `env.observation_space`.",
+                "Run a random agent loop: `state = env.reset()`, `action = env.action_space.sample()`, `env.step(action)`."
+            ]}
          >
             <RLLoopViz />
          </AlgorithmCard>
@@ -556,6 +563,14 @@ else:
             hyperparameters={[
               { name: 'epsilon', description: 'Probability of choosing a random action (Exploration Rate).', default: '0.1' }
             ]}
+            steps={[
+                "Define a Bandit class in Colab with true probabilities for 'arms'.",
+                "Initialize Q-values array to zeros.",
+                "Run a loop for N trials.",
+                "Generate random number `r`. If `r < epsilon`, select random arm. Else, select `argmax(Q)`.",
+                "Simulate pulling the arm (return 1 or 0 based on probability).",
+                "Update Q-value for the chosen arm: `Q[a] = Q[a] + alpha * (reward - Q[a])`."
+            ]}
          >
             <BanditViz />
          </AlgorithmCard>
@@ -581,6 +596,14 @@ error = target - Q[state, action]
 Q[state, action] += alpha * error`}
             pros={['Guaranteed convergence', 'Off-policy (learns from any data)', 'Simple to implement']}
             cons={['Scales poorly to high dimensions', 'Requires discrete actions']}
+            steps={[
+                "Use `gym.make('FrozenLake-v1')` in Colab.",
+                "Initialize `Q_table = np.zeros((state_space, action_space))`.",
+                "Set hyperparameters: `alpha` (learning rate), `gamma` (discount), `epsilon`.",
+                "Loop through episodes. Reset environment.",
+                "Step in environment. Apply formula: `Q[s,a] = Q[s,a] + alpha * (R + gamma * max(Q[s']) - Q[s,a])`.",
+                "Decay epsilon over time to shift from exploration to exploitation."
+            ]}
         >
             <GridWorldViz />
         </AlgorithmCard>

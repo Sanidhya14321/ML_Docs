@@ -292,6 +292,15 @@ clf.fit(X_train, y_train)`}
           { name: 'C', description: 'Inverse of regularization strength; smaller values specify stronger regularization.', default: '1.0' },
           { name: 'penalty', description: 'Used to specify the norm used in the penalization (l1, l2).', default: 'l2' }
         ]}
+        steps={[
+          "Import `LogisticRegression` from `sklearn.linear_model` in Google Colab.",
+          "Ensure your target variable y is categorical (e.g., 0 or 1).",
+          "Scale your features using `StandardScaler` (Logistic Regression is sensitive to scale).",
+          "Initialize: `model = LogisticRegression(C=1.0)`.",
+          "Fit the model to your training set.",
+          "Predict probabilities using `model.predict_proba(X_test)` to see confidence scores.",
+          "Use a confusion matrix to evaluate precision and recall."
+        ]}
       >
         <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4">
           <ResponsiveContainer width="100%" height="100%">
@@ -323,6 +332,14 @@ knn.fit(X_train, y_train)`}
           { name: 'n_neighbors', description: 'Number of neighbors to consider.', default: '5' },
           { name: 'metric', description: 'Distance function used for the tree.', default: 'minkowski' }
         ]}
+        steps={[
+          "Import `KNeighborsClassifier` from `sklearn.neighbors` in your notebook.",
+          "CRITICAL: Normalize all features to the same scale (0-1) using `MinMaxScaler`.",
+          "Choose an odd number for `k` (e.g., 3 or 5) to avoid ties.",
+          "Initialize: `model = KNeighborsClassifier(n_neighbors=5)`.",
+          "Fit the model (this just stores the data).",
+          "Predict on test data. The model will calculate distances in real-time."
+        ]}
       >
          <KNNViz />
       </AlgorithmCard>
@@ -338,6 +355,14 @@ knn.fit(X_train, y_train)`}
 svm = SVC(kernel='rbf', C=1.0)`}
         pros={['Effective in high dimensions', 'Memory efficient (uses support vectors)', 'Versatile via kernel trick']}
         cons={['Doesn\'t directly provide probability estimates', 'Slow on large datasets', 'Hard to interpret']}
+        steps={[
+          "Import `SVC` from `sklearn.svm` in Colab.",
+          "Standardize features (Mean=0, Variance=1). SVM maximizes margin based on distance.",
+          "Select a kernel: `linear` for simple data, `rbf` for complex non-linear data.",
+          "Initialize: `model = SVC(kernel='rbf', C=1.0)`.",
+          "Fit the model.",
+          "Note: `SVC` does not output probabilities by default. Set `probability=True` if needed (slower)."
+        ]}
       >
         <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
             <ResponsiveContainer width="100%" height="100%">
@@ -373,6 +398,13 @@ svm = SVC(kernel='rbf', C=1.0)`}
 nb = GaussianNB().fit(X_train, y_train)`}
         pros={['Extremely fast and scalable', 'Works well with small datasets', 'Excellent for text (Spam detection)']}
         cons={['Strong independence assumption rarely holds', 'Zero-frequency problem for unseen categories']}
+        steps={[
+          "Import `GaussianNB` (for continuous features) or `MultinomialNB` (for text counts) from `sklearn.naive_bayes`.",
+          "Prepare your X and y matrices.",
+          "Initialize: `model = GaussianNB()`.",
+          "Fit the model. It's usually instant.",
+          "Predict classes. This is an excellent 'baseline' model to benchmark others against."
+        ]}
       >
         <NaiveBayesViz />
       </AlgorithmCard>
@@ -388,6 +420,14 @@ nb = GaussianNB().fit(X_train, y_train)`}
 dt = DecisionTreeClassifier(max_depth=5)`}
         pros={['White-box interpretability', 'Requires zero data scaling', 'Implicit feature selection']}
         cons={['Highly prone to overfitting', 'Unstable: small data changes yield different trees', 'Sensitive to imbalanced data']}
+        steps={[
+          "Import `DecisionTreeClassifier` from `sklearn.tree`.",
+          "No need to scale data; Trees handle raw values well.",
+          "Initialize: `model = DecisionTreeClassifier(max_depth=3)`.",
+          "Setting `max_depth` is crucial to prevent the tree from memorizing the data (overfitting).",
+          "Fit and predict.",
+          "Use `sklearn.tree.plot_tree(model)` to visualize the actual decision logic."
+        ]}
       >
         <DecisionTreeViz />
       </AlgorithmCard>
