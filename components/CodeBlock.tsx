@@ -33,14 +33,14 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
   };
 
   return (
-    <div className="my-8 rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-[#1e222a] group relative font-mono text-sm">
+    <div className="my-8 rounded-xl overflow-hidden border border-slate-700/50 shadow-2xl bg-[#1e1e1e] group relative font-mono text-sm">
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#282c34] border-b border-black/20 select-none">
+      <div className="flex items-center justify-between px-4 py-3 bg-[#252526] border-b border-white/5 select-none">
         <div className="flex items-center gap-4">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 transition-colors"></div>
-            <div className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 transition-colors"></div>
-            <div className="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 transition-colors"></div>
+          <div className="flex space-x-2 opacity-80 hover:opacity-100 transition-opacity">
+            <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
           </div>
           <div className="flex items-center gap-2 ml-2">
             {filename && (
@@ -77,8 +77,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
       </div>
 
       {/* Code Area */}
-      <div className="relative overflow-x-auto custom-scrollbar bg-[#1e222a]">
-        <pre className={`language-${language} !bg-transparent !m-0 !p-6 !font-mono leading-relaxed`}>
+      <div className="relative overflow-x-auto custom-scrollbar bg-[#1e1e1e]">
+        <pre className={`language-${language} !bg-transparent !m-0 !p-6 !font-mono !text-[13.5px] !leading-loose`}>
           <code ref={codeRef} className={`language-${language}`}>
             {code.trim()}
           </code>
