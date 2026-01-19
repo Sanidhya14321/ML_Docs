@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NeuralNetworkViz } from '../components/NeuralNetworkViz';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
+import { Database, ArrowRight, Search, FileText, Bot } from 'lucide-react';
 
 // Data for RNN
 const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({
@@ -222,6 +223,72 @@ const BPTTViz = () => {
     );
 };
 
+const RAGViz = () => (
+    <div className="flex flex-col gap-6 p-6 bg-slate-900/50 rounded-2xl border border-slate-800 items-center justify-center relative overflow-hidden select-none">
+        {/* Connection Dashed Line */}
+        <div className="absolute top-1/2 left-4 right-4 h-0 border-t-2 border-dashed border-slate-800/50 -z-0 hidden md:block"></div>
+
+        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-lg gap-4 z-10">
+            {/* Step 1: Query */}
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-lg group">
+                    <Search size={22} className="text-indigo-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="text-center">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Query</div>
+                    <div className="text-[9px] text-slate-600 font-mono">Input</div>
+                </div>
+            </div>
+
+            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+
+            {/* Step 2: Vector DB */}
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-900/10 border border-emerald-500/20 flex flex-col items-center justify-center shadow-lg relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
+                    <Database size={24} className="text-emerald-500 z-10" />
+                    <div className="absolute bottom-1 w-8 h-0.5 bg-emerald-500/50 rounded-full animate-pulse"></div>
+                </div>
+                <div className="text-center">
+                    <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Vector DB</div>
+                    <div className="text-[9px] text-emerald-500/60 font-mono">Similarity Search</div>
+                </div>
+            </div>
+
+            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+
+            {/* Step 3: Context */}
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-lg relative group">
+                    <FileText size={22} className="text-amber-400 z-10 group-hover:-translate-y-1 transition-transform" />
+                    <FileText size={22} className="text-amber-400/50 absolute top-4 left-5 -z-0" />
+                </div>
+                <div className="text-center">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Context</div>
+                    <div className="text-[9px] text-slate-600 font-mono">Top-K Chunks</div>
+                </div>
+            </div>
+
+            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+
+            {/* Step 4: LLM */}
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-xl shadow-indigo-600/20">
+                    <Bot size={28} className="text-white" />
+                </div>
+                <div className="text-center">
+                    <div className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">LLM</div>
+                    <div className="text-[9px] text-indigo-400/60 font-mono">Generation</div>
+                </div>
+            </div>
+        </div>
+        
+        <div className="bg-slate-950 px-4 py-1.5 rounded-full border border-slate-800 text-[9px] text-slate-500 font-mono z-20 mt-4 md:mt-0">
+            Augmented Prompt = Context + Query
+        </div>
+    </div>
+);
+
 export const DeepLearningView: React.FC = () => {
   return (
     <div className="space-y-12 animate-fade-in pb-20">
@@ -378,6 +445,47 @@ def attention(q, k, v):
         ]}
       >
         <AttentionViz />
+      </AlgorithmCard>
+
+      <AlgorithmCard
+        id="rag"
+        title="Retrieval Augmented Generation (RAG)"
+        complexity="Advanced"
+        theory="RAG enhances Large Language Models by retrieving relevant data from external knowledge bases (Vector Databases) before generating a response. This grounds the model on specific, up-to-date, or private information, reducing hallucinations."
+        math={<span>p(y|x) &asymp; &Sigma;<sub>z &isin; TopK(x)</sub> p(y|x,z)p(z|x)</span>}
+        mathLabel="RAG Probability Approximation"
+        code={`import chromadb
+
+# 1. Initialize Client
+client = chromadb.Client()
+collection = client.create_collection("docs")
+
+# 2. Add Documents
+collection.add(
+    documents=["Product A manual...", "Company policy..."],
+    ids=["id1", "id2"]
+)
+
+# 3. Query at Runtime
+results = collection.query(
+    query_texts=["How do I reset Product A?"],
+    n_results=2
+)
+
+# 4. Augment Prompt (Pseudo)
+prompt = f"Context: {results['documents']}\nQuery: {user_query}"`}
+        pros={['Access to private/proprietary data', 'Reduces model hallucinations', 'Easy to update knowledge (just update DB)']}
+        cons={['Increased latency due to retrieval step', 'Depends heavily on retrieval quality', 'Context window limitations']}
+        steps={[
+            "Chunk your documents (e.g., 512 tokens with overlap).",
+            "Embed chunks using a model like OpenAI's `text-embedding-3-small` or HuggingFace models.",
+            "Store embeddings in a Vector Database (Pinecone, Chroma, Milvus).",
+            "At runtime, embed user query and perform Cosine Similarity search.",
+            "Retrieve Top-K chunks and inject them into the system prompt.",
+            "Send augmented prompt to LLM for final answer generation."
+        ]}
+      >
+        <RAGViz />
       </AlgorithmCard>
     </div>
   );
