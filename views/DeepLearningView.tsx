@@ -5,13 +5,6 @@ import { AlgorithmCard } from '../components/AlgorithmCard';
 import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
 import { Database, ArrowRight, Search, FileText, Bot } from 'lucide-react';
 
-// Data for RNN
-const timeSeriesData = Array.from({ length: 20 }, (_, i) => ({
-    time: i,
-    actual: Math.sin(i * 0.5),
-    predicted: Math.sin(i * 0.5 - 0.5) 
-}));
-
 // Data for Embeddings Viz
 const embeddingData = [
     { x: 2, y: 2, label: 'Man', fill: '#818cf8' },
