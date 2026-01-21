@@ -11,7 +11,9 @@ import {
   Search,
   Zap,
   Swords,
-  FlaskConical
+  FlaskConical,
+  BarChart,
+  Activity
 } from 'lucide-react';
 import { Course, ViewSection } from '../types';
 
@@ -35,6 +37,34 @@ export const CURRICULUM: Course = {
               type: "doc",
               icon: Calculator,
               description: "The mathematical language of vectors, matrices, and gradients."
+            },
+            {
+              id: "topic-probability",
+              title: "Probability & Statistics",
+              type: "doc",
+              icon: BarChart,
+              description: "Distributions, Bayes' Theorem, and Hypothesis Testing.",
+              details: {
+                theory: "Probability theory quantifies uncertainty, providing the axioms for reasoning with incomplete information. Statistics offers the tools to infer models from data. Together, they form the bedrock of machine learning, enabling algorithms to predict outcomes and estimate confidence.",
+                math: "P(A|B) = \\frac{P(B|A)P(A)}{P(B)}",
+                mathLabel: "Bayes' Theorem",
+                code: "import numpy as np\nfrom scipy import stats\n\n# Normal Distribution\nmu, sigma = 0, 0.1\ns = np.random.normal(mu, sigma, 1000)",
+                codeLanguage: "python"
+              }
+            },
+            {
+              id: "topic-info-theory",
+              title: "Information Theory",
+              type: "doc",
+              icon: Activity,
+              description: "Quantifying information, Entropy, and KL Divergence.",
+              details: {
+                theory: "Information Theory mathematically quantifies the amount of uncertainty in a probability distribution. In Machine Learning, concepts like Entropy and Cross-Entropy are pivotal for constructing loss functions that guide model training.",
+                math: "H(X) = -\\sum_{i=1}^n P(x_i) \\log P(x_i)",
+                mathLabel: "Shannon Entropy",
+                code: "def entropy(probs):\n    return -np.sum(probs * np.log2(probs + 1e-9))",
+                codeLanguage: "python"
+              }
             },
             {
               id: ViewSection.OPTIMIZATION,
