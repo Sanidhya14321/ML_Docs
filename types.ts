@@ -13,7 +13,8 @@ export enum ViewSection {
   REINFORCEMENT = 'reinforcement',
   MODEL_COMPARISON = 'battleground',
   PROJECT_LAB = 'lab',
-  SITEMAP = 'sitemap'
+  SITEMAP = 'sitemap',
+  CERTIFICATE = 'certificate'
 }
 
 export enum MLModelType {

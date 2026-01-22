@@ -12,6 +12,7 @@ import { LabWorkspace } from './components/LabWorkspace';
 import { Dashboard } from './components/Dashboard';
 import { QuizView } from './components/QuizView';
 import { SitemapView } from './views/SitemapView';
+import { CertificateView } from './views/CertificateView';
 import { getTopicById } from './lib/contentHelpers';
 import { NAV_ITEMS } from './lib/navigation-data';
 import { useCourseProgress } from './hooks/useCourseProgress';
@@ -176,13 +177,16 @@ const App: React.FC = () => {
   else if (currentPath === ViewSection.DASHBOARD) {
      contentElement = <Dashboard onNavigate={navigateTo} />;
   }
+  else if (currentPath === ViewSection.SITEMAP) {
+      contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
+  }
+  else if (currentPath === ViewSection.CERTIFICATE) {
+      contentElement = <CertificateView />;
+  }
   else if (CONTENT_REGISTRY[currentPath]) {
       const InteractiveComponent = CONTENT_REGISTRY[currentPath];
       contentElement = <InteractiveComponent />;
   } 
-  else if (currentPath === ViewSection.SITEMAP) {
-      contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
-  }
   else {
       contentElement = <DocViewer topicId={currentPath} title={activeLabel} />;
   }
