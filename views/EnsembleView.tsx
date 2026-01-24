@@ -147,11 +147,16 @@ export const EnsembleView: React.FC = () => {
              <DecisionBoundaryViz />
              <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart layout="vertical" data={featureImportanceData}>
+                    <BarChart layout="vertical" data={featureImportanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
-                    <XAxis type="number" stroke="#475569" fontSize={10} />
+                    <XAxis type="number" stroke="#475569" fontSize={10} tickFormatter={(value) => `${(value * 100).toFixed(0)}%`} />
                     <YAxis dataKey="feature" type="category" stroke="#475569" fontSize={10} width={60} />
-                    <Bar dataKey="importance" fill="#6366f1" radius={[0, 4, 4, 0]} />
+                    <Tooltip 
+                        cursor={{fill: '#1e293b', opacity: 0.4}} 
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
+                        formatter={(value: number) => [`${(value * 100).toFixed(1)}%`, 'Importance']}
+                    />
+                    <Bar dataKey="importance" fill="#6366f1" radius={[0, 4, 4, 0]} activeBar={{ fill: '#818cf8' }} />
                     </BarChart>
                 </ResponsiveContainer>
                 <p className="text-[10px] text-center text-slate-600 mt-4 uppercase tracking-widest font-mono">Relative Feature Contribution</p>
