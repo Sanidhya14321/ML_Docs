@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, CheckCircle, Printer, Share2, BrainCircuit } from 'lucide-react';
+import { Award, CheckCircle, Printer, BrainCircuit } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
 
 export const CertificateView: React.FC = () => {

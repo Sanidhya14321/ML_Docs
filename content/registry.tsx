@@ -1,7 +1,7 @@
 
 import React, { useState, lazy } from 'react';
 import { ViewSection, ContentModule } from '../types';
-import { Calendar, Clock, BarChart, Tag, Share2 } from 'lucide-react';
+import { Calendar, Clock, BarChart, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { SEOHead } from '../components/SEOHead';
 import { Feedback } from '../components/Feedback';

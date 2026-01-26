@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Circle, FileText, Terminal, FolderOpen, Award, CheckCircle } from 'lucide-react';
+import { ChevronRight, ChevronDown, Circle, FileText, Terminal, Award, CheckCircle } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
 import { Module, Chapter, Topic } from '../types';
 import { useCourseProgress } from '../hooks/useCourseProgress';

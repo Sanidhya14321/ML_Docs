@@ -18,7 +18,7 @@ import { NAV_ITEMS } from './lib/navigation-data';
 import { useCourseProgress } from './hooks/useCourseProgress';
 import { useTheme } from './hooks/useTheme';
 import { 
-  BrainCircuit, Search, Command, X, Loader2, Sparkles
+  BrainCircuit, Search, Command, Sparkles
 } from 'lucide-react';
 
 // New Components

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, ComposedChart, Scatter, ReferenceLine } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { Play, Pause, RotateCcw, BoxSelect } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 
 const featureImportanceData = [
   { feature: 'Age', importance: 0.15 },

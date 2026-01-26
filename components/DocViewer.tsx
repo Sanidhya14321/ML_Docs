@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { Calendar, Clock, BarChart, Share2, ArrowRight, FlaskConical, BookOpen } from 'lucide-react';
+import { Calendar, Clock, BarChart, Share2, ArrowRight, FlaskConical } from 'lucide-react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
 import { Callout } from './Callout';

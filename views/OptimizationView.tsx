@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { Play, RotateCcw, FastForward, Cpu, AlertCircle } from 'lucide-react';
+import { Play, RotateCcw, Cpu, AlertCircle } from 'lucide-react';
 
 const data = Array.from({ length: 20 }, (_, i) => ({
   epoch: i,
@@ -188,63 +188,4 @@ export const OptimizationView: React.FC = () => {
           steps={[
             "Initialize a Google Colab notebook for the experiment.",
             "Define your cost function J(θ) (e.g., Mean Squared Error) and its gradient ∇J(θ).",
-            "Initialize parameters θ randomly (e.g., weights and bias).",
-            "Create a training loop that runs for a set number of `epochs`.",
-            "Inside the loop, compute the gradient using the current parameters.",
-            "Update parameters: θ = θ - learning_rate * gradient.",
-            "Monitor the loss value; it should decrease with each iteration."
-          ]}
-        >
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="epoch" hide />
-                <YAxis hide />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px' }} />
-                <Line type="monotone" dataKey="loss" stroke="#6366f1" strokeWidth={4} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </AlgorithmCard>
-      </section>
-
-      <section id="csp-logic">
-         <div className="flex items-center gap-3 mb-10">
-          <div className="w-10 h-10 rounded-xl bg-amber-600/10 flex items-center justify-center text-amber-400">
-             <RotateCcw size={20} />
-          </div>
-          <h2 id="backtracking-title" className="text-3xl font-bold text-white tracking-tight">Search & Constraints</h2>
-        </div>
-        <AlgorithmCard
-          id="backtracking"
-          title="Backtracking (CSPs)"
-          complexity="Intermediate"
-          theory="A general algorithm for finding solutions to constraint satisfaction problems. It incrementally builds candidates and abandons them ('backtracks') as soon as it determines they cannot possibly be completed to a valid solution."
-          math={<span>&forall; v &in; D: valid(v) &rArr; Solve(P &cup; v)</span>}
-          mathLabel="Recursive Search Invariant"
-          code={`def backtrack(state):
-    if is_complete(state): return True
-    for val in possible_moves():
-        if is_valid(val):
-            apply(val)
-            if backtrack(state): return True
-            undo(val) # Backtrack`}
-          pros={['Finds all possible solutions', 'Systematic pruning', 'Guaranteed completion']}
-          cons={['Exponential worst-case complexity', 'High recursion depth']}
-          steps={[
-            "Identify the state representation (e.g., a Sudoku grid or N-Queens board).",
-            "Define a helper function `is_valid(state, move)` to check constraints.",
-            "Implement the recursive `solve(state)` function.",
-            "Base Case: If state is complete/goal reached, return True.",
-            "Recursive Step: Loop through possible moves. If valid, apply move and call `solve`.",
-            "Backtrack Step: If `solve` returns False, undo the move (reset state) and try the next option.",
-            "Trigger the initial call to `solve(initial_state)`."
-          ]}
-        >
-          <SudokuViz />
-        </AlgorithmCard>
-      </section>
-    </div>
-  );
-};
+            "Initialize parameters θ randomly (e.g., weights and bias
