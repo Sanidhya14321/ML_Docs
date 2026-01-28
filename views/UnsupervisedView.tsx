@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ComposedChart, Line } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { Network, ArrowRight, RefreshCw, Layers } from 'lucide-react';
+import { Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- HELPERS ---

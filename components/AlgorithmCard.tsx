@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MathBlock } from './MathBlock';
 import { CodeBlock } from './CodeBlock';
-import { Check, X, Info, Sparkles, ChevronDown, ListChecks } from 'lucide-react';
+import { Check, X, Info, Sparkles, ListChecks } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { AlgorithmSkeleton } from './Skeletons';
 

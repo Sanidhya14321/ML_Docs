@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { NavigationItem, ViewSection } from '../types';
-import { FileText, Folder, Copy, Check } from 'lucide-react';
+import { FileText, Folder } from 'lucide-react';
 import { CodeBlock } from '../components/CodeBlock';
 
 // In a real app, this would be imported from a central config
