@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ComposedChart, Line } from 'recharts';
+import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

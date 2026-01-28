@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { LatexRenderer } from '../components/LatexRenderer';
 import { BrainCircuit, Play, RotateCcw, Target, Shuffle, Activity, Database, Coins } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- VISUALIZATIONS ---

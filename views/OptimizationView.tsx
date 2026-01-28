@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { Play, RotateCcw, Cpu, AlertCircle } from 'lucide-react';
@@ -188,4 +188,28 @@ export const OptimizationView: React.FC = () => {
           steps={[
             "Initialize a Google Colab notebook for the experiment.",
             "Define your cost function J(θ) (e.g., Mean Squared Error) and its gradient ∇J(θ).",
-            "Initialize parameters θ randomly (e.g., weights and bias
+            "Initialize parameters θ randomly (e.g., weights and bias)",
+            "Run a loop: Calculate Gradient -> Update Weights -> Repeat.",
+            "Plot the cost function over time to verify convergence."
+          ]}
+        >
+          <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 text-center">
+             <div className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-4">Gradient Flow Visualization</div>
+             <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <XAxis dataKey="epoch" stroke="#475569" fontSize={10} />
+                        <YAxis stroke="#475569" fontSize={10} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                        <Line type="monotone" dataKey="loss" stroke="#6366f1" strokeWidth={3} dot={false} />
+                    </LineChart>
+                </ResponsiveContainer>
+             </div>
+             <p className="text-[9px] text-slate-500 mt-2 font-mono">Loss J(θ) reducing over time</p>
+          </div>
+        </AlgorithmCard>
+      </section>
+    </div>
+  );
+};
