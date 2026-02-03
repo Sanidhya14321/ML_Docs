@@ -1,9 +1,11 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Tooltip, ScatterChart, Scatter, ReferenceLine, Label } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceDot, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Tooltip, ScatterChart, Scatter, ReferenceLine, Label, AreaChart, Area } from 'recharts';
+import { AlgorithmCard } from '../components/AlgorithmCard';
 import { MLModelType } from '../types';
 import { MEDICAL_MODEL_DATA } from '../constants';
 import { Swords, Zap, Activity, Grid } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const comparisonData = {
   [MLModelType.LOGISTIC_REGRESSION]: {
@@ -188,6 +190,137 @@ const DecisionBoundaryViz = ({ model, colorHex }: { model: MLModelType, colorHex
   }, [model, colorHex]);
 
   return <canvas ref={canvasRef} width={300} height={300} className="w-full h-full object-cover" />;
+};
+
+const NaiveBayesViz = () => {
+    const [overlap, setOverlap] = useState(4);
+    
+    const data = useMemo(() => {
+        return Array.from({ length: 60 }, (_, i) => {
+            const x = (i / 60) * 12;
+            const probA = (1 / (1.2 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 3) / 1.2, 2));
+            const probB = (1 / (1.2 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - (3 + overlap)) / 1.2, 2));
+            return { x, probA, probB };
+        });
+    }, [overlap]);
+
+    return (
+        <div className="space-y-4">
+            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Class Separation: <span className="text-indigo-400 ml-2">{overlap.toFixed(1)}</span></label>
+                <input 
+                    type="range" min="0" max="8" step="0.5" 
+                    value={overlap} onChange={(e) => setOverlap(parseFloat(e.target.value))}
+                    className="w-40 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                />
+            </div>
+            <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="colorNB_A" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                            </linearGradient>
+                            <linearGradient id="colorNB_B" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                        <XAxis dataKey="x" hide />
+                        <YAxis hide />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px' }} />
+                        <Area type="monotone" dataKey="probA" stroke="#ef4444" fillOpacity={1} fill="url(#colorNB_A)" name="P(x|C1)" />
+                        <Area type="monotone" dataKey="probB" stroke="#3b82f6" fillOpacity={1} fill="url(#colorNB_B)" name="P(x|C2)" />
+                        <ReferenceLine x={3 + overlap/2} stroke="#ffffff" strokeDasharray="3 3" strokeOpacity={0.5} label={{ value: 'Boundary', fill: '#fff', fontSize: 9, position: 'top' }} />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
+};
+
+const DecisionTreeViz = () => {
+  // SVG Tree layout
+  const width = 400;
+  const height = 240;
+  const nodes = [
+    { x: 200, y: 40, label: 'Entropy: 0.98\nFeature X > 5.2', color: 'indigo' },
+    { x: 100, y: 120, label: 'Feature Y ≤ 2.1', color: 'indigo' },
+    { x: 300, y: 120, label: 'Pure Leaf', color: 'emerald' },
+    { x: 50, y: 200, label: 'Class A', color: 'rose' },
+    { x: 150, y: 200, label: 'Class B', color: 'emerald' },
+  ];
+
+  const links = [
+    { from: 0, to: 1 },
+    { from: 0, to: 2 },
+    { from: 1, to: 3 },
+    { from: 1, to: 4 },
+  ];
+
+  return (
+    <div className="flex flex-col items-center w-full py-8 bg-slate-950 rounded-2xl border border-slate-800/50 shadow-inner overflow-hidden select-none">
+       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="max-w-md w-full">
+          {/* Links */}
+          {links.map((link, i) => {
+             const from = nodes[link.from];
+             const to = nodes[link.to];
+             return (
+               <path 
+                 key={i} 
+                 d={`M ${from.x} ${from.y} C ${from.x} ${(from.y + to.y) / 2}, ${to.x} ${(from.y + to.y) / 2}, ${to.x} ${to.y}`}
+                 stroke="#334155"
+                 strokeWidth="2"
+                 fill="none"
+                 strokeDasharray="4 2"
+               />
+             );
+          })}
+
+          {/* Nodes */}
+          {nodes.map((node, i) => {
+             const isLeaf = i >= 2;
+             const colorMap = {
+               indigo: { bg: '#1e1b4b', border: '#6366f1', text: '#818cf8' },
+               emerald: { bg: '#064e3b', border: '#10b981', text: '#34d399' },
+               rose: { bg: '#4c0519', border: '#f43f5e', text: '#fb7185' }
+             };
+             const theme = colorMap[node.color as keyof typeof colorMap];
+
+             return (
+               <g key={i} transform={`translate(${node.x}, ${node.y})`}>
+                  <rect 
+                    x={isLeaf ? -30 : -50} 
+                    y={isLeaf ? -15 : -25} 
+                    width={isLeaf ? 60 : 100} 
+                    height={isLeaf ? 30 : 50} 
+                    rx="8" 
+                    fill={theme.bg} 
+                    stroke={theme.border} 
+                    strokeWidth="2"
+                    className="transition-all hover:scale-110 cursor-help"
+                  />
+                  {node.label.split('\n').map((line, lineIdx) => (
+                    <text 
+                      key={lineIdx}
+                      y={isLeaf ? 5 : (lineIdx === 0 ? -2 : 12)} 
+                      textAnchor="middle" 
+                      fill={theme.text} 
+                      fontSize={isLeaf ? "10" : "8"} 
+                      fontWeight="bold"
+                      className="pointer-events-none uppercase font-mono tracking-tighter"
+                    >
+                      {line}
+                    </text>
+                  ))}
+               </g>
+             );
+          })}
+       </svg>
+       <p className="text-[9px] text-slate-600 mt-6 uppercase tracking-[0.3em] font-mono">Recursive Binary Splitting</p>
+    </div>
+  );
 };
 
 const SensitivityPanel = ({ model, impacts, color }: any) => {
@@ -385,6 +518,56 @@ export const ModelComparisonView: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
          <SensitivityPanel model={modelA} impacts={MODEL_IMPACTS[modelA]} color="#6366f1" />
          <SensitivityPanel model={modelB} impacts={MODEL_IMPACTS[modelB]} color="#10b981" />
+      </div>
+
+      {/* New Algorithm Detail Cards */}
+      <div className="mt-24 border-t border-slate-800 pt-16">
+        <h2 className="text-3xl font-bold text-white mb-12 text-center">Reference Models</h2>
+        
+        <AlgorithmCard
+          id="naive-bayes-ref"
+          title="Naive Bayes"
+          complexity="Fundamental"
+          theory="A probabilistic classifier based on Bayes' Theorem. It makes the 'naive' assumption of conditional independence between every pair of features, allowing for extremely fast computation and high scalability."
+          math={<span>P(C|x) = <sup>P(x|C)P(C)</sup>&frasl;<sub>P(x)</sub></span>}
+          mathLabel="Bayesian Inference"
+          code={`from sklearn.naive_bayes import GaussianNB
+nb = GaussianNB().fit(X_train, y_train)`}
+          pros={['Extremely fast and scalable', 'Works well with small datasets', 'Excellent for text (Spam detection)']}
+          cons={['Strong independence assumption rarely holds', 'Zero-frequency problem for unseen categories']}
+          steps={[
+            "Import `GaussianNB` (for continuous features) or `MultinomialNB` (for text counts) from `sklearn.naive_bayes`.",
+            "Prepare your X and y matrices.",
+            "Initialize: `model = GaussianNB()`.",
+            "Fit the model. It's usually instant.",
+            "Predict classes. This is an excellent 'baseline' model to benchmark others against."
+          ]}
+        >
+          <NaiveBayesViz />
+        </AlgorithmCard>
+
+        <AlgorithmCard
+          id="decision-trees-ref"
+          title="Decision Trees"
+          complexity="Intermediate"
+          theory="Models decisions through a branching tree structure. It greedily splits the data at each node to maximize information gain or minimize impurity metrics like Gini or Entropy."
+          math={<span>Gini = 1 - &Sigma; (p<sub>i</sub>)<sup>2</sup></span>}
+          mathLabel="Impurity Metric"
+          code={`from sklearn.tree import DecisionTreeClassifier
+dt = DecisionTreeClassifier(max_depth=5)`}
+          pros={['White-box interpretability', 'Requires zero data scaling', 'Implicit feature selection']}
+          cons={['Highly prone to overfitting', 'Unstable: small data changes yield different trees', 'Sensitive to imbalanced data']}
+          steps={[
+            "Import `DecisionTreeClassifier` from `sklearn.tree`.",
+            "No need to scale data; Trees handle raw values well.",
+            "Initialize: `model = DecisionTreeClassifier(max_depth=3)`.",
+            "Setting `max_depth` is crucial to prevent the tree from memorizing the data (overfitting).",
+            "Fit and predict.",
+            "Use `sklearn.tree.plot_tree(model)` to visualize the actual decision logic."
+          ]}
+        >
+          <DecisionTreeViz />
+        </AlgorithmCard>
       </div>
     </div>
   );
