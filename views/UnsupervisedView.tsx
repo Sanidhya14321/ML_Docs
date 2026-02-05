@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import { AlgorithmCard } from '../components/AlgorithmCard';
-import { Network } from 'lucide-react';
+import { Network, Sliders, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- HELPERS ---
@@ -50,7 +50,6 @@ const KMeansViz = () => {
     
     const { clusters, centroids } = useMemo(() => {
         // 1. Initialize random centroids (deterministically based on K for stability)
-        // We pick points from the dataset to act as initial centroids to ensure convergence
         let currentCentroids = Array.from({ length: k }, (_, i) => ({ 
             x: points[Math.floor((i / k) * points.length)].x, 
             y: points[Math.floor((i / k) * points.length)].y 
@@ -97,7 +96,9 @@ const KMeansViz = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Clusters (k): <span className="text-indigo-400 ml-2">{k}</span></label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Sliders size={12} /> Hyperparameter K: <span className="text-indigo-400 text-sm ml-2">{k}</span>
+                    </label>
                     <input 
                         type="range" min="1" max="6" step="1" 
                         value={k} onChange={(e) => setK(Number(e.target.value))}
@@ -105,7 +106,7 @@ const KMeansViz = () => {
                     />
                 </div>
                 <div className="text-[10px] font-mono px-3 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                    Minimizing Variance
+                    Minimizing Within-Cluster Sum of Squares
                 </div>
             </div>
 
@@ -207,7 +208,9 @@ const DBSCANViz = () => {
         <div className="space-y-6">
              <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Epsilon (Radius): <span className="text-emerald-400 ml-2">{epsilon}</span></label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Sliders size={12} /> Epsilon (Radius): <span className="text-emerald-400 text-sm ml-2">{epsilon}</span>
+                    </label>
                     <input 
                         type="range" min="5" max="25" step="1" 
                         value={epsilon} onChange={(e) => setEpsilon(Number(e.target.value))}
@@ -296,7 +299,9 @@ const PCAViz = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Correlation: <span className="text-indigo-400 ml-2">{spread.toFixed(2)}</span></label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Sliders size={12} /> Correlation (Spread): <span className="text-indigo-400 text-sm ml-2">{spread.toFixed(2)}</span>
+                    </label>
                     <input 
                         type="range" min="0.1" max="0.99" step="0.01" 
                         value={spread} onChange={(e) => setSpread(Number(e.target.value))}
@@ -457,7 +462,9 @@ const IsolationForestViz = () => {
         <div className="space-y-6">
              <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contamination: <span className="text-rose-400 ml-2">{(contamination * 100).toFixed(0)}%</span></label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Sliders size={12} /> Contamination: <span className="text-rose-400 text-sm ml-2">{(contamination * 100).toFixed(0)}%</span>
+                    </label>
                     <input 
                         type="range" min="0.01" max="0.25" step="0.01" 
                         value={contamination} onChange={(e) => setContamination(Number(e.target.value))}
@@ -484,6 +491,114 @@ const IsolationForestViz = () => {
                         </Scatter>
                     </ScatterChart>
                 </ResponsiveContainer>
+            </div>
+        </div>
+    );
+};
+
+const TSNEViz = () => {
+    const [perplexity, setPerplexity] = useState(30);
+    
+    // Generate data based on perplexity to simulate t-SNE behavior
+    // Real t-SNE solves an optimization problem; here we model the visual effect:
+    // Low perplexity -> fragmentation, tight local clusters, potentially noise seen as structure
+    // High perplexity -> global structure emphasis, merging of nearby clusters
+    const data = useMemo(() => {
+        const clusters = [
+            { id: 'A', cx: 25, cy: 30, color: '#f43f5e' },
+            { id: 'B', cx: 75, cy: 30, color: '#3b82f6' },
+            { id: 'C', cx: 50, cy: 75, color: '#10b981' }
+        ];
+
+        let points = [];
+        
+        // Simulation parameters derived from perplexity
+        // Spread of clusters (Global) vs Spread of points (Local)
+        
+        // Higher perplexity = more global attraction (clusters move to center)
+        const globalGravitation = Math.min(1, perplexity / 100); 
+        
+        // Lower perplexity = tighter local packing BUT potentially fragmented
+        const localSpread = Math.max(2, 25 - (perplexity * 0.4));
+
+        clusters.forEach(c => {
+            // Gravitate centroids towards 50,50 based on perplexity (simulating global structure awareness)
+            const dx = 50 - c.cx;
+            const dy = 50 - c.cy;
+            const finalCx = c.cx + dx * globalGravitation * 0.4;
+            const finalCy = c.cy + dy * globalGravitation * 0.4;
+
+            for(let i=0; i<30; i++) {
+                // Random scatter
+                const r = Math.random() * localSpread;
+                const theta = Math.random() * Math.PI * 2;
+                
+                // Low perplexity artifact: Fragmentation (points cluster in sub-groups)
+                let fragmentX = 0, fragmentY = 0;
+                if (perplexity < 10) {
+                    const subCluster = i % 3;
+                    fragmentX = Math.cos(subCluster * 2) * (15 - perplexity);
+                    fragmentY = Math.sin(subCluster * 2) * (15 - perplexity);
+                }
+
+                points.push({
+                    id: `${c.id}-${i}`,
+                    x: finalCx + r * Math.cos(theta) + fragmentX,
+                    y: finalCy + r * Math.sin(theta) + fragmentY,
+                    fill: c.color
+                });
+            }
+        });
+        
+        return points;
+    }, [perplexity]);
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <div className="w-1/2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <Sliders size={12} /> Perplexity: <span className="text-amber-400 text-sm ml-2">{perplexity}</span>
+                    </label>
+                    <input 
+                        type="range" min="5" max="60" step="5" 
+                        value={perplexity} onChange={(e) => setPerplexity(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500 mt-2"
+                    />
+                </div>
+                <div className="text-[10px] font-mono px-3 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400 text-right">
+                    {perplexity < 15 ? "Focus: Local (Fragmented)" : perplexity > 40 ? "Focus: Global (Uniform)" : "Balanced Structure"}
+                </div>
+            </div>
+
+            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 relative overflow-hidden flex items-center justify-center">
+                <svg viewBox="0 0 100 100" className="w-full h-full p-4 overflow-visible">
+                    <defs>
+                        <radialGradient id="glowPoint">
+                            <stop offset="0%" stopColor="white" stopOpacity="0.8"/>
+                            <stop offset="100%" stopColor="white" stopOpacity="0"/>
+                        </radialGradient>
+                    </defs>
+                    <AnimatePresence>
+                        {data.map((p) => (
+                            <motion.circle 
+                                key={p.id}
+                                initial={false}
+                                animate={{ cx: p.x, cy: p.y, fill: p.fill }}
+                                transition={{ type: "spring", stiffness: 50, damping: 15 }}
+                                r={1.5}
+                                opacity={0.8}
+                            />
+                        ))}
+                    </AnimatePresence>
+                </svg>
+                <div className="absolute bottom-2 left-2 text-[9px] text-slate-600 font-mono">
+                    High Dim &rarr; 2D Embedding
+                </div>
+            </div>
+            
+            <div className="text-xs text-slate-500 text-center max-w-lg mx-auto">
+                <strong className="text-amber-400">Perplexity</strong> can be interpreted as the number of effective nearest neighbors. Low values preserve local splits; high values prioritize global geometry.
             </div>
         </div>
     );
@@ -642,13 +757,7 @@ tsne = TSNE(n_components=2, perplexity=30)`}
             "Experiment with `perplexity` (5-50) as it drastically changes results."
         ]}
       >
-        <div className="bg-slate-950 p-8 rounded-3xl border border-slate-800 text-center">
-            <Network className="w-16 h-16 text-indigo-500 mx-auto mb-4" />
-            <p className="text-slate-400 text-sm">
-                t-SNE is best used for <strong className="text-white">Exploratory Data Analysis (EDA)</strong> to visualize high-dimensional datasets in 2D or 3D.
-                Unlike PCA, it preserves local neighborhoods.
-            </p>
-        </div>
+        <TSNEViz />
       </AlgorithmCard>
 
     </div>
