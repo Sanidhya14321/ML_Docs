@@ -1,5 +1,7 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Copy, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CodeEditorProps {
   value: string;
@@ -11,16 +13,27 @@ interface CodeEditorProps {
 export const CodeEditor: React.FC<CodeEditorProps> = ({ 
   value, 
   onChange, 
-  language = 'python',
+  language = 'python', 
   readOnly = false 
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
   // Sync scrolling between textarea and line numbers
   const handleScroll = () => {
     if (textareaRef.current && lineNumbersRef.current) {
       lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
 
@@ -53,6 +66,27 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
          />
       </div>
       
+      {/* Actions */}
+      <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <button
+            onClick={handleCopy}
+            className="p-2 rounded-lg bg-slate-800/90 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 shadow-xl backdrop-blur-sm transition-all"
+            title="Copy Code"
+        >
+            <AnimatePresence mode="wait">
+                {copied ? (
+                    <motion.div key="check" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <Check size={14} className="text-emerald-400" />
+                    </motion.div>
+                ) : (
+                    <motion.div key="copy" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
+                        <Copy size={14} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </button>
+      </div>
+
       {/* Language Badge */}
       <div className="absolute bottom-2 right-4 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-800/50 px-2 py-1 rounded">
