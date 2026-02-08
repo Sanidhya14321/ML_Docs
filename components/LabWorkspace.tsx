@@ -7,9 +7,10 @@ import { LabConsole } from './LabConsole';
 import { useCodeRunner } from '../hooks/useCodeRunner';
 import { getTopicById } from '../lib/contentHelpers';
 import { useCourseProgress } from '../hooks/useCourseProgress';
-import { Play, RotateCcw, Terminal, FileCode, Loader2, Lightbulb, CheckCircle } from 'lucide-react';
+import { Play, RotateCcw, Terminal, FileCode, Loader2, Lightbulb, CheckCircle, Server } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { triggerConfetti } from './Confetti';
+import { LoadingOverlay } from './LoadingOverlay';
 
 interface LabWorkspaceProps {
   topicId: string;
@@ -27,6 +28,7 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
 
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
   const [isMobile, setIsMobile] = useState(false);
+  const [isBooting, setIsBooting] = useState(true);
   
   const { markAsCompleted, isCompleted } = useCourseProgress();
   const completed = isCompleted(topicId);
@@ -38,6 +40,15 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Simulate Environment Boot Sequence
+  useEffect(() => {
+    setIsBooting(true);
+    const timer = setTimeout(() => {
+        setIsBooting(false);
+    }, 2000); // 2 second boot simulation
+    return () => clearTimeout(timer);
+  }, [topicId]);
 
   // Auto-complete logic based on execution logs
   useEffect(() => {
@@ -68,6 +79,14 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     }
   };
 
+  if (isBooting) {
+      return (
+          <div className="h-full flex items-center justify-center bg-[#020617] text-slate-300">
+              <LoadingOverlay message="Provisioning Environment" subMessage="Allocating GPU Container..." />
+          </div>
+      );
+  }
+
   return (
     <div className="h-full flex flex-col bg-[#0f1117] relative z-50">
       {/* Lab Header */}
@@ -83,6 +102,10 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
         </div>
         
         <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden lg:flex items-center gap-2 text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 mr-2">
+             <Server size={10} /> System Online
+          </div>
+
           <AnimatePresence>
             {completed && (
                 <motion.div 
