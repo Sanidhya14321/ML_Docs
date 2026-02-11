@@ -289,8 +289,9 @@ clf.fit(X_train, y_train)`}
         pros={['Excellent baseline model', 'Interpretability via coefficients', 'Computationally very efficient']}
         cons={['Assumes linear decision boundary', 'Struggles with complex interactions without manual feature engineering']}
         hyperparameters={[
-          { name: 'C', description: 'Inverse of regularization strength; smaller values specify stronger regularization.', default: '1.0' },
-          { name: 'penalty', description: 'Used to specify the norm used in the penalization (l1, l2).', default: 'l2' }
+          { name: 'C', description: 'Inverse of regularization strength. Smaller values specify stronger regularization to prevent overfitting.', default: '1.0', range: 'Float (e.g., 0.01, 1.0, 10.0)' },
+          { name: 'penalty', description: 'Norm used in penalization. L1 (Lasso) creates sparse models; L2 (Ridge) shrinks weights.', default: 'l2', range: "'l1', 'l2', 'elasticnet', 'none'" },
+          { name: 'solver', description: 'Optimization algorithm. Use "liblinear" for small datasets, "lbfgs" for multiclass.', default: 'lbfgs', range: "'liblinear', 'lbfgs', 'saga'" }
         ]}
         steps={[
           "Import `LogisticRegression` from `sklearn.linear_model` in Google Colab.",
