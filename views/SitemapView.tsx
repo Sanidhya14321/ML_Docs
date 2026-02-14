@@ -105,7 +105,8 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
              <div className="flex justify-between items-end">
                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">robots.txt</label>
              </div>
-             <CodeBlock code={robotsTxt} language="yaml" filename="public/robots.txt" />
+             {/* Switched to bash for safer highlighting support */}
+             <CodeBlock code={robotsTxt} language="bash" filename="public/robots.txt" />
           </div>
         </section>
       </div>

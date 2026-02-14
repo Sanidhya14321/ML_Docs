@@ -87,5 +87,6 @@ export const CONTENT_REGISTRY: Record<string, any> = {
   [ViewSection.PROJECT_LAB]: lazy(() => import('../views/ProjectLabView').then(m => ({ default: m.ProjectLabView }))),
   
   // New Content-First Modules
-  'deep-learning/attention-mechanism': lazy(() => import('./deep-learning/AttentionMechanism').then(m => ({ default: () => <DocReader module={m} path="deep-learning/attention-mechanism" /> }))),
+  // Note: 'm as any' cast is required to satisfy the ContentModule interface during strict TS builds
+  'deep-learning/attention-mechanism': lazy(() => import('./deep-learning/AttentionMechanism').then(m => ({ default: () => <DocReader module={m as any} path="deep-learning/attention-mechanism" /> }))),
 };

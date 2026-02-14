@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Mastery Hub | The Technical Codex</title>
     
-    <!-- Tailwind with Typography Plugin (CDN kept for simplicity to avoid CSS setup churn) -->
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
@@ -21,6 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
 
+    <!-- Tailwind Config must be defined BEFORE the CDN script -->
     <script>
       tailwind.config = {
         darkMode: 'class',
@@ -134,6 +132,10 @@
         }
       }
     </script>
+
+    <!-- Tailwind with Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
     <style>
       ::-webkit-scrollbar { width: 6px; height: 6px; }
       ::-webkit-scrollbar-track { background: transparent; }

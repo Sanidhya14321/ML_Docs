@@ -433,7 +433,7 @@ const IsolationForestViz = () => {
     const [contamination, setContamination] = useState(0.1);
     
     const data = useMemo(() => {
-        const points = generateBlobs(100, [{x: 50, y: 50}], 30);
+        const points: any[] = generateBlobs(100, [{x: 50, y: 50}], 30);
         // Add outliers
         points.push({ id: 101, x: 10, y: 10, outlier: true });
         points.push({ id: 102, x: 90, y: 90, outlier: true });
@@ -441,17 +441,17 @@ const IsolationForestViz = () => {
         points.push({ id: 104, x: 85, y: 15, outlier: true });
         
         // Calculate naive outlier score (distance from center)
-        const scored = points.map(p => {
+        const scored = points.map((p: any) => {
             const dist = Math.sqrt(Math.pow(p.x - 50, 2) + Math.pow(p.y - 50, 2));
             return { ...p, score: dist };
         });
         
         // Determine threshold based on contamination %
-        const sortedScores = [...scored].sort((a, b) => b.score - a.score);
+        const sortedScores = [...scored].sort((a: any, b: any) => b.score - a.score);
         const cutoffIndex = Math.floor(scored.length * contamination);
         const threshold = sortedScores[cutoffIndex].score;
 
-        return scored.map(p => ({
+        return scored.map((p: any) => ({
             ...p,
             isAnomaly: p.score >= threshold,
             fill: p.score >= threshold ? '#f43f5e' : '#10b981'
@@ -485,7 +485,7 @@ const IsolationForestViz = () => {
                         <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
                         <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
                         <Scatter name="Data" data={data} shape="circle">
-                            {data.map((entry, index) => (
+                            {data.map((entry: any, index: number) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                             ))}
                         </Scatter>
@@ -510,7 +510,7 @@ const TSNEViz = () => {
             { id: 'C', cx: 50, cy: 75, color: '#10b981' }
         ];
 
-        let points = [];
+        let points: { id: string; x: number; y: number; fill: string }[] = [];
         
         // Simulation parameters derived from perplexity
         // Spread of clusters (Global) vs Spread of points (Local)
