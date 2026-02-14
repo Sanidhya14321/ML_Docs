@@ -525,6 +525,9 @@ for _ in range(steps):
     state = next_state`}
             pros={['Provides mathematical guarantees', 'Handles long-term planning', 'Generalizes across domains']}
             cons={['Computationally hard for large state spaces', 'Sensitive to sparse rewards']}
+            hyperparameters={[
+              { name: 'Discount Factor (γ)', description: 'Determines importance of future rewards. 0 = shortsighted, 1 = farsighted.', default: '0.99', range: '0.0 - 1.0' }
+            ]}
             steps={[
                 "Open Google Colab. Install `gym` environment: `!pip install gym`.",
                 "Import dependencies: `import gym`, `import numpy as np`.",
@@ -561,7 +564,8 @@ else:
             pros={['Simple but effective baseline', 'Guarantees exploration', 'Tunable via Epsilon']}
             cons={['Exploration is random (inefficient)', 'Performance drops if Epsilon is not decayed']}
             hyperparameters={[
-              { name: 'epsilon', description: 'Probability of choosing a random action (Exploration Rate).', default: '0.1' }
+              { name: 'Epsilon (ε)', description: 'Probability of choosing a random action (Exploration Rate).', default: '0.1', range: '0.0 - 1.0' },
+              { name: 'Decay Rate', description: 'Rate at which ε decreases over time to shift towards exploitation.', default: '0.995', range: '0.9 - 0.999' }
             ]}
             steps={[
                 "Define a Bandit class in Colab with true probabilities for 'arms'.",
@@ -596,6 +600,11 @@ error = target - Q[state, action]
 Q[state, action] += alpha * error`}
             pros={['Guaranteed convergence', 'Off-policy (learns from any data)', 'Simple to implement']}
             cons={['Scales poorly to high dimensions', 'Requires discrete actions']}
+            hyperparameters={[
+                { name: 'Learning Rate (α)', description: 'Step size for updates. Determines how much new info overrides old.', default: '0.1', range: '0.01 - 0.5' },
+                { name: 'Discount Factor (γ)', description: 'Importance of future rewards. Higher values encourage long-term planning.', default: '0.99', range: '0.8 - 0.99' },
+                { name: 'Epsilon (ε)', description: 'Exploration probability. Often decayed over episodes.', default: '1.0 -> 0.1', range: '0.0 - 1.0' }
+            ]}
             steps={[
                 "Use `gym.make('FrozenLake-v1')` in Colab.",
                 "Initialize `Q_table = np.zeros((state_space, action_space))`.",
@@ -614,33 +623,41 @@ Q[state, action] += alpha * error`}
             <h2 className="text-3xl font-bold text-white">04. Advanced Paradigms</h2>
             <div className="h-px bg-slate-800 flex-1"></div>
          </div>
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-slate-900 border border-slate-800 rounded-3xl p-10 shadow-2xl">
-             <div className="space-y-6">
-                 <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-                    <span className="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg">AC</span> Actor-Critic Methods
-                 </h3>
-                 <p className="text-slate-400 leading-relaxed">
-                     Actor-Critic methods solve the high variance problem of pure policy gradients by combining two networks:
-                 </p>
-                 <div className="space-y-4">
-                     <div className="flex gap-4 items-start bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                         <div className="w-8 h-8 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold flex-shrink-0">A</div>
-                         <div>
-                            <p className="text-sm font-bold text-slate-200 mb-1">The Actor (Policy)</p>
-                            <p className="text-xs text-slate-500">Proposes actions based on the current state. It tries to maximize the value estimated by the Critic.</p>
-                         </div>
-                     </div>
-                     <div className="flex gap-4 items-start bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                         <div className="w-8 h-8 rounded bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold flex-shrink-0">C</div>
-                         <div>
-                            <p className="text-sm font-bold text-slate-200 mb-1">The Critic (Value)</p>
-                            <p className="text-xs text-slate-500">Evaluates the action by computing the TD Error (Surprise). This error signal is used to update both networks.</p>
-                         </div>
-                     </div>
-                 </div>
-             </div>
+         <AlgorithmCard
+            id="actor-critic"
+            title="Actor-Critic Methods"
+            complexity="Advanced"
+            theory={`Actor-Critic methods combine the benefits of value-based and policy-based methods. The 'Actor' (Policy) controls how the agent behaves, while the 'Critic' (Value Function) measures how good the taken action was. This structure reduces the variance of policy gradient updates, stabilizing training.
+
+### Dual Network Architecture
+1. **Actor**: Outputs action probabilities (π).
+2. **Critic**: Outputs state value estimates (V).`}
+            math={<span>&nabla; J(&theta;) &asymp; &Eopf; [&nabla;<sub>&theta;</sub> log &pi;<sub>&theta;</sub>(a|s) (R - V<sub>w</sub>(s))]</span>}
+            mathLabel="Advantage Actor-Critic Update"
+            code={`# Actor Update (Policy)
+advantage = reward + gamma * val_next - val_curr
+actor_loss = -log_prob * advantage.detach()
+
+# Critic Update (Value)
+critic_loss = (advantage)**2`}
+            pros={['Lower variance than pure Policy Gradients', 'Can learn online (no need for full episodes)', 'State-of-the-art for continuous control']}
+            cons={['Two networks to tune (instability)', 'Sample inefficiency', 'Complex implementation']}
+            hyperparameters={[
+                { name: 'Learning Rate', description: 'Step size for gradient descent on both networks. Often different for Actor and Critic.', default: '3e-4', range: '1e-5 - 1e-2' },
+                { name: 'Entropy Coefficient', description: 'Bonus term added to loss to encourage exploration and prevent premature convergence.', default: '0.01', range: '0.0 - 0.1' },
+                { name: 'Gamma (γ)', description: 'Discount factor for future rewards.', default: '0.99', range: '0.9 - 0.99' }
+            ]}
+            steps={[
+                "Define two neural networks: `Actor` (outputs probabilities) and `Critic` (outputs scalar value).",
+                "Run agent in environment for N steps to collect trajectory.",
+                "Calculate Advantage: `A = r + gamma * V(s') - V(s)`.",
+                "Critic Loss: Mean Squared Error between returns and V(s).",
+                "Actor Loss: `-log(prob) * A` (maximize reward).",
+                "Backpropagate both losses."
+            ]}
+         >
              <ActorCriticViz />
-         </div>
+         </AlgorithmCard>
       </section>
     </div>
   );
