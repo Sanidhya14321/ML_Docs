@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home } from 'lucide-react';
+import { Home, ChevronRight } from 'lucide-react';
 import { ViewSection, NavigationItem } from '../types';
 
 interface BreadcrumbsProps {
@@ -10,7 +10,7 @@ interface BreadcrumbsProps {
 }
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems, onNavigate }) => {
-  // Helper to find path to current item
+  // Helper to find path to current item in the navigation tree
   const findPath = (items: NavigationItem[], targetId: string, path: NavigationItem[] = []): NavigationItem[] | null => {
     for (const item of items) {
       if (item.id === targetId) return [...path, item];
@@ -24,27 +24,30 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems,
 
   const breadcrumbPath = findPath(navItems, currentPath);
 
-  if (!breadcrumbPath) return null;
+  // Hide breadcrumbs on Dashboard or if path is invalid
+  if (!breadcrumbPath || currentPath === ViewSection.DASHBOARD) return null;
 
   return (
-    <nav className="flex items-center gap-2 text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wide overflow-x-auto whitespace-nowrap scrollbar-hide mask-linear-fade">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap scrollbar-hide px-1">
       <button 
-        onClick={() => onNavigate(ViewSection.FOUNDATIONS)}
-        className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+        onClick={() => onNavigate(ViewSection.DASHBOARD)}
+        className="hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors flex items-center gap-1 p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
+        title="Back to Dashboard"
       >
-        <Home size={12} />
-        <span className="hidden sm:inline">Home</span>
+        <Home size={14} />
       </button>
       
       {breadcrumbPath.map((item, idx) => (
         <React.Fragment key={item.id}>
-            <span className="text-slate-700 select-none">/</span>
+            <ChevronRight size={12} className="text-slate-400 dark:text-slate-600 shrink-0" />
             <button
                 onClick={() => onNavigate(item.id)}
                 disabled={idx === breadcrumbPath.length - 1}
                 className={`
-                    transition-colors truncate max-w-[150px]
-                    ${idx === breadcrumbPath.length - 1 ? 'text-indigo-400 font-bold cursor-default' : 'hover:text-slate-300'}
+                    px-2 py-1 rounded transition-all truncate max-w-[120px] sm:max-w-[200px] flex items-center
+                    ${idx === breadcrumbPath.length - 1 
+                        ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-500/10 cursor-default ring-1 ring-indigo-500/20' 
+                        : 'hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}
                 `}
             >
                 {item.label}
