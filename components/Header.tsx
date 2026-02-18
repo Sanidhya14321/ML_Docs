@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Menu, Search, Command, Settings } from 'lucide-react';
+import { Menu, Search, Command, Settings, Moon, Sun } from 'lucide-react';
 import { Breadcrumbs } from './Breadcrumbs';
 import { NavigationItem } from '../types';
+import { useTheme } from '../hooks/useTheme';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -14,6 +15,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, onSettingsClick, currentPath, navItems, onNavigate }) => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/50 transition-colors">
        <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -40,6 +43,15 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, onSe
              <div className="hidden sm:flex items-center gap-0.5 ml-1 px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[10px]">
                 <Command size={8} /> K
              </div>
+          </button>
+
+          <button
+             onClick={toggleTheme}
+             className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+             aria-label={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+             title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
           <button
