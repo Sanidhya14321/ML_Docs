@@ -1,6 +1,12 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 
+interface Connection {
+  d: string;
+  weight: number;
+  key: string;
+}
+
 export const NeuralNetworkViz: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
 
@@ -20,8 +26,8 @@ export const NeuralNetworkViz: React.FC = () => {
   const h2Nodes = [70, 130, 190, 250];
   const outputNodes = [110, 190];
 
-  const createConnections = (nodesLeft: number[], nodesRight: number[], xLeft: number, xRight: number) => {
-    const paths = [];
+  const createConnections = (nodesLeft: number[], nodesRight: number[], xLeft: number, xRight: number): Connection[] => {
+    const paths: Connection[] = [];
     for (let i = 0; i < nodesLeft.length; i++) {
         for (let j = 0; j < nodesRight.length; j++) {
             const weight = 0.2 + Math.random() * 0.8;
