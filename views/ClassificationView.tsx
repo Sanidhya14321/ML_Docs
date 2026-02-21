@@ -233,25 +233,123 @@ const DecisionTreeViz = () => {
   );
 };
 
+const PolyKernelViz = () => {
+  return (
+    <div className="h-32 w-full bg-slate-950 rounded-lg border border-slate-800 relative overflow-hidden mb-4 group-hover:border-indigo-500/30 transition-colors">
+       <svg width="100%" height="100%" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="gradPoly" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.3" />
+            </linearGradient>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#475569" />
+            </marker>
+          </defs>
+          
+          {/* Left: 2D Input Space */}
+          <g transform="translate(0,0)">
+             <text x="50" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Input Space (2D)</text>
+             {/* Class A: Center */}
+             <circle cx="50" cy="45" r="15" fill="#ef4444" fillOpacity="0.2" />
+             <circle cx="50" cy="45" r="2" fill="#ef4444" />
+             <circle cx="45" cy="40" r="2" fill="#ef4444" />
+             <circle cx="55" cy="50" r="2" fill="#ef4444" />
+             
+             {/* Class B: Ring */}
+             <circle cx="50" cy="45" r="30" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="2 2" />
+             <circle cx="50" cy="15" r="2" fill="#3b82f6" />
+             <circle cx="50" cy="75" r="2" fill="#3b82f6" />
+             <circle cx="20" cy="45" r="2" fill="#3b82f6" />
+             <circle cx="80" cy="45" r="2" fill="#3b82f6" />
+          </g>
+
+          {/* Arrow */}
+          <path d="M 90 45 L 110 45" stroke="#475569" strokeWidth="1" markerEnd="url(#arrow)" />
+
+          {/* Right: Feature Space (3D projection hint) */}
+          <g transform="translate(100,0)">
+             <text x="50" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Feature Space (High-Dim)</text>
+             {/* Paraboloid hint */}
+             <path d="M 20 20 Q 50 80 80 20" fill="url(#gradPoly)" stroke="#6366f1" strokeWidth="1" />
+             
+             {/* Hyperplane cut */}
+             <line x1="15" y1="45" x2="85" y2="45" stroke="#ffffff" strokeWidth="1" strokeDasharray="4 2" />
+             
+             {/* Points mapped */}
+             <circle cx="50" cy="60" r="2" fill="#ef4444" />
+             <circle cx="20" cy="20" r="2" fill="#3b82f6" />
+             <circle cx="80" cy="20" r="2" fill="#3b82f6" />
+          </g>
+       </svg>
+    </div>
+  );
+};
+
+const RBFKernelViz = () => {
+  return (
+    <div className="h-32 w-full bg-slate-950 rounded-lg border border-slate-800 relative overflow-hidden mb-4 group-hover:border-emerald-500/30 transition-colors">
+       <svg width="100%" height="100%" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
+          {/* Left: Complex Topology */}
+          <g transform="translate(0,0)">
+             <text x="50" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Complex Topology</text>
+             
+             {/* Islands */}
+             <path d="M 30 30 Q 40 20 50 30 T 70 30" fill="none" stroke="#ef4444" strokeWidth="20" strokeOpacity="0.1" strokeLinecap="round" />
+             <circle cx="30" cy="30" r="2" fill="#ef4444" />
+             <circle cx="50" cy="30" r="2" fill="#ef4444" />
+             <circle cx="70" cy="30" r="2" fill="#ef4444" />
+
+             {/* Background Class */}
+             <circle cx="50" cy="60" r="2" fill="#3b82f6" />
+             <circle cx="20" cy="50" r="2" fill="#3b82f6" />
+             <circle cx="80" cy="50" r="2" fill="#3b82f6" />
+          </g>
+
+           {/* Arrow */}
+           <path d="M 90 45 L 110 45" stroke="#475569" strokeWidth="1" markerEnd="url(#arrow)" />
+
+          {/* Right: Lifted Peaks */}
+          <g transform="translate(100,0)">
+             <text x="50" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">RBF "Lift"</text>
+             
+             {/* Gaussian Peaks */}
+             <path d="M 10 60 Q 30 10 50 60" fill="none" stroke="#ef4444" strokeWidth="1.5" />
+             <path d="M 40 60 Q 60 20 80 60" fill="none" stroke="#ef4444" strokeWidth="1.5" />
+             
+             {/* Slicing Plane */}
+             <line x1="5" y1="50" x2="95" y2="50" stroke="#ffffff" strokeWidth="1" strokeDasharray="4 2" />
+             
+             {/* Points below */}
+             <circle cx="20" cy="70" r="2" fill="#3b82f6" />
+             <circle cx="80" cy="70" r="2" fill="#3b82f6" />
+          </g>
+       </svg>
+    </div>
+  );
+};
+
 const KernelExplainer = () => (
   <div className="mt-8 pt-8 border-t border-slate-800/50">
-    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">The Kernel Trick</h4>
+    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">The Kernel Trick: Non-Linear Separation</h4>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative group overflow-hidden transition-all hover:border-indigo-500/30">
         <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
         <h5 className="text-indigo-400 font-bold text-sm mb-3">Polynomial Kernel</h5>
+        <PolyKernelViz />
         <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/50 mb-3 text-center">
            <span className="font-serif italic text-slate-200 text-sm">K(x, x') = (&gamma;x&middot;x' + r)<sup>d</sup></span>
         </div>
         <p className="text-xs text-slate-400 leading-relaxed">
           Projects data into a space of feature interactions (e.g., x<sub>1</sub>x<sub>2</sub>, x<sub>1</sub><sup>2</sup>). 
-          <strong> Impact:</strong> Creates global, curved decision boundaries. Ideal for distinct geometric shapes.
+          <strong> Impact:</strong> Creates global, curved decision boundaries. Ideal for distinct geometric shapes like rings or arcs.
         </p>
       </div>
 
       <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 relative group overflow-hidden transition-all hover:border-emerald-500/30">
         <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150"></div>
         <h5 className="text-emerald-400 font-bold text-sm mb-3">RBF (Radial Basis)</h5>
+        <RBFKernelViz />
         <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800/50 mb-3 text-center">
            <span className="font-serif italic text-slate-200 text-sm">K(x, x') = exp(-&gamma;||x - x'||<sup>2</sup>)</span>
         </div>
