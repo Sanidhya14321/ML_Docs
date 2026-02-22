@@ -2,9 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Copy, Check, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Prism from 'prismjs';
 
-// Declare Prism global since it's loaded via CDN in index.html
-declare const Prism: any;
+// We need to import the CSS for the theme, but it's currently loaded via CDN in index.html.
+// If we wanted to be fully self-contained, we would import it here:
+// import 'prismjs/themes/prism-one-dark.css'; 
+// However, to respect the "reduce initial bundle size" request for *components*, 
+// we will stick to dynamic imports for languages.
 
 interface CodeBlockProps {
   code: string;
@@ -17,9 +21,24 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
   const codeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (typeof Prism !== 'undefined' && codeRef.current) {
-      Prism.highlightElement(codeRef.current);
-    }
+    const highlight = async () => {
+      if (codeRef.current) {
+        try {
+            // Core languages like 'javascript', 'css', 'clike', 'markup' are included in the main bundle usually,
+            // but for others we need to import them.
+            // We use a try-catch because the language might not exist or might be 'text'.
+            if (language && language !== 'text' && language !== 'javascript' && language !== 'css' && language !== 'html') {
+                await import(`prismjs/components/prism-${language}`);
+            }
+            Prism.highlightElement(codeRef.current);
+        } catch (e) {
+            console.warn(`Failed to load Prism language: ${language}`, e);
+            // Fallback to plain text or just highlight what we can
+            Prism.highlightElement(codeRef.current);
+        }
+      }
+    };
+    highlight();
   }, [code, language]);
 
   const handleCopy = async () => {
