@@ -3,6 +3,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { AlgorithmCard } from '../components/AlgorithmCard';
 import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ScatterChart, Scatter, ReferenceLine, LabelList } from 'recharts';
 import { Database, ArrowRight, Search, FileText, Bot, Play, Pause } from 'lucide-react';
+import { PerceptronViz } from '../components/PerceptronViz';
+import { ActivationFunctionsViz } from '../components/ActivationFunctionsViz';
 
 // Data for Embeddings Viz
 const embeddingData = [
@@ -431,6 +433,75 @@ export const DeepLearningView: React.FC = () => {
           Harnessing the power of multi-layered artificial neural networks. Deep learning identifies complex hierarchies of features within massive datasets to solve tasks once thought impossible for machines.
         </p>
       </header>
+
+      <AlgorithmCard
+        id="perceptron"
+        title="The Perceptron"
+        complexity="Fundamental"
+        theory={`The simplest form of a neural network. A single neuron that takes multiple inputs, weights them, sums them up, adds a bias, and passes the result through an activation function (originally a step function) to produce a binary output. It forms the building block of all deep learning.
+        
+### Mathematical Model
+1. **Weighted Sum:** z = w₁x₁ + w₂x₂ + ... + b
+2. **Activation:** y = step(z)`}
+        math={<span>y = &phi;(&Sigma; w<sub>i</sub>x<sub>i</sub> + b)</span>}
+        mathLabel="Perceptron Formula"
+        code={`class Perceptron:
+    def __init__(self, learning_rate=0.01):
+        self.lr = learning_rate
+        self.weights = None
+        self.bias = 0
+
+    def predict(self, X):
+        linear = np.dot(X, self.weights) + self.bias
+        return np.where(linear > 0, 1, 0)`}
+        pros={['Simple and interpretable', 'Guaranteed to converge for linearly separable data', 'Foundation of modern AI']}
+        cons={['Can ONLY solve linearly separable problems', 'Fails on XOR problem', 'Step function is not differentiable (cannot use backprop directly)']}
+        steps={[
+            "Initialize weights and bias to small random numbers.",
+            "For each training example:",
+            "1. Calculate prediction: y_pred = step(w·x + b)",
+            "2. Calculate error: error = y_true - y_pred",
+            "3. Update weights: w = w + lr * error * x",
+            "4. Update bias: b = b + lr * error",
+            "Repeat until convergence."
+        ]}
+      >
+        <PerceptronViz />
+      </AlgorithmCard>
+
+      <AlgorithmCard
+        id="activation-functions"
+        title="Activation Functions"
+        complexity="Fundamental"
+        theory={`Activation functions introduce non-linearity into the network. Without them, a neural network of any depth is mathematically equivalent to a single linear layer. They determine whether a neuron should "fire" or not.
+        
+### Common Functions
+* **Sigmoid:** Smooth step, outputs (0,1). Good for probability.
+* **ReLU:** max(0,x). Efficient, solves vanishing gradient.
+* **Tanh:** Zero-centered (-1,1).`}
+        math={<span>ReLU(x) = max(0, x)</span>}
+        mathLabel="Rectified Linear Unit"
+        code={`# Common Activations
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def relu(x):
+    return np.maximum(0, x)
+
+def softmax(x):
+    exps = np.exp(x)
+    return exps / np.sum(exps)`}
+        pros={['Enables learning of complex non-linear patterns', 'Differentiability allows backpropagation', 'Control over output range']}
+        cons={['Sigmoid/Tanh suffer from vanishing gradients', 'ReLU can suffer from "dead neurons"', 'Choice depends heavily on architecture']}
+        steps={[
+            "Hidden Layers: Default to **ReLU** (Rectified Linear Unit). It's fast and effective.",
+            "Output Layer (Binary): Use **Sigmoid** to get a probability between 0 and 1.",
+            "Output Layer (Multi-class): Use **Softmax** to get a probability distribution summing to 1.",
+            "RNNs: Often use **Tanh** or **Sigmoid** for gating mechanisms."
+        ]}
+      >
+        <ActivationFunctionsViz />
+      </AlgorithmCard>
 
       <AlgorithmCard
         id="mlp"
