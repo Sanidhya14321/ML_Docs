@@ -45,15 +45,45 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
   const xmlString = generateSitemapXML(navItems);
 
   return (
-    <div className="space-y-12 animate-fade-in pb-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-12 pb-20"
+    >
       <header className="border-b border-slate-800 pb-12">
-        <h1 className="text-5xl font-serif font-bold text-white mb-6">Site Architecture</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-5xl font-serif font-bold text-white mb-6"
+        >
+          Site Architecture
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+        >
           A complete index of the Neural Codex documentation. This page serves both as a user directory and a DevOps verification tool for crawler accessibility.
-        </p>
+        </motion.p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-12"
+      >
         {/* Visual Directory */}
         <section>
           <div className="flex items-center gap-3 mb-6">
@@ -109,7 +139,7 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
              <CodeBlock code={robotsTxt} language="bash" filename="public/robots.txt" />
           </div>
         </section>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

@@ -96,8 +96,13 @@ const ChapterItem: React.FC<{ chapter: Chapter; currentPath: string; onNavigate:
 const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (path: string) => void }> = ({ module, currentPath, onNavigate }) => {
   const Icon = module.icon;
   return (
-    <div className="mb-8">
-      <div className="flex items-center gap-3 px-2 mb-3 text-slate-800 dark:text-slate-200 sticky top-0 bg-white/95 dark:bg-[#060810]/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mb-8"
+    >
+      <div className="flex items-center gap-3 px-2 mb-3 text-slate-800 dark:text-slate-200 sticky top-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
         <span className="text-indigo-600 dark:text-indigo-500">{Icon ? <Icon size={16} /> : null}</span>
         <h3 className="text-sm font-serif font-bold tracking-tight">{module.title}</h3>
       </div>
@@ -106,7 +111,7 @@ const ModuleItem: React.FC<{ module: Module; currentPath: string; onNavigate: (p
           <ChapterItem key={chapter.id} chapter={chapter} currentPath={currentPath} onNavigate={onNavigate} />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -89,7 +89,12 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
   }
 
   return (
-    <div className="max-w-3xl mx-auto pt-12 pb-24 px-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="max-w-3xl mx-auto pt-12 pb-24 px-6"
+    >
       <header className="mb-12">
          <div className="flex justify-between items-end mb-4">
             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 dark:text-indigo-400">Assessment</span>
@@ -105,9 +110,14 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
       </header>
 
       <div className="space-y-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+        <motion.h1 
+          key={currentQuestion.text}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white leading-tight"
+        >
           {currentQuestion.text}
-        </h1>
+        </motion.h1>
 
         <div className="grid grid-cols-1 gap-4">
           {currentQuestion.options.map((option, idx) => {
@@ -171,6 +181,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };

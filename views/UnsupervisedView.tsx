@@ -608,14 +608,44 @@ const TSNEViz = () => {
 
 export const UnsupervisedView: React.FC = () => {
   return (
-    <div className="space-y-12 animate-fade-in pb-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-12 pb-20"
+    >
       <header className="mb-12 border-b border-slate-800 pb-8">
-        <h1 className="text-5xl font-serif font-bold text-white mb-4">Unsupervised Learning</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-5xl font-serif font-bold text-white mb-4"
+        >
+          Unsupervised Learning
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+        >
           Extracting structure from noise. Unsupervised algorithms organize data without the guidance of explicit labels, identifying clusters, densities, dimensions, and anomalies.
-        </p>
+        </motion.p>
       </header>
 
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
       {/* 1. K-MEANS */}
       <AlgorithmCard
         id="k-means"
@@ -759,7 +789,7 @@ tsne = TSNE(n_components=2, perplexity=30)`}
       >
         <TSNEViz />
       </AlgorithmCard>
-
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

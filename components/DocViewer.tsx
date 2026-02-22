@@ -26,6 +26,8 @@ const getMockData = (id: string, title: string) => {
   };
 };
 
+import { motion } from 'framer-motion';
+
 export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact = false }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -52,7 +54,12 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
   }
 
   return (
-    <div className={`mx-auto ${isCompact ? 'max-w-none px-2' : 'max-w-4xl pb-24'}`}>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={`mx-auto ${isCompact ? 'max-w-none px-2' : 'max-w-4xl pb-24'}`}
+    >
       {/* 1. Header Section - Hidden in Compact Mode */}
       {!isCompact && (
         <header className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-8">
@@ -172,6 +179,6 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
 
       {/* 3. Footer Navigation - Hidden in Compact Mode */}
       {!isCompact && <DocPagination currentPath={topicId} />}
-    </div>
+    </motion.div>
   );
 };

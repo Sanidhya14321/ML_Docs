@@ -132,18 +132,46 @@ export const ProjectLabView: React.FC = () => {
   };
 
   return (
-    <div className="pb-24 space-y-16">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="pb-24 space-y-16"
+    >
       <header className="relative">
-        <h1 className="text-6xl font-serif font-bold text-slate-900 dark:text-white flex items-center gap-6">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-6xl font-serif font-bold text-slate-900 dark:text-white flex items-center gap-6"
+        >
           <span className="bg-indigo-600 px-5 py-2 rounded-2xl text-xl shadow-2xl shadow-indigo-600/30 text-white">Lab</span>
           Medical Case Study
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-6 text-xl font-light leading-relaxed max-w-3xl">
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-500 dark:text-slate-400 mt-6 text-xl font-light leading-relaxed max-w-3xl"
+        >
           Simulating a clinical heart disease diagnostic tool. Select algorithms and analyze metrics to find the most reliable predictor.
-        </p>
+        </motion.p>
       </header>
 
-      <div className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md">
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+        className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md"
+      >
          {[
            { id: 'eda', icon: <BarChart3 size={16} />, label: 'Data EDA' },
            { id: 'performance', icon: <TrendingUp size={16} />, label: 'Benchmarks' },
@@ -157,7 +185,7 @@ export const ProjectLabView: React.FC = () => {
              {tab.icon} {tab.label}
            </button>
          ))}
-      </div>
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {activeTab === 'eda' && (
@@ -316,6 +344,6 @@ export const ProjectLabView: React.FC = () => {
              </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };

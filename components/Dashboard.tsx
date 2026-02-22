@@ -36,7 +36,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   }
 
   return (
-    <div className="pb-20 animate-fade-in space-y-12">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="pb-20 space-y-12"
+    >
       {/* Hero Section */}
       <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
@@ -45,16 +50,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <Trophy size={16} />
                 <span className="text-xs font-black uppercase tracking-widest">Course Progress</span>
              </div>
-             <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4">
+             <motion.h1 
+               initial={{ y: 20, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               transition={{ delay: 0.2 }}
+               className="text-4xl md:text-5xl font-serif font-bold text-white mb-4"
+             >
                 {CURRICULUM.title}
-             </h1>
-             <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
+             </motion.h1>
+             <motion.p 
+               initial={{ y: 20, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               transition={{ delay: 0.3 }}
+               className="text-slate-400 max-w-xl text-lg font-light leading-relaxed"
+             >
                 You have completed <strong className="text-white">{overallProgress}%</strong> of the certification. 
                 {overallProgress === 100 ? " Ready for deployment." : " Continue building your neural architecture."}
-             </p>
+             </motion.p>
           </div>
 
-          <div className="bg-slate-950/50 backdrop-blur-md p-6 rounded-2xl border border-slate-800/50 w-full md:w-auto min-w-[280px]">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-slate-950/50 backdrop-blur-md p-6 rounded-2xl border border-slate-800/50 w-full md:w-auto min-w-[280px]"
+          >
              <div className="flex justify-between items-end mb-2">
                 <span className="text-[10px] font-mono text-slate-500 uppercase">Current Velocity</span>
                 <span className="text-2xl font-bold text-white">{overallProgress}%</span>
@@ -63,7 +83,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <motion.div 
                    initial={{ width: 0 }}
                    animate={{ width: `${overallProgress}%` }}
-                   transition={{ duration: 1, ease: "easeOut" }}
+                   transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
                    className="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
                 />
              </div>
@@ -74,7 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 <Play size={16} fill="currentColor" />
                 {lastActiveTopic ? "Resume Learning" : "Start Course"}
              </button>
-          </div>
+          </motion.div>
         </div>
 
         {/* Decorator */}
@@ -82,7 +102,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       </header>
 
       {/* Dynamic Modules Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <motion.div 
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+        className="grid grid-cols-1 xl:grid-cols-2 gap-8"
+      >
         {CURRICULUM.modules.map((module, idx) => {
           const progress = getModuleProgress(module.id);
           const isStarted = progress > 0;
@@ -150,7 +183,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </motion.div>
           );
         })}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

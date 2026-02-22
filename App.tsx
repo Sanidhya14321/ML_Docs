@@ -130,7 +130,7 @@ const App: React.FC = () => {
   if (isLabMode) {
       return (
         <div className="h-screen bg-slate-950 text-slate-200 overflow-hidden font-sans">
-             <Suspense fallback={<div className="h-full flex items-center justify-center bg-[#020617]"><LoadingOverlay message="Initializing Lab" subMessage="Provisioning Container..." /></div>}>
+             <Suspense fallback={<div className="h-full flex items-center justify-center bg-slate-950"><LoadingOverlay message="Initializing Lab" subMessage="Provisioning Container..." /></div>}>
                 {contentElement}
              </Suspense>
         </div>
@@ -141,6 +141,13 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 overflow-hidden font-sans selection:bg-indigo-500/30 transition-colors duration-300">
       
+      {/* Background Pattern */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px] dark:opacity-10"></div>
+        <div className="absolute right-0 bottom-0 -z-10 h-[310px] w-[310px] rounded-full bg-teal-500 opacity-20 blur-[100px] dark:opacity-10"></div>
+      </div>
+
       {/* Scroll Progress Bar (Updated to Teal/Emerald) */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-emerald-500 to-indigo-500 z-[110] origin-left shadow-[0_0_10px_rgba(20,184,166,0.5)]" 
@@ -148,7 +155,7 @@ const App: React.FC = () => {
       />
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-950/50 backdrop-blur-xl relative z-40">
+      <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl relative z-40">
         <div className="p-6 border-b border-slate-200 dark:border-slate-800/50">
            <button 
               onClick={() => navigateTo(ViewSection.DASHBOARD)}
@@ -188,7 +195,7 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-slate-950 relative">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
          <Header 
             onMenuClick={() => setIsMobileMenuOpen(true)}
             onSearchClick={() => setIsSearchOpen(true)}
@@ -198,20 +205,16 @@ const App: React.FC = () => {
             onNavigate={navigateTo}
          />
 
-         <main className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar relative bg-slate-50/50 dark:bg-slate-950">
-             {/* Gradients updated to Teal/Emerald for a cleaner look */}
-             <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-500/5 rounded-full blur-[120px] pointer-events-none" />
-             <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
-             
-             <div className="max-w-[1000px] mx-auto p-4 md:p-12 lg:p-16 relative z-10 min-h-screen">
+         <main className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar relative">
+             <div className="max-w-[1000px] mx-auto p-4 md:p-12 lg:p-16 min-h-screen">
                 <Suspense fallback={<LoadingOverlay />}>
                   <AnimatePresence mode="wait">
                     <motion.div 
                       key={currentPath}
-                      initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+                      initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
                       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} 
+                      exit={{ opacity: 0, y: -10, filter: 'blur(5px)' }}
+                      transition={{ duration: 0.3, ease: "easeOut" }} 
                     >
                       {contentElement}
                     </motion.div>
@@ -222,7 +225,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Desktop TOC Sidebar */}
-      <aside className="hidden xl:block w-64 border-l border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-950/50 backdrop-blur-sm p-8 h-full overflow-y-auto z-40">
+      <aside className="hidden xl:block w-64 border-l border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-8 h-full overflow-y-auto z-40">
           {CONTENT_REGISTRY[currentPath] && <TableOfContents />}
       </aside>
 

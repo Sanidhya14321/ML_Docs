@@ -494,14 +494,44 @@ const ActorCriticViz = () => {
 
 export const ReinforcementView: React.FC = () => {
   return (
-    <div className="space-y-16 animate-fade-in pb-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-16 pb-20"
+    >
       <header>
-        <h1 className="text-6xl font-serif font-bold text-white mb-6">Reinforcement Learning</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-6xl font-serif font-bold text-white mb-6"
+        >
+          Reinforcement Learning
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl max-w-3xl leading-relaxed"
+        >
           The computational study of goal-directed learning. Reinforcement Learning (RL) involves agents that learn through experience—maximizing rewards while navigating uncertain environments.
-        </p>
+        </motion.p>
       </header>
 
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
       <section id="rl-foundations" className="scroll-mt-24">
          <div className="flex items-center gap-3 mb-10">
             <h2 className="text-3xl font-bold text-white">01. The RL Cycle</h2>
@@ -659,6 +689,7 @@ critic_loss = (advantage)**2`}
              <ActorCriticViz />
          </AlgorithmCard>
       </section>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

@@ -10,7 +10,12 @@ export const CertificateView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 flex flex-col items-center justify-center animate-fade-in relative overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen p-8 flex flex-col items-center justify-center relative overflow-hidden"
+    >
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/10 via-slate-950 to-slate-950 -z-10"></div>
       
@@ -83,6 +88,6 @@ export const CertificateView: React.FC = () => {
            </div>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };

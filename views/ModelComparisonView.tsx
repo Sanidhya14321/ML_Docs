@@ -378,17 +378,45 @@ export const ModelComparisonView: React.FC = () => {
   const rocDataB = MEDICAL_MODEL_DATA[modelB].rocCurve;
 
   return (
-    <div className="space-y-12 animate-fade-in pb-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-12 pb-20"
+    >
       <header>
-        <h1 className="text-5xl font-serif font-bold text-white mb-4 flex items-center gap-4">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-5xl font-serif font-bold text-white mb-4 flex items-center gap-4"
+        >
           <Swords className="text-rose-500" size={48} />
           The Battleground
-        </h1>
-        <p className="text-slate-400 text-xl max-w-2xl leading-relaxed">
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl max-w-2xl leading-relaxed"
+        >
           Comparing algorithms side-by-side to understand the fundamental trade-offs in modern machine learning.
-        </p>
+        </motion.p>
       </header>
 
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
       {/* Model Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-1 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-3xl">
@@ -569,6 +597,7 @@ dt = DecisionTreeClassifier(max_depth=5)`}
           <DecisionTreeViz />
         </AlgorithmCard>
       </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

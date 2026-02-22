@@ -152,16 +152,48 @@ const SudokuViz: React.FC = () => {
   );
 };
 
+import { motion } from 'framer-motion';
+
 export const OptimizationView: React.FC = () => {
   return (
-    <div className="space-y-16">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-16 pb-20"
+    >
       <header id="optimization-header" className="border-b border-slate-800 pb-12">
-        <h1 className="text-6xl font-serif font-bold text-white mb-6">Optimization</h1>
-        <p className="text-slate-400 text-xl font-light leading-relaxed max-w-2xl">
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-6xl font-serif font-bold text-white mb-6"
+        >
+          Optimization
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl font-light leading-relaxed max-w-2xl"
+        >
           The mathematical core of machine learning. Optimization algorithms find the minimal error state, transforming "training" into a rigorous search for truth.
-        </p>
+        </motion.p>
       </header>
 
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
       <section id="calculus-engine">
         <div className="flex items-center gap-3 mb-10">
           <div className="w-10 h-10 rounded-xl bg-indigo-600/10 flex items-center justify-center text-indigo-400">
@@ -210,6 +242,7 @@ export const OptimizationView: React.FC = () => {
           </div>
         </AlgorithmCard>
       </section>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

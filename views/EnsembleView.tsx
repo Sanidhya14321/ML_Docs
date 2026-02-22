@@ -119,14 +119,48 @@ const GradientBoostingViz = () => {
     );
 };
 
+import { motion } from 'framer-motion';
+
 export const EnsembleView: React.FC = () => {
   return (
-    <div className="space-y-16 animate-fade-in pb-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-16 pb-20"
+    >
       <header className="border-b border-slate-800 pb-12">
-        <h1 className="text-6xl font-serif font-bold text-white mb-6">Ensemble Methods</h1>
-        <p className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light">Combining the wisdom of crowds. Ensemble models orchestrate multiple weak learners to achieve a collective intelligence that is robust, stable, and accurate.</p>
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-6xl font-serif font-bold text-white mb-6"
+        >
+          Ensemble Methods
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+        >
+          Combining the wisdom of crowds. Ensemble models orchestrate multiple weak learners to achieve a collective intelligence that is robust, stable, and accurate.
+        </motion.p>
       </header>
 
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
       <AlgorithmCard
         id="random-forest" title="Random Forest" complexity="Intermediate"
         theory="A massive ensemble of decision trees. Using Bootstrap Aggregating (Bagging), each tree is trained on a different subset of data. The variance of individual trees is averaged away, resulting in a smooth and generalized decision boundary."
@@ -182,6 +216,7 @@ export const EnsembleView: React.FC = () => {
       >
          <GradientBoostingViz />
       </AlgorithmCard>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
