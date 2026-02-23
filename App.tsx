@@ -13,6 +13,7 @@ import { Dashboard } from './components/Dashboard';
 import { QuizView } from './components/QuizView';
 import { SitemapView } from './views/SitemapView';
 import { CertificateView } from './views/CertificateView';
+import { NewsFeedView } from './views/NewsFeedView';
 import { getTopicById } from './lib/contentHelpers';
 import { NAV_ITEMS } from './lib/navigation-data';
 import { useCourseProgress } from './hooks/useCourseProgress';
@@ -114,6 +115,9 @@ const App: React.FC = () => {
   }
   else if (currentPath === ViewSection.SITEMAP) {
       contentElement = <SitemapView navItems={NAV_ITEMS} onNavigate={navigateTo} />;
+  }
+  else if (currentPath === ViewSection.NEWS_FEED) {
+      contentElement = <NewsFeedView />;
   }
   else if (currentPath === ViewSection.CERTIFICATE) {
       contentElement = <CertificateView />;

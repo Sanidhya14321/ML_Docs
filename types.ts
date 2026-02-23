@@ -3,6 +3,7 @@ import React from 'react';
 
 export enum ViewSection {
   DASHBOARD = 'dashboard',
+  NEWS_FEED = 'news-feed',
   FOUNDATIONS = 'foundations',
   OPTIMIZATION = 'optimization',
   REGRESSION = 'regression',
