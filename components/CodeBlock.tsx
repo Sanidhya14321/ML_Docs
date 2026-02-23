@@ -52,7 +52,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
   };
 
   return (
-    <div className="my-8 rounded-xl overflow-hidden border border-slate-700/50 shadow-2xl bg-[#1e1e1e] group relative font-mono text-sm">
+    <div className="my-8 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 shadow-2xl bg-[#1e1e1e] group relative font-mono text-sm">
       {/* Terminal Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-[#252526] border-b border-white/5 select-none">
         <div className="flex items-center gap-4">

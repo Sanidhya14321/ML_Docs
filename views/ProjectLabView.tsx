@@ -26,8 +26,8 @@ const CorrelationHeatmap = () => {
     };
 
     return (
-        <div className="flex flex-col items-center select-none">
-            <div className="grid grid-cols-6 gap-2">
+        <div className="flex flex-col items-center select-none w-full overflow-x-auto pb-4">
+            <div className="grid grid-cols-6 gap-2 min-w-[320px]">
                 {/* Header Row */}
                 <div className="w-12 h-10 md:w-16 md:h-12"></div>
                 {features.map(f => (
@@ -143,16 +143,16 @@ export const ProjectLabView: React.FC = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-6xl font-serif font-bold text-slate-900 dark:text-white flex items-center gap-6"
+          className="text-4xl md:text-6xl font-serif font-bold text-slate-900 dark:text-white flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6"
         >
-          <span className="bg-indigo-600 px-5 py-2 rounded-2xl text-xl shadow-2xl shadow-indigo-600/30 text-white">Lab</span>
+          <span className="bg-indigo-600 px-5 py-2 rounded-2xl text-lg md:text-xl shadow-2xl shadow-indigo-600/30 text-white self-start">Lab</span>
           Medical Case Study
         </motion.h1>
         <motion.p 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-500 dark:text-slate-400 mt-6 text-xl font-light leading-relaxed max-w-3xl"
+          className="text-slate-500 dark:text-slate-400 mt-6 text-lg md:text-xl font-light leading-relaxed max-w-3xl"
         >
           Simulating a clinical heart disease diagnostic tool. Select algorithms and analyze metrics to find the most reliable predictor.
         </motion.p>
