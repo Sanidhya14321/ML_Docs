@@ -31,10 +31,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-[101] px-4"
           >
-            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
-              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <h3 className="font-bold text-slate-900 dark:text-white">Settings</h3>
-                <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors">
+            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-300">
+                <h3 className="font-bold text-slate-900 dark:text-white transition-colors duration-300">Settings</h3>
+                <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors duration-300">
                   <X size={20} />
                 </button>
               </div>

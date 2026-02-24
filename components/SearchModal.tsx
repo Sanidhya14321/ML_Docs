@@ -104,8 +104,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-xl z-[101] px-4"
           >
-            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh]">
-              <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh] transition-colors duration-300">
+              <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
                 <Search size={20} className="text-slate-400" />
                 <input 
                   ref={inputRef}
@@ -113,10 +113,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                   placeholder="Search topics, labs, or concepts..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-slate-900 dark:text-white outline-none placeholder:text-slate-500 text-lg"
+                  className="flex-1 bg-transparent text-slate-900 dark:text-white outline-none placeholder:text-slate-500 text-lg transition-colors duration-300"
                 />
                 <div className="hidden sm:flex items-center gap-2">
-                   <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 border border-slate-200 dark:border-slate-700">ESC</span>
+                   <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 border border-slate-200 dark:border-slate-700 transition-colors duration-300">ESC</span>
                 </div>
               </div>
               

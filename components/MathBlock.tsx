@@ -20,7 +20,7 @@ export const MathBlock: React.FC<MathBlockProps> = ({ children, label, type = 'b
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      className="my-10 p-8 bg-slate-100 dark:bg-slate-900/30 border-2 border-slate-200 dark:border-slate-800/50 rounded-3xl relative group overflow-hidden"
+      className="my-10 p-8 bg-slate-100 dark:bg-slate-900/30 border-2 border-slate-200 dark:border-slate-800/50 rounded-3xl relative group overflow-hidden transition-colors duration-300"
     >
       <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-30 transition-opacity">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" className="text-indigo-500">

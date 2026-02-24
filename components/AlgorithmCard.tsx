@@ -75,17 +75,17 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
         transition: { duration: 0.2 } 
       }}
-      className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden mb-16 shadow-xl dark:shadow-2xl scroll-mt-24 transition-all hover:border-indigo-500/30 group/card"
+      className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden mb-16 shadow-xl dark:shadow-2xl scroll-mt-24 transition-all duration-300 hover:border-indigo-500/30 group/card"
     >
-      <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-between">
+      <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-300">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover/card:scale-110 transition-transform duration-500">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover/card:scale-110 transition-transform duration-500 shrink-0">
              <Info size={24} />
           </div>
           <div>
-            <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white tracking-wide group-hover/card:text-indigo-600 dark:group-hover/card:text-indigo-300 transition-colors">{title}</h2>
+            <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 dark:text-white tracking-wide group-hover/card:text-indigo-600 dark:group-hover/card:text-indigo-300 transition-colors duration-300">{title}</h2>
             <div className="flex items-center gap-2 mt-1">
-               <div className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${complexityColors[complexity]}`}>
+               <div className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors duration-300 ${complexityColors[complexity]}`}>
                 {complexity}
               </div>
             </div>
@@ -95,7 +95,7 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowAI(!showAI)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${showAI ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+          className={`self-start md:self-auto flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${showAI ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}`}
         >
           <Sparkles size={14} className={showAI ? "animate-pulse" : ""} />
           AI Explanation

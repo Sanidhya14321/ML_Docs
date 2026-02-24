@@ -107,17 +107,17 @@ export const NewsFeedView: React.FC = () => {
       exit={{ opacity: 0 }}
       className="max-w-5xl mx-auto pb-24 px-4 md:px-8"
     >
-      <header className="mb-12 pt-8 border-b border-slate-200 dark:border-slate-800 pb-8">
+      <header className="mb-12 pt-8 border-b border-slate-200 dark:border-slate-800 pb-8 transition-colors duration-300">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2 transition-colors duration-300">
               <Newspaper size={20} />
               <span className="text-xs font-black uppercase tracking-widest">Live Intelligence</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-white leading-tight transition-colors duration-300">
               Machine Learning News Feed
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl">
+            <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl transition-colors duration-300">
               Real-time updates on the latest research papers, industry shifts, and tooling advancements, curated by Gemini.
             </p>
           </div>
@@ -131,7 +131,7 @@ export const NewsFeedView: React.FC = () => {
             <button 
               onClick={fetchNews}
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300 disabled:opacity-50"
             >
               {isLoading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
               Refresh
@@ -169,12 +169,12 @@ export const NewsFeedView: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 hover:border-indigo-500/30 transition-all hover:shadow-lg hover:shadow-indigo-500/5"
+              className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 hover:border-indigo-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5"
             >
               <div className="flex flex-col md:flex-row md:items-start gap-6">
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getCategoryColor(item.category)}`}>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-colors duration-300 ${getCategoryColor(item.category)}`}>
                       {item.category}
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">

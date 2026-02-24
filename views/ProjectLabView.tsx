@@ -170,7 +170,7 @@ export const ProjectLabView: React.FC = () => {
             }
           }
         }}
-        className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md"
+        className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md transition-colors duration-300"
       >
          {[
            { id: 'eda', icon: <BarChart3 size={16} />, label: 'Data EDA' },
@@ -180,7 +180,7 @@ export const ProjectLabView: React.FC = () => {
            <button 
              key={tab.id}
              onClick={() => setActiveTab(tab.id as any)}
-             className={`flex-1 py-3 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
+             className={`flex-1 py-3 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
            >
              {tab.icon} {tab.label}
            </button>
@@ -196,8 +196,8 @@ export const ProjectLabView: React.FC = () => {
                 exit={{ opacity: 0, x: 20 }}
                 className="space-y-8"
              >
-                <div className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-xl">
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+                <div className="p-8 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-xl transition-colors duration-300">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-3 transition-colors duration-300">
                         <BarChart3 className="text-indigo-500" /> Feature Correlation Matrix
                     </h3>
                     <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -205,7 +205,7 @@ export const ProjectLabView: React.FC = () => {
                         <div className="flex-1 space-y-6">
                             <div className="space-y-2">
                                 <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Analysis</h4>
-                                <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-light">
+                                <p className="text-slate-600 dark:text-slate-300 leading-relaxed font-light transition-colors duration-300">
                                     The heatmap reveals critical dependencies. Values close to <span className="text-emerald-500 dark:text-emerald-400 font-bold">1.0</span> indicate strong positive correlation, while <span className="text-rose-500 dark:text-rose-400 font-bold">-1.0</span> indicates strong negative correlation.
                                 </p>
                             </div>
@@ -213,14 +213,14 @@ export const ProjectLabView: React.FC = () => {
                             <div className="space-y-3">
                                 <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Key Insights</h4>
                                 <ul className="space-y-4">
-                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50">
+                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50 transition-colors duration-300">
                                         <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0" />
                                         <span>
                                             <strong className="text-rose-500 dark:text-rose-400 block mb-1">Age vs. HR (-0.4)</strong>
                                             Maximum heart rate clearly decreases as patient age increases, a standard physiological trend.
                                         </span>
                                     </li>
-                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50">
+                                    <li className="flex gap-4 text-slate-500 dark:text-slate-400 text-sm bg-slate-50 dark:bg-slate-950/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800/50 transition-colors duration-300">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
                                         <span>
                                             <strong className="text-emerald-500 dark:text-emerald-400 block mb-1">BP vs. Target (0.4)</strong>
@@ -243,7 +243,7 @@ export const ProjectLabView: React.FC = () => {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-12"
           >
-            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 shadow-xl">
+            <div className="glass-card p-10 rounded-3xl flex flex-col lg:flex-row gap-12 items-center justify-between relative bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 shadow-xl transition-colors duration-300">
               <AnimatePresence>
                 {showSuccess && (
                   <motion.div 
@@ -267,7 +267,7 @@ export const ProjectLabView: React.FC = () => {
                     value={selectedModel} 
                     onChange={(e) => setSelectedModel(e.target.value as MLModelType)} 
                     disabled={isTraining} 
-                    className="w-full bg-slate-50 dark:bg-slate-950/80 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-4 font-black text-sm cursor-pointer hover:border-indigo-500/50 transition-all focus:outline-none"
+                    className="w-full bg-slate-50 dark:bg-slate-950/80 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-4 font-black text-sm cursor-pointer hover:border-indigo-500/50 transition-all duration-300 focus:outline-none"
                   >
                     {Object.values(MLModelType).map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
@@ -277,7 +277,7 @@ export const ProjectLabView: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={trainModel}
                   disabled={isTraining}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-4 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all flex items-center justify-center gap-3"
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-4 rounded-2xl shadow-xl shadow-indigo-600/20 transition-all duration-300 flex items-center justify-center gap-3"
                 >
                   {isTraining ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} fill="white" />}
                   {isTraining ? 'Training...' : 'Fit & Evaluate'}
@@ -290,9 +290,9 @@ export const ProjectLabView: React.FC = () => {
                   { label: 'Precision', key: 'precision', color: 'indigo' },
                   { label: 'Recall', key: 'recall', color: 'rose' }
                 ].map((metric) => (
-                  <div key={metric.label} className="bg-slate-50 dark:bg-slate-950/50 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative group overflow-hidden">
+                  <div key={metric.label} className="bg-slate-50 dark:bg-slate-950/50 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative group overflow-hidden transition-colors duration-300">
                     <div className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-2">{metric.label}</div>
-                    <div className={`text-4xl font-mono font-black text-${metric.color}-600 dark:text-${metric.color}-400`}>
+                    <div className={`text-4xl font-mono font-black text-${metric.color}-600 dark:text-${metric.color}-400 transition-colors duration-300`}>
                       {isTraining ? (
                         <span className="inline-block animate-pulse">--</span>
                       ) : (
@@ -336,7 +336,7 @@ export const ProjectLabView: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50 dark:bg-slate-900/20"
+                className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50 dark:bg-slate-900/20 transition-colors duration-300"
              >
                 <Code size={48} className="text-slate-400 dark:text-slate-700 mb-4" />
                 <h3 className="text-xl font-bold text-slate-500 dark:text-slate-400">Notebook View</h3>

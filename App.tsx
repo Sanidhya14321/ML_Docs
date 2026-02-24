@@ -159,8 +159,8 @@ const App: React.FC = () => {
       />
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl relative z-40">
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800/50">
+      <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl relative z-40 transition-colors duration-300">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800/50 transition-colors duration-300">
            <button 
               onClick={() => navigateTo(ViewSection.DASHBOARD)}
               className="flex items-center gap-3 mb-6 w-full text-left group"
@@ -169,19 +169,19 @@ const App: React.FC = () => {
                 <BrainCircuit size={18} className="text-white" />
               </div>
               <div>
-                <h1 className="font-serif font-black text-lg text-slate-900 dark:text-white tracking-tighter">AI Codex</h1>
+                <h1 className="font-serif font-black text-lg text-slate-900 dark:text-white tracking-tighter transition-colors duration-300">AI Codex</h1>
                 <p className="text-[9px] text-slate-500 font-mono uppercase tracking-[0.3em]">v3.2.0</p>
               </div>
             </button>
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 p-2.5 rounded-lg flex items-center justify-between text-slate-500 transition-all group shadow-sm"
+              className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 p-2.5 rounded-lg flex items-center justify-between text-slate-500 transition-all duration-300 group shadow-sm"
             >
               <div className="flex items-center gap-2">
-                <Search size={14} className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                <Search size={14} className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300" />
                 <span className="text-[11px] font-bold">Quick find...</span>
               </div>
-              <div className="flex items-center gap-1 opacity-50 group-hover:opacity-100">
+              <div className="flex items-center gap-1 opacity-50 group-hover:opacity-100 transition-opacity duration-300">
                 <Command size={10} />
                 <span className="text-[10px] font-mono">K</span>
               </div>
@@ -192,8 +192,8 @@ const App: React.FC = () => {
           <Sidebar currentPath={currentPath} onNavigate={navigateTo} />
         </div>
 
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800/50 text-[10px] text-slate-600 flex justify-between">
-            <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Site Map</button>
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800/50 text-[10px] text-slate-600 flex justify-between transition-colors duration-300">
+            <button onClick={() => navigateTo(ViewSection.SITEMAP)} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-300">Site Map</button>
             <span>© 2024 AI Codex</span>
         </div>
       </aside>
@@ -229,7 +229,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Desktop TOC Sidebar */}
-      <aside className="hidden xl:block w-64 border-l border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-8 h-full overflow-y-auto z-40">
+      <aside className="hidden xl:block w-64 border-l border-slate-200 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm p-8 h-full overflow-y-auto z-40 transition-colors duration-300">
           {CONTENT_REGISTRY[currentPath] && <TableOfContents />}
       </aside>
 

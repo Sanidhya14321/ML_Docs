@@ -62,33 +62,33 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
     >
       {/* 1. Header Section - Hidden in Compact Mode */}
       {!isCompact && (
-        <header className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-8">
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex gap-2">
+        <header className="mb-12 border-b border-slate-200 dark:border-slate-800 pb-8 transition-colors duration-300">
+          <div className="flex justify-between items-start mb-6 gap-4">
+            <div className="flex flex-wrap gap-2">
                 {tags.map((tag, i) => (
-                  <span key={i} className="text-[10px] font-mono font-bold uppercase px-2 py-1 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400">
+                  <span key={i} className="text-[10px] font-mono font-bold uppercase px-2 py-1 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 transition-colors duration-300">
                     #{tag}
                   </span>
                 ))}
             </div>
-            <button className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+            <button className="p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 shrink-0">
                 <Share2 size={16} />
             </button>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white mb-6 leading-tight transition-colors duration-300">
             {displayTitle}
           </h1>
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex flex-wrap items-center gap-6 text-xs font-mono text-slate-500 uppercase tracking-widest">
+            <div className="flex flex-wrap items-center gap-6 text-xs font-mono text-slate-500 uppercase tracking-widest transition-colors duration-300">
               <div className="flex items-center gap-2">
                   <Calendar size={14} /> Updated Today
               </div>
               <div className="flex items-center gap-2">
                   <Clock size={14} /> 15 min read
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 transition-colors duration-300">
                   <BarChart size={14} /> Intermediate
               </div>
             </div>
@@ -104,7 +104,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
             )}
           </div>
           
-          <p className="text-xl text-slate-600 dark:text-slate-400 font-light leading-relaxed mt-8">
+          <p className="text-xl text-slate-600 dark:text-slate-400 font-light leading-relaxed mt-8 transition-colors duration-300">
             {displayDesc}
           </p>
         </header>
