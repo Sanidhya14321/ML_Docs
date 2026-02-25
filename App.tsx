@@ -22,6 +22,8 @@ import {
   BrainCircuit, Search, Command
 } from 'lucide-react';
 
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+
 // New Components
 import { Header } from './components/Header';
 import { MobileNav } from './components/MobileNav';
@@ -42,6 +44,21 @@ const App: React.FC = () => {
   // Scroll Progress Logic
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
+  // Navigation Helper
+  const navigateTo = (path: string) => {
+    if (path === currentPath) return;
+    window.location.hash = `#/${path}`;
+    setCurrentPath(path);
+    setIsMobileMenuOpen(false);
+    
+    if (!path.startsWith('lab/')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Keyboard Navigation
+  useKeyboardNavigation(currentPath, navigateTo);
 
   // Handle Command+K
   useEffect(() => {
@@ -83,17 +100,6 @@ const App: React.FC = () => {
     
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [setLastActiveTopic]);
-
-  const navigateTo = (path: string) => {
-    if (path === currentPath) return;
-    window.location.hash = `#/${path}`;
-    setCurrentPath(path);
-    setIsMobileMenuOpen(false);
-    
-    if (!path.startsWith('lab/')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
 
   // Determine State
   const isLabMode = currentPath.startsWith('lab/');
@@ -188,7 +194,7 @@ const App: React.FC = () => {
             </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
+        <div className="flex-1 min-h-0 pt-6 flex flex-col">
           <Sidebar currentPath={currentPath} onNavigate={navigateTo} />
         </div>
 

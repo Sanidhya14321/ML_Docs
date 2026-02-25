@@ -86,6 +86,7 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/0 to-indigo-500/0 group-hover:via-indigo-500/5 group-hover:to-indigo-500/10 transition-all duration-500" />
               <span className="flex items-center gap-2 text-xs font-mono font-bold text-slate-500 uppercase tracking-widest mb-2 group-hover:text-indigo-400">
                 <ChevronLeft size={12} /> Previous
+                <span className="hidden md:inline-block ml-2 px-1.5 py-0.5 rounded border border-slate-700 text-[9px] text-slate-600 group-hover:border-indigo-500/30 group-hover:text-indigo-400/70 transition-colors">K</span>
               </span>
               <span className="text-lg font-serif font-bold text-slate-200 group-hover:text-white">
                 {prevTopic.title}
@@ -103,6 +104,7 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
             >
                <div className="absolute inset-0 bg-gradient-to-l from-indigo-500/0 via-indigo-500/0 to-indigo-500/0 group-hover:via-indigo-500/5 group-hover:to-indigo-500/10 transition-all duration-500" />
                <span className="flex items-center gap-2 text-xs font-mono font-bold text-slate-500 uppercase tracking-widest mb-2 group-hover:text-indigo-400">
+                <span className="hidden md:inline-block mr-2 px-1.5 py-0.5 rounded border border-slate-700 text-[9px] text-slate-600 group-hover:border-indigo-500/30 group-hover:text-indigo-400/70 transition-colors">J</span>
                 Next <ChevronRight size={12} />
               </span>
               <span className="text-lg font-serif font-bold text-slate-200 group-hover:text-white">
