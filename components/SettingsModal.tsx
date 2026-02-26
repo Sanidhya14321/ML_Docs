@@ -30,11 +30,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-[101] px-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-title"
           >
             <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300">
               <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-300">
-                <h3 className="font-bold text-slate-900 dark:text-white transition-colors duration-300">Settings</h3>
-                <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors duration-300">
+                <h3 id="settings-title" className="font-bold text-slate-900 dark:text-white transition-colors duration-300">Settings</h3>
+                <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors duration-300" aria-label="Close Settings">
                   <X size={20} />
                 </button>
               </div>
@@ -55,6 +58,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                      <button 
                         onClick={toggleTheme}
                         className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${theme === 'dark' ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                        aria-label={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
                      >
                         <motion.div 
                           layout

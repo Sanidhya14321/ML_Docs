@@ -171,6 +171,8 @@ export const ProjectLabView: React.FC = () => {
           }
         }}
         className="flex bg-slate-200 dark:bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-300 dark:border-slate-800/50 max-w-md transition-colors duration-300"
+        role="tablist"
+        aria-label="Lab Views"
       >
          {[
            { id: 'eda', icon: <BarChart3 size={16} />, label: 'Data EDA' },
@@ -180,6 +182,10 @@ export const ProjectLabView: React.FC = () => {
            <button 
              key={tab.id}
              onClick={() => setActiveTab(tab.id as any)}
+             role="tab"
+             aria-selected={activeTab === tab.id}
+             aria-controls={`panel-${tab.id}`}
+             id={`tab-${tab.id}`}
              className={`flex-1 py-3 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
            >
              {tab.icon} {tab.label}
@@ -191,6 +197,9 @@ export const ProjectLabView: React.FC = () => {
         {activeTab === 'eda' && (
              <motion.div
                 key="eda"
+                role="tabpanel"
+                id="panel-eda"
+                aria-labelledby="tab-eda"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
@@ -238,6 +247,9 @@ export const ProjectLabView: React.FC = () => {
         {activeTab === 'performance' && (
           <motion.div 
             key="perf"
+            role="tabpanel"
+            id="panel-performance"
+            aria-labelledby="tab-performance"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -333,6 +345,9 @@ export const ProjectLabView: React.FC = () => {
         {activeTab === 'code' && (
              <motion.div
                 key="code"
+                role="tabpanel"
+                id="panel-code"
+                aria-labelledby="tab-code"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

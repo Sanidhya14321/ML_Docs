@@ -37,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, onSe
           <button 
              onClick={onSearchClick}
              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-indigo-500/50 transition-all duration-300 group"
+             aria-label="Quick Find"
           >
              <Search size={14} className="group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300" />
              <span className="text-xs font-medium hidden sm:inline">Quick Find</span>

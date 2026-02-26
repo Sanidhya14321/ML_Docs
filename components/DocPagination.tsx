@@ -81,6 +81,7 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
           {prevTopic ? (
             <a 
               href={`#/${prevTopic.id}`}
+              aria-label={`Previous Topic: ${prevTopic.title}`}
               className="group flex flex-col items-start p-6 rounded-2xl border border-slate-800 bg-slate-900/30 hover:bg-slate-900 hover:border-indigo-500/30 transition-all duration-300 relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/0 to-indigo-500/0 group-hover:via-indigo-500/5 group-hover:to-indigo-500/10 transition-all duration-500" />
@@ -100,6 +101,7 @@ export const DocPagination: React.FC<DocPaginationProps> = ({ currentPath }) => 
           {nextTopic ? (
             <a 
               href={`#/${nextTopic.id}`}
+              aria-label={`Next Topic: ${nextTopic.title}`}
               className="group flex flex-col items-end text-right p-6 rounded-2xl border border-slate-800 bg-slate-900/30 hover:bg-slate-900 hover:border-indigo-500/30 transition-all duration-300 relative overflow-hidden"
             >
                <div className="absolute inset-0 bg-gradient-to-l from-indigo-500/0 via-indigo-500/0 to-indigo-500/0 group-hover:via-indigo-500/5 group-hover:to-indigo-500/10 transition-all duration-500" />

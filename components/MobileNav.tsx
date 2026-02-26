@@ -29,6 +29,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose, currentPa
             exit={{ x: '-100%' }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
             className="fixed top-0 left-0 bottom-0 w-[85vw] max-w-xs bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 z-50 md:hidden flex flex-col shadow-2xl transition-colors duration-300"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
           >
              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-300">
                 <div className="flex items-center gap-2">
@@ -37,7 +40,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose, currentPa
                    </div>
                    <span className="font-serif font-bold text-slate-900 dark:text-white tracking-tight transition-colors duration-300">AI Codex</span>
                 </div>
-                <button onClick={onClose} className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-300">
+                <button 
+                  onClick={onClose} 
+                  className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors duration-300"
+                  aria-label="Close Menu"
+                >
                    <X size={20} />
                 </button>
              </div>

@@ -95,6 +95,8 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowAI(!showAI)}
+          aria-expanded={showAI}
+          aria-controls={`ai-explanation-${id}`}
           className={`self-start md:self-auto flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${showAI ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}`}
         >
           <Sparkles size={14} className={showAI ? "animate-pulse" : ""} />
@@ -113,6 +115,7 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
         <AnimatePresence>
           {showAI && (
             <motion.div 
+              id={`ai-explanation-${id}`}
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}

@@ -36,6 +36,7 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
     <button
       onClick={() => onNavigate(topic.id)}
       data-active={isActive}
+      aria-current={isActive ? 'page' : undefined}
       className={`
         w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-medium transition-all duration-300 group relative z-10 ml-2 text-left
         ${isActive ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}
@@ -82,10 +83,14 @@ const ChapterItem: React.FC<{
     }
   }, [expandAction, expandTimestamp, hasActiveChild]);
 
+  const contentId = `chapter-content-${chapter.id}`;
+
   return (
     <div className="mb-2">
       <button 
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
         className={`flex items-center gap-2 w-full text-left px-2 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${hasActiveChild ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300'}`}
       >
         <span className="opacity-70">{isOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}</span>
@@ -95,6 +100,7 @@ const ChapterItem: React.FC<{
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id={contentId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -175,6 +181,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
             onClick={handleExpandAll}
             className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
             title="Expand All"
+            aria-label="Expand All Chapters"
           >
             <Maximize2 size={14} />
           </button>
@@ -182,6 +189,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
             onClick={handleCollapseAll}
             className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
             title="Collapse All"
+            aria-label="Collapse All Chapters"
           >
             <Minimize2 size={14} />
           </button>
@@ -190,6 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
           onClick={handleLocateActive}
           className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider"
           title="Locate Active Topic"
+          aria-label="Locate Active Topic"
         >
           <LocateFixed size={14} />
           <span>Locate</span>
