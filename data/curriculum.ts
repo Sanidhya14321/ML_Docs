@@ -13,7 +13,8 @@ import {
   Swords,
   FlaskConical,
   BarChart,
-  Activity
+  Activity,
+  BookOpen
 } from 'lucide-react';
 import { Course, ViewSection } from '../types';
 
@@ -72,6 +73,116 @@ export const CURRICULUM: Course = {
               type: "doc",
               icon: Zap,
               description: "Gradient descent and the search for minima."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "mod-ml-theory",
+      title: "Machine Learning Theory",
+      icon: BookOpen,
+      chapters: [
+        {
+          id: "chap-ml-algos",
+          title: "Core Algorithms",
+          topics: [
+            {
+              id: ViewSection.ML_THEORY_ALGORITHMS,
+              title: "Algorithm Deep Dives",
+              type: "doc",
+              icon: BrainCircuit,
+              description: "The mechanics of learning: Decision Trees, SVMs, and Neural Networks.",
+              details: {
+                theory: `**Machine Learning Algorithms** are the engines that learn from data. They can be broadly categorized into:
+
+1.  **Supervised Learning:** Learning from labeled data (e.g., Regression, Classification).
+2.  **Unsupervised Learning:** Finding patterns in unlabeled data (e.g., Clustering, Dimensionality Reduction).
+3.  **Reinforcement Learning:** Learning through trial and error (e.g., Game playing, Robotics).
+
+We explore the mechanics of key algorithms like **Support Vector Machines (SVM)**, which find the optimal hyperplane to separate classes, and **Decision Trees**, which make decisions based on a series of rules.`,
+                math: "f(x) = \\text{sign}(\\mathbf{w} \\cdot \\mathbf{x} + b)",
+                mathLabel: "SVM Hyperplane Equation",
+                code: `from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+
+# Support Vector Machine
+svm_model = SVC(kernel='linear', C=1.0)
+svm_model.fit(X_train, y_train)
+
+# Decision Tree
+tree_model = DecisionTreeClassifier(max_depth=5)
+tree_model.fit(X_train, y_train)`,
+                codeLanguage: "python"
+              }
+            }
+          ]
+        },
+        {
+          id: "chap-ml-math",
+          title: "Mathematical Foundations",
+          topics: [
+            {
+              id: ViewSection.ML_THEORY_MATH,
+              title: "The Math of ML",
+              type: "doc",
+              icon: Calculator,
+              description: "Linear Algebra, Calculus, Probability, and Statistics.",
+              details: {
+                theory: `The four pillars of **Machine Learning Mathematics** are:
+
+*   **Linear Algebra:** Provides the language for data representation (vectors, matrices, tensors).
+*   **Calculus:** Enables optimization (gradient descent) by measuring rates of change.
+*   **Probability:** Quantifies uncertainty and manages stochastic processes.
+*   **Statistics:** Allows us to infer models from data and validate hypotheses.
+
+Understanding these foundations is crucial for debugging models, creating new architectures, and interpreting results.`,
+                math: "\\nabla_{\\theta} J(\\theta) = \\frac{1}{m} \\sum_{i=1}^m \\nabla_{\\theta} L(f(x^{(i)}; \\theta), y^{(i)})",
+                mathLabel: "Gradient Descent Update Rule",
+                code: `import numpy as np
+
+def gradient_descent(gradient, start, learn_rate, n_iter):
+    vector = start
+    for _ in range(n_iter):
+        diff = -learn_rate * gradient(vector)
+        vector += diff
+    return vector`,
+                codeLanguage: "python"
+              }
+            }
+          ]
+        },
+        {
+          id: "chap-ml-use-cases",
+          title: "Real-World Applications",
+          topics: [
+            {
+              id: ViewSection.ML_THEORY_USE_CASES,
+              title: "Industry Use Cases",
+              type: "doc",
+              icon: TrendingUp,
+              description: "From Fraud Detection to Personalized Medicine.",
+              details: {
+                theory: `**Machine Learning** is transforming industries by automating decisions and uncovering insights.
+
+*   **Finance:** Fraud detection, algorithmic trading, credit scoring.
+*   **Healthcare:** Disease diagnosis, drug discovery, personalized treatment plans.
+*   **Retail:** Recommendation systems, inventory management, customer churn prediction.
+*   **Manufacturing:** Predictive maintenance, quality control, supply chain optimization.
+
+We examine how these theoretical concepts translate into tangible business value and improved user experiences.`,
+                math: "\\text{ROI} = \\frac{\\text{Value Generated} - \\text{Cost of Model}}{\\text{Cost of Model}}",
+                mathLabel: "Return on Investment (ROI)",
+                code: `# Example: Simple Fraud Detection Logic
+def detect_fraud(transaction_risk_score):
+    if transaction_risk_score > 0.9:
+        return "Block Transaction"
+    elif transaction_risk_score > 0.7:
+        return "Flag for Manual Review"
+    else:
+        return "Approve Transaction"`,
+                codeLanguage: "python"
+              }
             }
           ]
         }

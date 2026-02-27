@@ -15,7 +15,10 @@ export enum ViewSection {
   MODEL_COMPARISON = 'battleground',
   PROJECT_LAB = 'lab',
   SITEMAP = 'sitemap',
-  CERTIFICATE = 'certificate'
+  CERTIFICATE = 'certificate',
+  ML_THEORY_ALGORITHMS = 'ml-theory-algorithms',
+  ML_THEORY_MATH = 'ml-theory-math',
+  ML_THEORY_USE_CASES = 'ml-theory-use-cases'
 }
 
 export enum MLModelType {

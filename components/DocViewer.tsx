@@ -8,6 +8,7 @@ import { LatexRenderer } from './LatexRenderer';
 import { DocPagination } from './DocPagination';
 import { getTopicById } from '../lib/contentHelpers';
 import { DocSkeleton } from './Skeletons';
+import ReactMarkdown from 'react-markdown';
 
 interface DocViewerProps {
   topicId: string;
@@ -133,9 +134,9 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-sm">01</span>
                 Theoretical Foundation
              </h2>
-             <p className="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
-                {content.theory}
-             </p>
+             <div className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                <ReactMarkdown>{content.theory}</ReactMarkdown>
+             </div>
            </>
          )}
 
