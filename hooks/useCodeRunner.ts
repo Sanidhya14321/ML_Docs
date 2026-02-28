@@ -72,6 +72,10 @@ export const useCodeRunner = (topicId: string, initialCode: string) => {
     const hasImport = code.includes('import');
     const isEmpty = code.trim().length === 0;
 
+    // Lab specific checks
+    const isHousingLab = topicId === 'lab-housing-prices';
+    const isMnistLab = topicId === 'lab-image-classification';
+
     if (isEmpty) {
         addLog('error', 'Error: No code to execute.');
     } else if (code.includes('error') || code.includes('raise')) {
@@ -89,7 +93,20 @@ export const useCodeRunner = (topicId: string, initialCode: string) => {
             addLog('stdout', '[INFO] Functions defined in memory');
         }
 
-        if (hasPrint) {
+        if (isHousingLab && code.includes('LinearRegression')) {
+             addLog('stdout', 'Training Linear Regression model...');
+             await new Promise(resolve => setTimeout(resolve, 800));
+             addLog('stdout', 'Model converged.');
+             addLog('stdout', `Mean Squared Error: ${(Math.random() * 1000 + 2000).toFixed(2)}`);
+        } else if (isMnistLab && code.includes('tensorflow')) {
+             addLog('stdout', 'Loading MNIST dataset...');
+             await new Promise(resolve => setTimeout(resolve, 500));
+             addLog('stdout', 'Epoch 1/5');
+             addLog('stdout', '1875/1875 [==============================] - 3s 2ms/step - loss: 0.2945 - accuracy: 0.9143');
+             addLog('stdout', 'Epoch 5/5');
+             addLog('stdout', '1875/1875 [==============================] - 2s 1ms/step - loss: 0.0765 - accuracy: 0.9765');
+             addLog('stdout', '313/313 - 0s - loss: 0.0742 - accuracy: 0.9772');
+        } else if (hasPrint) {
             // Try to extract content inside print() for a bit of realism
             const printMatch = code.match(/print\s*\((.*?)\)/);
             if (printMatch && printMatch[1]) {
@@ -108,7 +125,7 @@ export const useCodeRunner = (topicId: string, initialCode: string) => {
     }
 
     setIsRunning(false);
-  }, [code, clearLogs]);
+  }, [code, clearLogs, topicId]);
 
   return { code, setCode, resetCode, logs, isRunning, runCode, clearLogs };
 };

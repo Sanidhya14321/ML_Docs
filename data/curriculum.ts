@@ -444,6 +444,75 @@ print(f"Accuracy: {model.score(X_test, y_test)}")`,
                 solution: `print("Solution hidden")`,
                 hints: ["Check for data scaling", "Use cross-validation"]
               }
+            },
+            {
+              id: "lab-housing-prices",
+              title: "Housing Price Prediction",
+              type: "lab",
+              description: "Predicting house prices using Linear Regression.",
+              labConfig: {
+                initialCode: `import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Load dataset
+df = pd.read_csv('housing_data.csv')
+X = df.drop('price', axis=1)
+y = df['price']
+
+# Split Data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Train Model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict
+predictions = model.predict(X_test)
+
+# Evaluate
+mse = mean_squared_error(y_test, predictions)
+print(f"Mean Squared Error: {mse}")`,
+                solution: `print("Solution hidden")`,
+                hints: ["Consider feature normalization", "Check for outliers"]
+              }
+            },
+            {
+              id: "lab-image-classification",
+              title: "Digit Recognition (MNIST)",
+              type: "lab",
+              description: "Classifying handwritten digits using a Neural Network.",
+              labConfig: {
+                initialCode: `import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Load MNIST dataset
+mnist = tf.keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+# Build Model
+model = models.Sequential([
+  layers.Flatten(input_shape=(28, 28)),
+  layers.Dense(128, activation='relu'),
+  layers.Dropout(0.2),
+  layers.Dense(10)
+])
+
+# Compile Model
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+# Train Model
+model.fit(x_train, y_train, epochs=5)
+
+# Evaluate
+model.evaluate(x_test,  y_test, verbose=2)`,
+                solution: `print("Solution hidden")`,
+                hints: ["Normalize pixel values", "Try adding more layers"]
+              }
             }
           ]
         }
