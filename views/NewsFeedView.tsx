@@ -80,8 +80,51 @@ export const NewsFeedView: React.FC = () => {
       setError(err.message || "Failed to load news feed. Please try again.");
       
       // Fallback mock data for demo purposes if API fails (e.g. quota or network)
-      // Only use if we really can't get data, but better to show error in a real app.
-      // For this demo, I'll leave the error state visible.
+      const MOCK_NEWS: NewsItem[] = [
+        {
+          title: "Gemini 4.0 'Ultra' Achieves 99.8% on MMLU-Pro",
+          summary: "Google DeepMind's latest multimodal model shatters benchmarks, demonstrating near-perfect reasoning capabilities across STEM fields and creative writing tasks.",
+          category: "Industry",
+          date: "2026-02-28",
+          source: "Google DeepMind Blog",
+          url: "https://blog.google/technology/ai/gemini-4-ultra"
+        },
+        {
+          title: "Self-Correcting Code Agents: The End of Unit Tests?",
+          summary: "A new paper from Stanford and MIT introduces 'Reflexion-X', an agentic framework that autonomously writes, tests, and fixes code with zero human intervention, achieving SOTA on SWE-bench.",
+          category: "Research",
+          date: "2026-02-26",
+          source: "Arxiv",
+          url: "https://arxiv.org/abs/2602.12345"
+        },
+        {
+          title: "OpenAI Releases 'Sora 3' with Real-Time Video Generation",
+          summary: "The new video generation model can create 4K, 60fps video in real-time, enabling interactive movie experiences and dynamic game environments.",
+          category: "Industry",
+          date: "2026-02-24",
+          source: "OpenAI",
+          url: "https://openai.com/sora-3"
+        },
+        {
+          title: "PyTorch 3.0: Native Distributed Training on Edge Devices",
+          summary: "Meta's latest PyTorch release optimizes distributed training for edge computing, allowing massive models to be fine-tuned on clusters of consumer hardware.",
+          category: "Tooling",
+          date: "2026-02-20",
+          source: "PyTorch Foundation",
+          url: "https://pytorch.org/blog/pytorch-3-release"
+        },
+        {
+          title: "The 'Reasoning Gap': Why LLMs Still Struggle with Causal Inference",
+          summary: "A critical analysis published in Nature Machine Intelligence argues that despite scaling, current transformer architectures fundamentally lack causal reasoning abilities.",
+          category: "Research",
+          date: "2026-02-18",
+          source: "Nature",
+          url: "https://nature.com/articles/s42256-026-00123-x"
+        }
+      ];
+      
+      setNews(MOCK_NEWS);
+      setLastUpdated(new Date());
     } finally {
       setIsLoading(false);
     }

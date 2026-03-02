@@ -14,7 +14,8 @@ import {
   FlaskConical,
   BarChart,
   Activity,
-  BookOpen
+  BookOpen,
+  Newspaper
 } from 'lucide-react';
 import { Course, ViewSection } from '../types';
 
@@ -23,6 +24,26 @@ export const CURRICULUM: Course = {
   title: "AI Engineering Certification",
   description: "Master the art of machine learning through interactive visualizations and rigorous mathematical foundations.",
   modules: [
+    {
+      id: "mod-news",
+      title: "News & Updates",
+      icon: Newspaper,
+      chapters: [
+        {
+          id: "chap-news-feed",
+          title: "Latest Developments",
+          topics: [
+            {
+              id: ViewSection.NEWS_FEED,
+              title: "ML News Feed",
+              type: "doc",
+              icon: Newspaper,
+              description: "Real-time updates from the world of AI."
+            }
+          ]
+        }
+      ]
+    },
     {
       id: "mod-foundations",
       title: "Foundations",
