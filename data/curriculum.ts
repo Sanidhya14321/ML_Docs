@@ -15,7 +15,8 @@ import {
   BarChart,
   Activity,
   BookOpen,
-  Newspaper
+  Newspaper,
+  Award
 } from 'lucide-react';
 import { Course, ViewSection } from '../types';
 
@@ -94,6 +95,54 @@ export const CURRICULUM: Course = {
               type: "doc",
               icon: Zap,
               description: "Gradient descent and the search for minima."
+            },
+            {
+              id: "quiz-math-core",
+              title: "Math Checkpoint",
+              type: "quiz",
+              icon: Award,
+              description: "Test your understanding of Linear Algebra and Calculus.",
+              quizConfig: {
+                passingScore: 70,
+                questions: [
+                  {
+                    id: "q1",
+                    text: "What does the gradient vector represent in optimization?",
+                    options: [
+                      "The direction of steepest descent",
+                      "The direction of steepest ascent",
+                      "The global minimum",
+                      "The determinant of the matrix"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The gradient points in the direction of the greatest rate of increase of the function. To minimize a function (Gradient Descent), we move in the opposite direction."
+                  },
+                  {
+                    id: "q2",
+                    text: "In Bayes' Theorem P(A|B) = P(B|A)P(A) / P(B), what is P(A) called?",
+                    options: [
+                      "Posterior",
+                      "Likelihood",
+                      "Prior",
+                      "Evidence"
+                    ],
+                    correctIndex: 2,
+                    explanation: "P(A) is the Prior probability, representing our initial belief before seeing the evidence B."
+                  },
+                  {
+                    id: "q3",
+                    text: "Which matrix operation is fundamental to Neural Network layers?",
+                    options: [
+                      "Cross Product",
+                      "Dot Product (Matrix Multiplication)",
+                      "Determinant",
+                      "Eigenvalue Decomposition"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Matrix multiplication (Dot Product) is used to calculate the weighted sum of inputs in dense layers."
+                  }
+                ]
+              }
             }
           ]
         }
@@ -250,6 +299,54 @@ def detect_fraud(transaction_risk_score):
               type: "doc",
               icon: Swords,
               description: "Direct comparison of algorithms."
+            },
+            {
+              id: "quiz-classification",
+              title: "Classification Quiz",
+              type: "quiz",
+              icon: Award,
+              description: "Validate your knowledge of classification models.",
+              quizConfig: {
+                passingScore: 80,
+                questions: [
+                  {
+                    id: "q1",
+                    text: "Which algorithm seeks to maximize the margin between classes?",
+                    options: [
+                      "Logistic Regression",
+                      "Decision Trees",
+                      "Support Vector Machines (SVM)",
+                      "K-Nearest Neighbors"
+                    ],
+                    correctIndex: 2,
+                    explanation: "SVMs aim to find the optimal hyperplane that maximizes the margin (distance) between the nearest data points of different classes."
+                  },
+                  {
+                    id: "q2",
+                    text: "What is a common problem with Decision Trees that Random Forests help solve?",
+                    options: [
+                      "Underfitting",
+                      "Overfitting",
+                      "Slow training speed",
+                      "Inability to handle categorical data"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Decision Trees are prone to overfitting the training data. Random Forests reduce this by averaging the predictions of multiple trees."
+                  },
+                  {
+                    id: "q3",
+                    text: "In Logistic Regression, what function maps the output to a probability (0 to 1)?",
+                    options: [
+                      "ReLU",
+                      "Sigmoid",
+                      "Tanh",
+                      "Softmax"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The Sigmoid function maps any real-valued number to a value between 0 and 1, making it suitable for binary classification probabilities."
+                  }
+                ]
+              }
             }
           ]
         }
@@ -337,6 +434,54 @@ results = vector_db.query(
 # 3. Generate
 llm.predict(f"Context: {results}\\nQuestion: {query}")`,
                 codeLanguage: "python"
+              }
+            },
+            {
+              id: "quiz-deep-learning",
+              title: "Deep Learning Quiz",
+              type: "quiz",
+              icon: Award,
+              description: "Test your knowledge of Neural Networks and Transformers.",
+              quizConfig: {
+                passingScore: 75,
+                questions: [
+                  {
+                    id: "q1",
+                    text: "What is the primary purpose of the Attention mechanism in Transformers?",
+                    options: [
+                      "To reduce the dimensionality of the input",
+                      "To allow the model to focus on relevant parts of the input sequence",
+                      "To introduce non-linearity",
+                      "To prevent overfitting"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Attention allows the model to weigh the importance of different words in the input sequence when generating each word of the output."
+                  },
+                  {
+                    id: "q2",
+                    text: "Which neural network architecture is best suited for image processing?",
+                    options: [
+                      "Recurrent Neural Networks (RNN)",
+                      "Convolutional Neural Networks (CNN)",
+                      "Multilayer Perceptrons (MLP)",
+                      "Transformers"
+                    ],
+                    correctIndex: 1,
+                    explanation: "CNNs are designed to process grid-like data (images) using convolutional layers to detect spatial hierarchies of features."
+                  },
+                  {
+                    id: "q3",
+                    text: "What is 'Backpropagation'?",
+                    options: [
+                      "A way to initialize weights",
+                      "A method to calculate the gradient of the loss function with respect to weights",
+                      "A type of activation function",
+                      "A regularization technique"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Backpropagation is the algorithm used to compute the gradient of the loss function, which is then used by the optimizer to update the weights."
+                  }
+                ]
               }
             }
           ]
