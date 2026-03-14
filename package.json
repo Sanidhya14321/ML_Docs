@@ -11,13 +11,19 @@
   },
   "dependencies": {
     "@google/genai": "^1.42.0",
+    "@tailwindcss/typography": "^0.5.10",
+    "@tailwindcss/vite": "^4.0.0-alpha.14",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.0.8",
     "lucide-react": "^0.344.0",
     "prismjs": "^1.30.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^10.1.0",
-    "recharts": "^2.12.2"
+    "recharts": "^2.12.2",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.0.0-alpha.14",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@types/prismjs": "^1.26.6",
