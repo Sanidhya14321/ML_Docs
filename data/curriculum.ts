@@ -185,6 +185,54 @@ tree_model = DecisionTreeClassifier(max_depth=5)
 tree_model.fit(X_train, y_train)`,
                 codeLanguage: "python"
               }
+            },
+            {
+              id: "quiz-ml-paradigms",
+              title: "Paradigms Checkpoint",
+              type: "quiz",
+              icon: Award,
+              description: "Test your knowledge of Supervised, Unsupervised, and Reinforcement Learning.",
+              quizConfig: {
+                passingScore: 80,
+                questions: [
+                  {
+                    id: "p1",
+                    text: "Which paradigm requires a labeled dataset for training?",
+                    options: [
+                      "Unsupervised Learning",
+                      "Supervised Learning",
+                      "Reinforcement Learning",
+                      "Evolutionary Algorithms"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Supervised learning relies on input-output pairs (labels) to learn a mapping function."
+                  },
+                  {
+                    id: "p2",
+                    text: "K-Means clustering is an example of which learning paradigm?",
+                    options: [
+                      "Supervised Learning",
+                      "Unsupervised Learning",
+                      "Reinforcement Learning",
+                      "Semi-supervised Learning"
+                    ],
+                    correctIndex: 1,
+                    explanation: "K-Means finds patterns in unlabeled data, making it an unsupervised learning algorithm."
+                  },
+                  {
+                    id: "p3",
+                    text: "In Reinforcement Learning, what does the agent try to maximize?",
+                    options: [
+                      "Accuracy",
+                      "Precision",
+                      "Cumulative Reward",
+                      "Entropy"
+                    ],
+                    correctIndex: 2,
+                    explanation: "RL agents learn to take actions that maximize the total reward they receive over time."
+                  }
+                ]
+              }
             }
           ]
         },

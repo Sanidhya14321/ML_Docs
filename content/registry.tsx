@@ -85,6 +85,9 @@ export const CONTENT_REGISTRY: Record<string, any> = {
   [ViewSection.REINFORCEMENT]: lazy(() => import('../views/ReinforcementView').then(m => ({ default: m.ReinforcementView }))),
   [ViewSection.MODEL_COMPARISON]: lazy(() => import('../views/ModelComparisonView').then(m => ({ default: m.ModelComparisonView }))),
   [ViewSection.PROJECT_LAB]: lazy(() => import('../views/ProjectLabView').then(m => ({ default: m.ProjectLabView }))),
+  [ViewSection.ML_THEORY_ALGORITHMS]: lazy(() => import('../views/MLParadigmsView').then(m => ({ default: m.MLParadigmsView }))),
+  [ViewSection.ML_THEORY_MATH]: lazy(() => import('../views/FoundationsView').then(m => ({ default: m.FoundationsView }))),
+  [ViewSection.ML_THEORY_USE_CASES]: lazy(() => import('../views/IndustryUseCasesView').then(m => ({ default: m.IndustryUseCasesView }))),
   
   // New Content-First Modules
   // Note: 'm as any' cast is required to satisfy the ContentModule interface during strict TS builds
