@@ -27,23 +27,24 @@ const LinearViz = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prediction Visualizer</span>
+            <div className="flex justify-between items-center bg-app border border-border-strong p-4">
+                <span className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.2em]">PREDICTION_VISUALIZER</span>
                 <button 
                     onClick={() => setShowResiduals(!showResiduals)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${showResiduals ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-500'}`}
+                    className={`flex items-center gap-3 px-4 py-2 border transition-all text-[9px] font-mono font-black uppercase tracking-widest ${showResiduals ? 'bg-brand border-brand text-app' : 'bg-surface border-border-strong text-text-muted hover:text-text-primary'}`}
                 >
                     {showResiduals ? <Eye size={14} /> : <EyeOff size={14} />}
-                    {showResiduals ? 'Hide Residuals (MSE)' : 'Show Residuals (MSE)'}
+                    {showResiduals ? 'HIDE_RESIDUALS' : 'SHOW_RESIDUALS'}
                 </button>
             </div>
-            <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative">
+            <div className="h-64 w-full bg-app border border-border-strong p-2 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={linearData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis type="number" dataKey="x" stroke="#475569" hide />
-                        <YAxis type="number" stroke="#475569" hide />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                        <XAxis type="number" dataKey="x" hide />
+                        <YAxis type="number" hide />
+                        <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', borderRadius: '0px', fontSize: '9px', fontFamily: 'monospace' }} />
                         
                         {showResiduals && linearData.map((d, i) => (
                             <Line 
@@ -59,13 +60,13 @@ const LinearViz = () => {
                             />
                         ))}
 
-                        <Scatter name="Data" dataKey="y" fill="#818cf8" />
-                        <Line name="Best Fit" dataKey="line" stroke="#ef4444" strokeWidth={3} dot={false} activeDot={false} animationDuration={500} />
+                        <Scatter name="Data" dataKey="y" fill="var(--brand)" />
+                        <Line name="Best Fit" dataKey="line" stroke="#f43f5e" strokeWidth={2} dot={false} activeDot={false} animationDuration={500} />
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
-            <p className="text-[10px] text-center text-slate-500 uppercase tracking-[0.2em] font-mono">
-                {showResiduals ? "RED LINES INDICATE ERROR DISTANCE (RESIDUALS)" : "MINIMIZING THE SUM OF SQUARED RED LINES"}
+            <p className="text-[8px] text-center text-text-muted uppercase tracking-[0.4em] font-mono font-black">
+                {showResiduals ? "ERROR_DISTANCE_METRIC: RESIDUALS_ACTIVE" : "OPTIMIZATION_GOAL: MINIMIZE_SUM_OF_SQUARES"}
             </p>
         </div>
     );
@@ -94,30 +95,31 @@ const PolyViz = () => {
 
   return (
     <div className="space-y-4">
-        <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                Polynomial Degree: <span className="text-indigo-400 ml-2">{degree}</span>
+        <div className="flex justify-between items-center bg-app border border-border-strong p-4">
+            <label className="text-[9px] font-mono font-black text-text-muted uppercase tracking-widest">
+                POLYNOMIAL_DEGREE: <span className="text-brand ml-2">{degree}</span>
             </label>
             <input 
                 type="range" min="1" max="15" step="1" 
                 value={degree} onChange={(e) => setDegree(Number(e.target.value))}
-                className="w-32 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                className="w-32 h-1 bg-border-strong rounded-none appearance-none cursor-pointer accent-brand"
             />
         </div>
-        <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative">
+        <div className="h-64 w-full bg-app border border-border-strong p-2 relative overflow-hidden">
+             <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
              <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis type="number" dataKey="x" stroke="#475569" hide />
-                    <YAxis type="number" stroke="#475569" hide />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
-                    <Scatter name="Data" dataKey="y" fill="#818cf8" />
-                    <Line type="monotone" dataKey="curve" stroke="#f43f5e" strokeWidth={3} dot={false} animationDuration={300} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis type="number" dataKey="x" hide />
+                    <YAxis type="number" hide />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', borderRadius: '0px', fontSize: '9px', fontFamily: 'monospace' }} />
+                    <Scatter name="Data" dataKey="y" fill="var(--brand)" />
+                    <Line type="monotone" dataKey="curve" stroke="#f43f5e" strokeWidth={2} dot={false} animationDuration={300} />
                 </ComposedChart>
             </ResponsiveContainer>
         </div>
-         <p className="text-[10px] text-center text-slate-500 uppercase tracking-widest font-mono">
-            {degree === 1 ? "Underfitting (High Bias)" : degree > 8 ? "Overfitting (High Variance)" : "Balanced Fit"}
+         <p className="text-[8px] text-center text-text-muted uppercase tracking-[0.4em] font-mono font-black">
+            {degree === 1 ? "STATUS: UNDERFITTING_HIGH_BIAS" : degree > 8 ? "STATUS: OVERFITTING_HIGH_VARIANCE" : "STATUS: BALANCED_OPTIMAL_FIT"}
         </p>
     </div>
   );
@@ -125,21 +127,22 @@ const PolyViz = () => {
 
 const RegularizationViz = () => {
     return (
-      <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4">
+      <div className="h-64 w-full bg-app border border-border-strong p-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
           <ResponsiveContainer width="100%" height="100%">
               <BarChart data={coefficientData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="feature" stroke="#475569" />
-                  <YAxis stroke="#475569" />
-                  <Tooltip cursor={{fill: '#1e293b'}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
-                  <Legend />
-                  <Bar dataKey="Linear" fill="#94a3b8" />
-                  <Bar dataKey="Ridge" fill="#6366f1" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <XAxis dataKey="feature" stroke="var(--text-muted)" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="var(--text-muted)" fontSize={10} fontFamily="monospace" />
+                  <Tooltip cursor={{fill: 'rgba(16, 185, 129, 0.05)'}} contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', borderRadius: '0px', fontSize: '9px', fontFamily: 'monospace' }} />
+                  <Legend wrapperStyle={{ fontSize: '9px', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.1em' }} />
+                  <Bar dataKey="Linear" fill="var(--text-muted)" />
+                  <Bar dataKey="Ridge" fill="var(--brand)" />
                   <Bar dataKey="Lasso" fill="#f43f5e" />
               </BarChart>
           </ResponsiveContainer>
-          <p className="text-[10px] text-center text-slate-500 mt-4 uppercase tracking-widest font-mono">
-              Lasso (Red) drives coefficients to zero (Feature Selection). Ridge (Purple) shrinks them.
+          <p className="text-[8px] text-center text-text-muted mt-6 uppercase tracking-[0.4em] font-mono font-black">
+              LASSO_L1: FEATURE_SELECTION_ACTIVE // RIDGE_L2: WEIGHT_DECAY_ACTIVE
           </p>
       </div>
     );
@@ -155,24 +158,35 @@ export const RegressionView: React.FC = () => {
         exit={{ opacity: 0 }}
         className="space-y-12 pb-20"
       >
-        <header className="mb-12 border-b border-slate-800 pb-8">
-          <motion.h1 
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl font-serif font-bold text-white mb-4"
-          >
-            Supervised: Regression
-          </motion.h1>
-          <motion.p 
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
-          >
-            Predicting continuous values. From simple trend lines to complex polynomial curves, regression is the workhorse of forecasting and quantification.
-          </motion.p>
-        </header>
+      <header className="mb-12 border-b border-border-strong pb-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 font-mono text-[8px] text-brand/20 tracking-[0.5em] pointer-events-none">
+          REGRESSION_ENGINE_v4.0
+        </div>
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center gap-3 mb-6"
+        >
+          <div className="w-12 h-[1px] bg-brand" />
+          <span className="text-[10px] font-mono font-black text-brand uppercase tracking-[0.3em]">SUPERVISED_LEARNING</span>
+        </motion.div>
+        <motion.h1 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight"
+        >
+          Regression
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-text-secondary text-lg max-w-3xl leading-relaxed font-sans uppercase tracking-tight"
+        >
+          Predict continuous numerical values by modeling relationships between dependent and independent variables.
+        </motion.p>
+      </header>
   
         <motion.div
           initial="hidden"

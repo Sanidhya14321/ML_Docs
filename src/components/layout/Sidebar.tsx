@@ -10,7 +10,8 @@ import {
   Minimize2, 
   Maximize2, 
   LocateFixed,
-  BrainCircuit
+  BrainCircuit,
+  Hash
 } from 'lucide-react';
 import { CURRICULUM } from '../../../data/curriculum';
 import { Module, Chapter, Topic } from '../../../types';
@@ -30,15 +31,15 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
   const completed = isCompleted(topic.id);
   
   const getIcon = () => {
-    if (completed) return <CheckCircle size={12} className="text-emerald-500" />;
+    if (completed) return <CheckCircle size={10} className="text-emerald-500" />;
     if (topic.icon) {
         const Icon = topic.icon;
-        return <Icon size={12} />;
+        return <Icon size={10} />;
     }
     switch (topic.type) {
-      case 'lab': return <Terminal size={12} />;
-      case 'quiz': return <Award size={12} />;
-      default: return <FileText size={12} />;
+      case 'lab': return <Terminal size={10} />;
+      case 'quiz': return <Award size={10} />;
+      default: return <FileText size={10} />;
     }
   };
 
@@ -47,25 +48,20 @@ const TopicItem: React.FC<{ topic: Topic; currentPath: string; onNavigate: (path
       onClick={() => onNavigate(topic.id)}
       data-active={isActive}
       className={cn(
-        'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[11px] font-medium transition-all duration-fast group relative z-10 ml-2 text-left',
+        'w-full flex items-center gap-3 px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-tight transition-all duration-200 group relative border-b border-border-strong/10',
         isActive 
-          ? 'text-brand bg-brand/5' 
-          : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover'
+          ? 'text-app bg-text-primary' 
+          : 'text-text-secondary hover:text-text-primary hover:bg-surface-active'
       )}
     >
-      {isActive && (
-        <motion.div 
-          layoutId="sidebar-active"
-          className="absolute inset-0 border border-brand/20 rounded-lg -z-10"
-        />
-      )}
       <span className={cn(
         'shrink-0 transition-colors',
-        isActive ? 'text-brand' : 'text-text-muted group-hover:text-text-secondary'
+        isActive ? 'text-app' : 'text-text-muted group-hover:text-text-secondary'
       )}>
         {getIcon()}
       </span>
-      <span className="truncate leading-tight">{topic.title}</span>
+      <span className="truncate leading-tight flex-1">{topic.title}</span>
+      {isActive && <div className="w-1 h-3 bg-brand absolute left-0" />}
     </button>
   );
 };
@@ -90,16 +86,16 @@ const ChapterItem: React.FC<{
   }, [expandAction, expandTimestamp, hasActiveChild]);
 
   return (
-    <div className="mb-2">
+    <div className="border-b border-border-strong/20">
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-2 w-full text-left px-2 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors',
+          'flex items-center gap-3 w-full text-left px-5 py-4 text-[10px] font-mono font-black uppercase tracking-[0.2em] transition-colors bg-surface/30',
           hasActiveChild ? 'text-brand' : 'text-text-secondary hover:text-text-primary'
         )}
       >
-        <span className="opacity-70">{isOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}</span>
-        {chapter.title}
+        <span className="opacity-40">{isOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}</span>
+        <span className="font-display">{chapter.title}</span>
       </button>
       
       <AnimatePresence initial={false}>
@@ -108,7 +104,7 @@ const ChapterItem: React.FC<{
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden pl-2 border-l border-border-subtle ml-3 space-y-1"
+            className="overflow-hidden bg-app/20"
           >
             {chapter.topics.map((topic: Topic) => (
               <TopicItem key={topic.id} topic={topic} currentPath={currentPath} onNavigate={onNavigate} />
@@ -129,12 +125,12 @@ const ModuleItem: React.FC<{
 }> = ({ module, currentPath, onNavigate, expandAction, expandTimestamp }) => {
   const Icon = module.icon;
   return (
-    <div className="mb-8">
-      <div className="flex items-center gap-3 px-2 mb-3 text-text-primary sticky top-0 bg-surface/95 backdrop-blur-md py-2 z-20 border-b border-transparent">
-        <span className="text-brand">{Icon ? <Icon size={16} /> : null}</span>
-        <h3 className="text-sm font-serif font-bold tracking-tight">{module.title}</h3>
+    <div className="mb-0 border-b border-border-strong">
+      <div className="flex items-center gap-4 px-5 py-5 text-text-primary sticky top-0 bg-surface/95 backdrop-blur-md z-20 border-b border-border-strong">
+        <span className="text-brand opacity-60">{Icon ? <Icon size={14} /> : null}</span>
+        <h3 className="text-[11px] font-mono font-black uppercase tracking-[0.3em] text-text-muted">{module.title}</h3>
       </div>
-      <div className="space-y-1">
+      <div className="divide-y divide-border-strong/10">
         {module.chapters.map((chapter: Chapter) => (
           <ChapterItem 
             key={chapter.id} 
@@ -150,25 +146,6 @@ const ModuleItem: React.FC<{
   );
 };
 
-export const Sidebar: React.FC = () => {
-  const { isSidebarOpen, toggleSidebar } = useUIStore();
-  // We need currentPath and onNavigate from App.tsx context or props
-  // For now, I'll assume they are passed via a custom hook or we'll wrap this in a way that App.tsx provides them.
-  // Actually, I'll use a simplified version that AppShell will manage.
-  
-  // To keep it functional with the existing App.tsx, I'll need to pass these down.
-  // But wait, the AppShell is a wrapper. I'll need to use a store for navigation too if I want it truly decoupled.
-  // For now, I'll just make it a component that AppShell renders and we'll pass props.
-  
-  // Actually, I'll check how App.tsx uses it.
-  // App.tsx: <Sidebar currentPath={currentPath} onNavigate={navigateTo} />
-  
-  // I'll update AppShell to accept these props.
-  
-  return null; // I'll rewrite this in a moment after updating AppShell
-};
-
-// I'll rename the actual sidebar component to SidebarContent and use it in AppShell
 export const SidebarContent: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => {
   const [expandAction, setExpandAction] = useState<'expand' | 'collapse' | null>(null);
   const [expandTimestamp, setExpandTimestamp] = useState(0);
@@ -193,57 +170,57 @@ export const SidebarContent: React.FC<SidebarProps> = ({ currentPath, onNavigate
 
   return (
     <aside className={cn(
-      'fixed inset-y-0 left-0 z-40 w-72 bg-surface border-r border-border-subtle transition-transform duration-normal md:relative md:translate-x-0',
+      'fixed inset-y-0 left-0 z-40 w-72 bg-surface border-r border-border-strong transition-transform duration-normal md:relative md:translate-x-0 flex flex-col',
       !isSidebarOpen && '-translate-x-full'
     )}>
-      <div className="h-full flex flex-col">
-        {/* Brand Header */}
-        <div className="p-6 border-b border-border-subtle">
-           <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center shadow-lg shadow-brand/20">
-                <BrainCircuit size={18} className="text-white" />
-              </div>
-              <div>
-                <h1 className="font-serif font-black text-lg text-text-primary tracking-tighter">AI Codex</h1>
-                <p className="text-[9px] text-text-muted font-mono uppercase tracking-[0.3em]">v3.2.0</p>
-              </div>
+      {/* Brand Header */}
+      <div className="p-8 border-b border-border-strong bg-app/30">
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-8 h-8 rounded-none bg-text-primary flex items-center justify-center">
+              <BrainCircuit size={18} className="text-app" />
             </div>
-        </div>
-
-        {/* Controls */}
-        <div className="px-4 py-2 flex items-center justify-between border-b border-border-subtle mb-4">
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="xs" onClick={handleExpandAll} title="Expand All">
-              <Maximize2 size={14} />
-            </Button>
-            <Button variant="ghost" size="xs" onClick={handleCollapseAll} title="Collapse All">
-              <Minimize2 size={14} />
-            </Button>
+            <h1 className="font-display font-black text-lg text-text-primary tracking-tighter uppercase">AI_CODEX</h1>
           </div>
-          <Button variant="ghost" size="xs" onClick={handleLocateActive} className="gap-1.5 text-[10px] font-bold uppercase tracking-wider">
-            <LocateFixed size={14} />
-            <span>Locate</span>
+          <p className="text-[9px] text-text-muted font-mono font-black uppercase tracking-[0.4em] opacity-50">NEURAL_ARCH_V3.2</p>
+      </div>
+
+      {/* Controls */}
+      <div className="px-5 py-3 flex items-center justify-between border-b border-border-strong bg-surface/50">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="xs" onClick={handleExpandAll} className="h-7 w-7 p-0 rounded-none border border-border-strong hover:border-brand">
+            <Maximize2 size={12} />
+          </Button>
+          <Button variant="ghost" size="xs" onClick={handleCollapseAll} className="h-7 w-7 p-0 rounded-none border border-border-strong hover:border-brand">
+            <Minimize2 size={12} />
           </Button>
         </div>
+        <Button variant="ghost" size="xs" onClick={handleLocateActive} className="h-7 gap-2 text-[9px] font-mono font-black uppercase tracking-widest px-3 rounded-none border border-border-strong hover:border-brand">
+          <LocateFixed size={12} />
+          <span>SYNC</span>
+        </Button>
+      </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-32">
-          {CURRICULUM.modules.map((module: Module) => (
-            <ModuleItem 
-              key={module.id} 
-              module={module} 
-              currentPath={currentPath} 
-              onNavigate={onNavigate}
-              expandAction={expandAction}
-              expandTimestamp={expandTimestamp}
-            />
-          ))}
-        </nav>
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-border-strong/20">
+        {CURRICULUM.modules.map((module: Module) => (
+          <ModuleItem 
+            key={module.id} 
+            module={module} 
+            currentPath={currentPath} 
+            onNavigate={onNavigate}
+            expandAction={expandAction}
+            expandTimestamp={expandTimestamp}
+          />
+        ))}
+      </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-border-subtle text-[10px] text-text-muted flex justify-between">
-            <span>© 2024 AI Codex</span>
-        </div>
+      {/* Footer */}
+      <div className="p-6 border-t border-border-strong text-[9px] font-mono font-black text-text-muted flex justify-between bg-app/20 uppercase tracking-widest">
+          <div className="flex items-center gap-2">
+             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+             <span>SYSTEM_READY</span>
+          </div>
+          <span>© 2026</span>
       </div>
     </aside>
   );

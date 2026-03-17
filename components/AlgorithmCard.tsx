@@ -60,56 +60,48 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   }
 
   const complexityColors = {
-    'Fundamental': 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
-    'Intermediate': 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20',
-    'Advanced': 'bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/20'
+    'Fundamental': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    'Intermediate': 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
+    'Advanced': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
   };
 
   return (
     <motion.div 
       id={id} 
       variants={itemVariants}
-      whileHover={{ 
-        y: -5, 
-        scale: 1.01,
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-        transition: { duration: 0.2 } 
-      }}
-      className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden mb-16 shadow-xl dark:shadow-2xl scroll-mt-24 transition-all duration-300 hover:border-indigo-500/30 group/card"
+      className="bg-surface border border-border-strong rounded-none overflow-hidden mb-16 shadow-sm scroll-mt-24 transition-all duration-300 group/card"
     >
-      <div className="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors duration-300">
+      <div className="p-6 md:p-8 border-b border-border-strong bg-app/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover/card:scale-110 transition-transform duration-500 shrink-0">
-             <Info size={24} />
+          <div className="w-10 h-10 rounded bg-text-primary flex items-center justify-center text-app shrink-0">
+             <Info size={20} />
           </div>
           <div>
-            <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 dark:text-white tracking-wide group-hover/card:text-indigo-600 dark:group-hover/card:text-indigo-300 transition-colors duration-300">{title}</h2>
+            <h2 className="text-xl md:text-2xl font-display font-black text-text-primary uppercase tracking-tight">{title}</h2>
             <div className="flex items-center gap-2 mt-1">
-               <div className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors duration-300 ${complexityColors[complexity]}`}>
+               <div className={`px-2 py-0.5 rounded-none text-[8px] font-mono uppercase tracking-widest border ${complexityColors[complexity]}`}>
                 {complexity}
               </div>
             </div>
           </div>
         </div>
         <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setShowAI(!showAI)}
-          aria-expanded={showAI}
-          aria-controls={`ai-explanation-${id}`}
-          className={`self-start md:self-auto flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${showAI ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+          className={`self-start md:self-auto flex items-center gap-2 px-4 py-2 rounded-none text-[10px] font-mono uppercase tracking-widest transition-all duration-300 ${showAI ? 'bg-text-primary text-app' : 'bg-surface border border-border-strong text-text-secondary hover:text-text-primary hover:border-text-primary'}`}
         >
-          <Sparkles size={14} className={showAI ? "animate-pulse" : ""} />
-          AI Explanation
+          <Sparkles size={12} className={showAI ? "animate-pulse" : ""} />
+          AI_ANALYSIS
         </motion.button>
       </div>
       
-      <div className="p-8 md:p-10 space-y-10">
+      <div className="p-8 md:p-10 space-y-12">
         <div className="relative">
-          <h3 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-            <Info size={14} /> Theoretical Foundations
+          <h3 className="text-[9px] font-mono font-black text-brand uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+            <div className="w-1 h-1 bg-brand rounded-full" /> THEORETICAL_MODEL
           </h3>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg font-light">{theory}</p>
+          <p className="text-text-secondary leading-relaxed text-lg font-light max-w-3xl">{theory}</p>
         </div>
 
         <AnimatePresence>
@@ -121,11 +113,11 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              <div className="p-6 rounded-2xl bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/20 mb-8 relative">
-                 <div className="absolute -top-3 left-6 px-3 py-1 bg-indigo-600 text-[10px] font-black rounded-lg uppercase tracking-widest text-white">Intuitive Insight</div>
-                 <p className="text-indigo-800 dark:text-indigo-300 text-sm italic leading-relaxed">
-                   Think of {title} not just as a mathematical operation, but as a way to find patterns in chaos. 
-                   {complexity === 'Fundamental' ? ' It is like looking for the most basic building blocks of a puzzle.' : ' It is like building a complex network of logic where each step refines the overall understanding.'}
+              <div className="p-6 bg-brand/5 border-l-4 border-brand mb-8 relative">
+                 <div className="text-[9px] font-mono font-black text-brand uppercase tracking-widest mb-2">INTUITIVE_INSIGHT</div>
+                 <p className="text-text-primary text-sm italic leading-relaxed font-serif">
+                   "{title} is effectively a mapping function that minimizes entropy within the target domain. 
+                   {complexity === 'Fundamental' ? ' It serves as a foundational primitive for more complex architectures.' : ' It introduces non-linear decision boundaries that are essential for high-dimensional feature spaces.'}"
                  </p>
               </div>
             </motion.div>
@@ -133,46 +125,45 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
         </AnimatePresence>
 
         {children && (
-          <div className="my-10 bg-slate-50 dark:bg-slate-950/80 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 shadow-inner relative group/viz overflow-hidden">
-             <div className="absolute top-4 right-6 text-[9px] font-mono text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em]">Live Interaction Layer</div>
+          <div className="my-10 bg-app border border-border-strong p-8 relative group/viz overflow-hidden">
+             <div className="absolute top-4 right-6 text-[8px] font-mono text-text-muted uppercase tracking-[0.4em]">DYNAMIC_SIMULATION_LAYER</div>
              <div className="relative z-10">
               {children}
              </div>
-             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-5 space-y-8">
-            <MathBlock label={mathLabel || "Core Equation"}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-border-subtle pt-12">
+          <div className="lg:col-span-5 space-y-10">
+            <MathBlock label={mathLabel || "FORMAL_DEFINITION"}>
               {math}
             </MathBlock>
             
             <div className="space-y-6">
-              <h3 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em]">The Scorecard</h3>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="bg-emerald-50 dark:bg-emerald-500/5 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-500/10">
-                  <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-3">
-                    <Check size={14} /> Strengths
+              <h3 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.3em]">PERFORMANCE_METRICS</h3>
+              <div className="grid grid-cols-1 gap-0 border border-border-subtle">
+                <div className="p-5 border-b border-border-subtle bg-emerald-500/5">
+                  <h4 className="flex items-center gap-2 font-mono font-black text-[9px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-4">
+                    <Check size={12} /> ADVANTAGES
                   </h4>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {pros.map((pro, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-                        <span className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                      <li key={idx} className="flex items-start gap-3 text-[11px] text-text-secondary font-mono uppercase tracking-tight">
+                        <span className="text-emerald-500">+</span>
                         {pro}
                       </li>
                     ))}
                   </ul>
                 </div>
                 
-                <div className="bg-rose-50 dark:bg-rose-500/5 p-5 rounded-2xl border border-rose-100 dark:border-rose-500/10">
-                  <h4 className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-rose-600 dark:text-rose-400 mb-3">
-                    <X size={14} /> Weaknesses
+                <div className="p-5 bg-rose-500/5">
+                  <h4 className="flex items-center gap-2 font-mono font-black text-[9px] uppercase tracking-widest text-rose-600 dark:text-rose-400 mb-4">
+                    <X size={12} /> LIMITATIONS
                   </h4>
-                  <ul className="space-y-2">
+                  <ul className="space-y-3">
                     {cons.map((con, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-                        <span className="w-1 h-1 rounded-full bg-rose-500 mt-1.5 flex-shrink-0" />
+                      <li key={idx} className="flex items-start gap-3 text-[11px] text-text-secondary font-mono uppercase tracking-tight">
+                        <span className="text-rose-500">-</span>
                         {con}
                       </li>
                     ))}
@@ -183,22 +174,24 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
           </div>
 
           <div className="lg:col-span-7">
-            <h3 className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-4">Implementation Reference</h3>
-            <CodeBlock code={code} />
+            <h3 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.3em] mb-6">IMPLEMENTATION_REFERENCE</h3>
+            <div className="border border-border-strong">
+              <CodeBlock code={code} />
+            </div>
             
             {hyperparameters && hyperparameters.length > 0 && (
-              <div className="mt-8">
-                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Key Parameters</h4>
-                <div className="space-y-3">
+              <div className="mt-10">
+                <h4 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.3em] mb-6">HYPERPARAMETER_SPACE</h4>
+                <div className="grid grid-cols-1 gap-px bg-border-strong border border-border-strong">
                   {hyperparameters.map((param, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-800/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center group/param hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
+                    <div key={idx} className="bg-surface p-4 flex justify-between items-center group/param">
                       <div className="flex-1">
-                        <code className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400">{param.name}</code>
-                        <p className="text-[10px] text-slate-500 mt-1">{param.description}</p>
+                        <code className="text-[11px] font-mono font-bold text-brand">{param.name}</code>
+                        <p className="text-[10px] text-text-muted mt-1 uppercase tracking-tighter">{param.description}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-slate-400 dark:text-slate-600 uppercase font-mono tracking-tighter">Default</div>
-                        <div className="text-xs text-slate-600 dark:text-slate-300 font-mono">{param.default || 'N/A'}</div>
+                        <div className="text-[8px] text-text-muted uppercase font-mono tracking-widest mb-1">DEFAULT</div>
+                        <div className="text-[10px] text-text-primary font-mono">{param.default || 'NULL'}</div>
                       </div>
                     </div>
                   ))}
@@ -207,17 +200,17 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
             )}
 
             {steps && steps.length > 0 && (
-              <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800/50">
-                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <ListChecks size={14} className="text-indigo-500" /> Implementation Protocol
+              <div className="mt-10 pt-10 border-t border-border-subtle">
+                <h4 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                  <ListChecks size={12} className="text-brand" /> EXECUTION_PROTOCOL
                 </h4>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {steps.map((step, idx) => (
-                    <div key={idx} className="flex gap-4">
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 flex items-center justify-center">
-                        {idx + 1}
+                    <div key={idx} className="flex gap-4 group/step">
+                      <span className="flex-shrink-0 w-6 h-6 border border-border-strong text-[10px] font-mono font-bold text-text-muted flex items-center justify-center group-hover/step:border-brand group-hover/step:text-brand transition-colors">
+                        {String(idx + 1).padStart(2, '0')}
                       </span>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-0.5">
+                      <p className="text-[11px] text-text-secondary leading-relaxed pt-1 uppercase tracking-tight">
                         {step}
                       </p>
                     </div>

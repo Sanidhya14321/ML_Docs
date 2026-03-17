@@ -49,22 +49,22 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="space-y-12 pb-20"
+      className="space-y-16 pb-24"
     >
-      <header className="border-b border-slate-800 pb-12">
+      <header className="border-b border-border-strong pb-12">
         <motion.h1 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl font-serif font-bold text-white mb-6"
+          className="text-5xl font-display font-black text-text-primary mb-6 uppercase tracking-tighter"
         >
-          Site Architecture
+          SITE_ARCHITECTURE
         </motion.h1>
         <motion.p 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+          className="text-text-secondary text-xl max-w-3xl leading-relaxed font-light"
         >
           A complete index of the Neural Codex documentation. This page serves both as a user directory and a DevOps verification tool for crawler accessibility.
         </motion.p>
@@ -82,29 +82,29 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
             }
           }
         }}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-12"
+        className="grid grid-cols-1 lg:grid-cols-2 gap-16"
       >
         {/* Visual Directory */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-             <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                <Folder size={16} />
+          <div className="flex items-center gap-4 mb-8">
+             <div className="w-10 h-10 rounded-none bg-brand/10 flex items-center justify-center text-brand">
+                <Folder size={20} />
              </div>
-             <h2 className="text-xl font-bold text-white">Directory Tree</h2>
+             <h2 className="text-xl font-display font-black text-text-primary uppercase tracking-tight">DIRECTORY_TREE</h2>
           </div>
           
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 space-y-2">
-            {navItems.map(item => (
-               <div key={item.id} className="space-y-2">
-                 <button onClick={() => onNavigate(item.id)} className="flex items-center gap-3 text-slate-300 hover:text-indigo-400 transition-colors group">
-                    <span className="text-slate-600 group-hover:text-indigo-500/50 font-mono text-xs">00</span>
-                    <span className="font-bold">{item.label}</span>
+          <div className="bg-surface border border-border-strong rounded-none p-10 space-y-4">
+            {navItems.map((item, idx) => (
+               <div key={item.id} className="space-y-4">
+                 <button onClick={() => onNavigate(item.id)} className="flex items-center gap-4 text-text-primary hover:text-brand transition-all group w-full text-left">
+                    <span className="text-text-muted group-hover:text-brand/50 font-mono text-[10px] font-black uppercase tracking-widest">{String(idx).padStart(2, '0')}</span>
+                    <span className="font-mono font-black uppercase tracking-widest text-xs">{item.label}</span>
                  </button>
                  {item.items && (
-                    <div className="ml-4 pl-4 border-l border-slate-800 space-y-2">
-                       {item.items.map((sub, idx) => (
-                          <button key={sub.id} onClick={() => onNavigate(sub.id)} className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-300 transition-colors w-full text-left py-1">
-                             <FileText size={12} className="text-slate-600" />
+                    <div className="ml-6 pl-6 border-l border-border-strong space-y-3">
+                       {item.items.map((sub, subIdx) => (
+                          <button key={sub.id} onClick={() => onNavigate(sub.id)} className="flex items-center gap-4 text-[11px] font-mono font-bold uppercase tracking-tight text-text-secondary hover:text-brand transition-all w-full text-left py-1">
+                             <FileText size={12} className="text-text-muted" />
                              <span>{sub.label}</span>
                           </button>
                        ))}
@@ -116,26 +116,25 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
         </section>
 
         {/* DevOps Artifacts */}
-        <section className="space-y-8">
-           <div className="flex items-center gap-3 mb-6">
-             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                <FileText size={16} />
+        <section className="space-y-12">
+           <div className="flex items-center gap-4 mb-8">
+             <div className="w-10 h-10 rounded-none bg-brand/10 flex items-center justify-center text-brand">
+                <FileText size={20} />
              </div>
-             <h2 className="text-xl font-bold text-white">DevOps Artifacts</h2>
+             <h2 className="text-xl font-display font-black text-text-primary uppercase tracking-tight">DEVOPS_ARTIFACTS</h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
              <div className="flex justify-between items-end">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">sitemap.xml</label>
+                <label className="text-[10px] font-mono font-black text-text-muted uppercase tracking-[0.4em]">SITEMAP_XML</label>
              </div>
              <CodeBlock code={xmlString} language="xml" filename="public/sitemap.xml" />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
              <div className="flex justify-between items-end">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">robots.txt</label>
+                <label className="text-[10px] font-mono font-black text-text-muted uppercase tracking-[0.4em]">ROBOTS_TXT</label>
              </div>
-             {/* Switched to bash for safer highlighting support */}
              <CodeBlock code={robotsTxt} language="bash" filename="public/robots.txt" />
           </div>
         </section>

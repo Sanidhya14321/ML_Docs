@@ -136,10 +136,10 @@ export const NewsFeedView: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Research': return 'bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400 border-purple-200 dark:border-purple-500/20';
-      case 'Industry': return 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border-blue-200 dark:border-blue-500/20';
-      case 'Tooling': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20';
-      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+      case 'Research': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+      case 'Industry': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      case 'Tooling': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      default: return 'bg-surface-active text-text-muted border-border-strong';
     }
   };
 
@@ -148,93 +148,94 @@ export const NewsFeedView: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="max-w-5xl mx-auto pb-24 px-4 md:px-8"
+      className="max-w-6xl mx-auto pb-24 px-6 md:px-10"
     >
-      <header className="mb-12 pt-8 border-b border-slate-200 dark:border-slate-800 pb-8 transition-colors duration-300">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2 transition-colors duration-300">
+      <header className="mb-16 pt-12 border-b border-border-strong pb-12 transition-all duration-300">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-brand">
               <Newspaper size={20} />
-              <span className="text-xs font-black uppercase tracking-widest">Live Intelligence</span>
+              <span className="text-[10px] font-mono font-black uppercase tracking-[0.4em]">LIVE_INTELLIGENCE_STREAM</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-white leading-tight transition-colors duration-300">
-              Machine Learning News Feed
+            <h1 className="text-4xl md:text-5xl font-display font-black text-text-primary leading-none uppercase tracking-tighter">
+              NEURAL_FEED
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2 max-w-2xl transition-colors duration-300">
-              Real-time updates on the latest research papers, industry shifts, and tooling advancements, curated by Gemini.
+            <p className="text-text-secondary mt-4 max-w-2xl text-lg font-light leading-relaxed">
+              Real-time synchronization with global AI advancements, research breakthroughs, and industry shifts.
             </p>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {lastUpdated && (
-              <span className="text-xs text-slate-500 font-mono hidden md:inline-block">
-                Updated: {lastUpdated.toLocaleTimeString()}
+              <span className="text-[10px] text-text-muted font-mono font-black uppercase tracking-widest hidden md:inline-block">
+                LAST_SYNC: {lastUpdated.toLocaleTimeString()}
               </span>
             )}
-            <button 
+            <Button 
               onClick={fetchNews}
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-300 disabled:opacity-50"
+              variant="outline"
+              size="sm"
+              leftIcon={isLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
             >
-              {isLoading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-              Refresh
-            </button>
+              REFRESH_STREAM
+            </Button>
           </div>
         </div>
       </header>
 
       {error && (
-        <div className="mb-8 p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-xl flex items-start gap-3 text-rose-700 dark:text-rose-400">
+        <div className="mb-12 p-6 bg-rose-500/5 border border-rose-500/20 rounded-none flex items-start gap-4 text-rose-500">
           <AlertCircle size={20} className="shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-bold text-sm">Unable to fetch news</h3>
-            <p className="text-sm opacity-90">{error}</p>
+            <h3 className="font-mono font-black text-xs uppercase tracking-widest mb-1">SYNC_ERROR_DETECTED</h3>
+            <p className="text-sm opacity-80 font-mono uppercase tracking-tight">{error}</p>
           </div>
         </div>
       )}
 
       {isLoading && news.length === 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 animate-pulse">
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/4 mb-4"></div>
-              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full mb-2"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
+            <div key={i} className="bg-surface border border-border-strong rounded-none p-8 animate-pulse">
+              <div className="h-3 bg-border-strong rounded-none w-1/4 mb-6"></div>
+              <div className="h-10 bg-border-strong rounded-none w-3/4 mb-6"></div>
+              <div className="h-4 bg-border-strong rounded-none w-full mb-3"></div>
+              <div className="h-4 bg-border-strong rounded-none w-2/3"></div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-8">
           {news.map((item, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 hover:border-indigo-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5"
+              className="group relative bg-surface border border-border-strong rounded-none p-8 hover:border-brand transition-all duration-300"
             >
-              <div className="flex flex-col md:flex-row md:items-start gap-6">
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-colors duration-300 ${getCategoryColor(item.category)}`}>
+              <div className="flex flex-col md:flex-row md:items-start gap-10">
+                <div className="flex-1 space-y-6">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <span className={`px-2.5 py-1 rounded-none text-[9px] font-mono font-black uppercase tracking-widest border transition-colors duration-300 ${getCategoryColor(item.category)}`}>
                       {item.category}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
+                    <span className="flex items-center gap-2 text-[10px] text-text-muted font-mono font-black uppercase tracking-widest">
                       <Calendar size={12} />
                       {item.date}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
+                    <span className="flex items-center gap-2 text-[10px] text-text-muted font-mono font-black uppercase tracking-widest">
                       <Tag size={12} />
                       {item.source}
                     </span>
                   </div>
                   
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <h2 className="text-2xl font-display font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors leading-tight">
                     {item.title}
                   </h2>
                   
-                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                  <p className="text-text-secondary leading-relaxed text-base font-light">
                     {item.summary}
                   </p>
                 </div>
@@ -245,10 +246,10 @@ export const NewsFeedView: React.FC = () => {
                       href={item.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 transition-all"
-                      title="Read Source"
+                      className="flex items-center justify-center w-12 h-12 rounded-none bg-app border border-border-strong text-text-muted hover:bg-brand hover:text-app hover:border-brand transition-all"
+                      title="READ_SOURCE"
                     >
-                      <ExternalLink size={18} />
+                      <ExternalLink size={20} />
                     </a>
                   </div>
                 )}

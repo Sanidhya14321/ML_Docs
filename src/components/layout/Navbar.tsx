@@ -14,57 +14,64 @@ export const Navbar: React.FC = () => {
   } = useUIStore();
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between px-4 h-16 bg-surface/80 backdrop-blur-md border-b border-border-subtle transition-colors duration-normal">
+    <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-14 bg-surface/80 backdrop-blur-md border-b border-border-strong transition-colors duration-normal">
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <Button
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="md:hidden"
+          className="md:hidden rounded-none"
           aria-label="Toggle menu"
         >
-          <Menu size={20} />
+          <Menu size={18} />
         </Button>
         
-        {/* Breadcrumbs or Title could go here */}
-        <div className="hidden sm:block">
-          <span className="text-sm font-medium text-text-secondary">AI Codex</span>
+        <div className="hidden sm:flex items-center gap-3">
+          <div className="w-1 h-4 bg-brand" />
+          <span className="text-[10px] font-mono font-black text-text-primary uppercase tracking-[0.2em]">
+            SYSTEM_INTERFACE_V2.5
+          </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 pl-4 shrink-0">
+      <div className="flex items-center gap-4 pl-4 shrink-0">
         {/* Quick Find Button */}
         <button
           onClick={toggleSearch}
-          className="flex items-center gap-2 px-3 h-9 rounded-lg bg-surface-hover border border-border-subtle text-text-secondary hover:text-text-primary hover:border-brand/50 transition-all duration-fast group"
+          className="flex items-center gap-3 px-4 h-8 rounded-none bg-app border border-border-strong text-text-secondary hover:text-text-primary hover:border-brand transition-all duration-fast group"
         >
-          <Search size={14} className="group-hover:text-brand transition-colors" />
-          <span className="text-xs font-bold hidden sm:inline">Quick Find</span>
-          <div className="hidden sm:flex items-center gap-0.5 ml-1 px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 border border-border-subtle text-[10px] font-mono">
+          <Search size={12} className="group-hover:text-brand transition-colors" />
+          <span className="text-[10px] font-mono font-black uppercase tracking-widest hidden sm:inline">SEARCH_INDEX</span>
+          <div className="hidden sm:flex items-center gap-1 ml-2 px-1.5 py-0.5 border border-border-strong bg-surface text-[9px] font-mono text-text-muted">
             <Command size={8} /> K
           </div>
         </button>
 
-        {/* Theme Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleTheme}
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </Button>
+        <div className="h-4 w-px bg-border-strong hidden sm:block" />
 
-        {/* Settings */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleSettings}
-          aria-label="Settings"
-        >
-          <Settings size={20} />
-        </Button>
+        <div className="flex items-center gap-1">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            className="rounded-none hover:bg-brand/10 hover:text-brand"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </Button>
+
+          {/* Settings */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSettings}
+            className="rounded-none hover:bg-brand/10 hover:text-brand"
+            aria-label="Settings"
+          >
+            <Settings size={18} />
+          </Button>
+        </div>
       </div>
     </header>
   );

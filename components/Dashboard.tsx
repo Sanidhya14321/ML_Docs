@@ -16,7 +16,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data loading for skeleton demonstration
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
@@ -25,7 +24,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     if (lastActiveTopic) {
       onNavigate(lastActiveTopic);
     } else {
-      // Default to first topic of first module
       const firstTopic = CURRICULUM.modules[0]?.chapters[0]?.topics[0]?.id;
       if (firstTopic) onNavigate(firstTopic);
     }
@@ -43,18 +41,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       className="pb-20 space-y-12"
     >
       {/* Hero Section */}
-      <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 border border-slate-800 p-8 md:p-12 shadow-2xl transition-colors duration-300">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div>
-             <div className="flex items-center gap-2 text-indigo-400 mb-2">
-                <Trophy size={16} />
-                <span className="text-xs font-black uppercase tracking-widest">Course Progress</span>
+      <header className="relative overflow-hidden rounded-none bg-app border border-border-strong p-8 md:p-12 shadow-sm transition-all duration-300">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+          <div className="flex-1">
+             <div className="flex items-center gap-3 text-brand mb-6">
+                <div className="w-2 h-2 bg-brand rounded-full animate-pulse" />
+                <span className="text-[10px] font-mono font-black uppercase tracking-[0.3em]">CORE_SYSTEM_STATUS: ACTIVE</span>
              </div>
              <motion.h1 
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 0.2 }}
-               className="text-4xl md:text-5xl font-serif font-bold text-white mb-4"
+               className="text-4xl md:text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight leading-none"
              >
                 {CURRICULUM.title}
              </motion.h1>
@@ -62,43 +60,49 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 0.3 }}
-               className="text-slate-400 max-w-xl text-lg font-light leading-relaxed"
+               className="text-text-secondary max-w-xl text-lg font-light leading-relaxed"
              >
-                You have completed <strong className="text-white">{overallProgress}%</strong> of the certification. 
-                {overallProgress === 100 ? " Ready for deployment." : " Continue building your neural architecture."}
+                Neural synchronization at <strong className="text-text-primary font-bold">{overallProgress}%</strong>. 
+                {overallProgress === 100 ? " System fully optimized. Ready for deployment." : " Expanding cognitive architecture through iterative learning cycles."}
              </motion.p>
           </div>
 
           <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="bg-slate-950/50 backdrop-blur-md p-6 rounded-2xl border border-slate-800/50 w-full md:w-auto min-w-[280px] transition-colors duration-300"
+            className="bg-surface p-8 border border-border-strong w-full md:w-auto min-w-[320px] relative"
           >
-             <div className="flex justify-between items-end mb-2">
-                <span className="text-[10px] font-mono text-slate-500 uppercase">Current Velocity</span>
-                <span className="text-2xl font-bold text-white">{overallProgress}%</span>
+             <div className="absolute -top-px -left-px w-4 h-4 border-t border-l border-brand" />
+             <div className="absolute -bottom-px -right-px w-4 h-4 border-b border-r border-brand" />
+             
+             <div className="flex justify-between items-end mb-4">
+                <span className="text-[9px] font-mono font-black text-text-muted uppercase tracking-widest">COMPLETION_INDEX</span>
+                <span className="text-3xl font-display font-black text-text-primary">{overallProgress}%</span>
              </div>
-             <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden mb-6 transition-colors duration-300">
+             <div className="w-full h-1 bg-border-subtle mb-8 relative overflow-hidden">
                 <motion.div 
                    initial={{ width: 0 }}
                    animate={{ width: `${overallProgress}%` }}
-                   transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
-                   className="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-                />
+                   transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+                   className="h-full bg-brand relative"
+                >
+                   <div className="absolute top-0 right-0 w-1 h-full bg-white animate-pulse" />
+                </motion.div>
              </div>
              <button 
                 onClick={handleResume}
-                className="w-full py-3 bg-white text-slate-950 hover:bg-indigo-50 font-bold rounded-lg transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-4 bg-text-primary text-app hover:bg-brand transition-all duration-300 font-mono font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 group"
              >
-                <Play size={16} fill="currentColor" />
-                {lastActiveTopic ? "Resume Learning" : "Start Course"}
+                <Play size={14} fill="currentColor" className="group-hover:translate-x-1 transition-transform" />
+                {lastActiveTopic ? "RESUME_PROTOCOL" : "INITIALIZE_SEQUENCE"}
              </button>
           </motion.div>
         </div>
 
-        {/* Decorator */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+             style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       </header>
 
       {/* Dynamic Modules Grid */}
@@ -114,7 +118,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             }
           }
         }}
-        className="grid grid-cols-1 xl:grid-cols-2 gap-8"
+        className="grid grid-cols-1 xl:grid-cols-2 gap-px bg-border-strong border border-border-strong"
       >
         {CURRICULUM.modules.map((module, idx) => {
           const progress = getModuleProgress(module.id);
@@ -125,52 +129,53 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           return (
             <motion.div 
               key={module.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/30 transition-all duration-300 group shadow-lg dark:shadow-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: idx * 0.05 }}
+              className="bg-surface group"
             >
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 transition-colors duration-300">
-                 <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 transition-colors duration-300 ${isComplete ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'}`}>
+              <div className="p-8 border-b border-border-subtle bg-app/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
+                 <div className="flex items-center gap-5">
+                    <div className={`w-12 h-12 rounded-none border flex items-center justify-center transition-all duration-300 ${isComplete ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-brand/5 border-brand/20 text-brand'}`}>
                        {isComplete ? <CheckCircle size={20} /> : (Icon ? <Icon size={20} /> : null)}
                     </div>
                     <div>
-                       <h3 className="font-bold text-slate-900 dark:text-slate-200 text-lg transition-colors duration-300">{module.title}</h3>
-                       <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 uppercase mt-1">
-                          <span>{module.chapters.reduce((acc, c) => acc + c.topics.length, 0)} Topics</span>
-                          <span>•</span>
-                          <span className={isComplete ? "text-emerald-600 dark:text-emerald-500" : isStarted ? "text-indigo-600 dark:text-indigo-400" : ""}>{progress}% Complete</span>
+                       <h3 className="text-xl font-display font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors">{module.title}</h3>
+                       <div className="flex items-center gap-3 text-[9px] font-mono font-black text-text-muted uppercase tracking-widest mt-1">
+                          <span>{module.chapters.reduce((acc, c) => acc + c.topics.length, 0)} NODES</span>
+                          <span className="w-1 h-1 bg-border-strong rounded-full" />
+                          <span className={isComplete ? "text-emerald-500" : isStarted ? "text-brand" : ""}>{progress}% SYNCED</span>
                        </div>
                     </div>
                  </div>
-                 {isComplete && <div className="text-emerald-500/20 hidden sm:block"><Trophy size={48} /></div>}
+                 {isComplete && <div className="text-emerald-500/10 hidden sm:block"><Trophy size={48} /></div>}
               </div>
 
-              <div className="p-6 space-y-6">
+              <div className="p-8 space-y-10">
                  {module.chapters.map(chapter => (
                    <div key={chapter.id}>
-                      <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 pl-2 border-l-2 border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                      <h4 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.3em] mb-4 flex items-center gap-3">
+                        <div className="w-4 h-px bg-border-strong" />
                         {chapter.title}
                       </h4>
-                      <div className="space-y-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                          {chapter.topics.map(topic => {
                            const completed = isCompleted(topic.id);
                            return (
                              <button 
                                 key={topic.id}
                                 onClick={() => onNavigate(topic.id)}
-                                className={`w-full text-left p-2 rounded-lg flex items-center gap-3 transition-colors duration-300 ${completed ? 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                                className={`group/topic text-left px-4 py-3 border border-transparent hover:border-border-strong hover:bg-app transition-all duration-200 flex items-center gap-3 ${completed ? 'opacity-60' : ''}`}
                              >
-                                <div className={`shrink-0 transition-colors duration-300 ${completed ? 'text-emerald-500' : 'text-slate-400 dark:text-slate-700'}`}>
-                                   {completed ? <CheckCircle size={14} /> : <Circle size={14} />}
+                                <div className={`shrink-0 transition-colors duration-300 ${completed ? 'text-emerald-500' : 'text-text-muted group-hover/topic:text-brand'}`}>
+                                   {completed ? <CheckCircle size={12} /> : <Circle size={12} />}
                                 </div>
-                                <span className={`flex-1 text-sm font-medium truncate ${completed ? 'line-through decoration-slate-300 dark:decoration-slate-700' : ''}`}>
+                                <span className={`flex-1 text-[11px] font-mono font-bold uppercase tracking-tight truncate ${completed ? 'line-through decoration-emerald-500/30' : 'text-text-secondary group-hover/topic:text-text-primary'}`}>
                                    {topic.title}
                                 </span>
                                 {topic.type === 'lab' && (
-                                   <span className="text-[9px] font-black uppercase bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded border border-indigo-500/20">
-                                      Lab
+                                   <span className="text-[8px] font-mono font-black uppercase border border-brand/30 text-brand px-1.5 py-0.5">
+                                      LAB
                                    </span>
                                 )}
                              </button>

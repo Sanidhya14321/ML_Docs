@@ -23,7 +23,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-app/80 backdrop-blur-sm z-[100]"
           />
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -34,35 +34,38 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             aria-modal="true"
             aria-labelledby="settings-title"
           >
-            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-colors duration-300">
-              <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors duration-300">
-                <h3 id="settings-title" className="font-bold text-slate-900 dark:text-white transition-colors duration-300">Settings</h3>
-                <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors duration-300" aria-label="Close Settings">
-                  <X size={20} />
+            <div className="bg-surface border border-border-strong rounded-none shadow-2xl overflow-hidden transition-all duration-300">
+              <div className="p-6 border-b border-border-strong flex items-center justify-between bg-app/50">
+                <div className="flex items-center gap-3">
+                   <div className="w-2 h-2 bg-brand rounded-full" />
+                   <h3 id="settings-title" className="text-[10px] font-mono font-black text-text-primary uppercase tracking-[0.3em]">SYSTEM_CONFIGURATION</h3>
+                </div>
+                <button onClick={onClose} className="p-2 text-text-muted hover:text-text-primary transition-colors" aria-label="Close Settings">
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="p-6 space-y-8">
+              <div className="p-8 space-y-12">
                 {/* Appearance */}
                 <section>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Appearance</h4>
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-100 dark:bg-slate-900">
-                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-500/10 text-indigo-500 rounded-lg">
-                           {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+                  <h4 className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.2em] mb-6">INTERFACE_THEME</h4>
+                  <div className="flex items-center justify-between p-6 bg-app border border-border-strong">
+                     <div className="flex items-center gap-4">
+                        <div className="p-2 bg-brand/10 text-brand">
+                           {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
                         </div>
-                        <div className="text-sm font-medium text-slate-900 dark:text-slate-200">
-                           {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                        <div className="text-[11px] font-mono font-bold text-text-primary uppercase tracking-widest">
+                           {theme === 'dark' ? 'DARK_MODE_ACTIVE' : 'LIGHT_MODE_ACTIVE'}
                         </div>
                      </div>
                      <button 
                         onClick={toggleTheme}
-                        className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${theme === 'dark' ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                        className={`relative w-12 h-6 rounded-none transition-colors duration-300 ${theme === 'dark' ? 'bg-brand' : 'bg-border-strong'}`}
                         aria-label={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
                      >
                         <motion.div 
                           layout
-                          className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md"
+                          className="absolute top-1 left-1 w-4 h-4 bg-app rounded-none shadow-md"
                           animate={{ x: theme === 'dark' ? 24 : 0 }}
                         />
                      </button>
@@ -71,13 +74,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
                 {/* Danger Zone */}
                 <section>
-                  <h4 className="text-xs font-black text-rose-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                     <ShieldAlert size={12} /> Danger Zone
+                  <h4 className="text-[9px] font-mono font-black text-rose-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                     <ShieldAlert size={12} /> DESTRUCTIVE_OPERATIONS
                   </h4>
-                  <div className="p-4 rounded-xl border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-900/10">
-                     <div className="mb-4">
-                        <h5 className="text-sm font-bold text-slate-900 dark:text-white mb-1">Reset Course Progress</h5>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="p-6 border border-rose-500/20 bg-rose-500/5">
+                     <div className="mb-6">
+                        <h5 className="text-[11px] font-mono font-black text-text-primary uppercase tracking-widest mb-2">RESET_PROGRESS_DATA</h5>
+                        <p className="text-[10px] text-text-secondary uppercase tracking-tight leading-relaxed">
                            This will permanently delete all your progress, completed topics, and local settings. This action cannot be undone.
                         </p>
                      </div>
@@ -88,16 +91,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                               onClose();
                            }
                         }}
-                        className="w-full py-2.5 bg-white dark:bg-rose-950 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/50 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 hover:bg-rose-500 hover:text-app text-[10px] font-mono font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3"
                      >
-                        <Trash2 size={14} /> Reset Everything
+                        <Trash2 size={14} /> WIPE_ALL_DATA
                      </button>
                   </div>
                 </section>
               </div>
 
-              <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-center">
-                 <p className="text-[10px] text-slate-400 font-mono">AI Codex v3.2.0 Build 2024.10</p>
+              <div className="p-4 bg-app border-t border-border-strong text-center">
+                 <p className="text-[8px] text-text-muted font-mono font-black uppercase tracking-[0.4em]">AI_CODEX_CORE_v3.2.0 // BUILD_2026.03</p>
               </div>
             </div>
           </motion.div>

@@ -57,44 +57,45 @@ const KNNViz = () => {
 
   const classACount = neighbors.filter(n => n.class === 'A').length;
   const classBCount = neighbors.filter(n => n.class === 'B').length;
-  const predictedClass = classACount > classBCount ? 'A (Red)' : 'B (Blue)';
+  const predictedClass = classACount > classBCount ? 'CLASS_A' : 'CLASS_B';
 
   return (
     <div className="flex flex-col gap-4">
-       <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+       <div className="flex justify-between items-center bg-app border border-border-strong p-4">
           <div className="flex items-center gap-6">
-             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Neighbors (k): <span className="text-indigo-400 text-sm ml-2">{k}</span></label>
+             <label className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.2em]">K_NEIGHBORS: <span className="text-brand text-xs ml-2">{k}</span></label>
              <input 
                type="range" min="1" max="9" step="2" 
                value={k} onChange={(e) => setK(Number(e.target.value))}
-               className="w-32 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+               className="w-32 h-1 bg-border-strong rounded-none appearance-none cursor-pointer accent-brand"
              />
           </div>
-          <div className="text-[10px] font-mono uppercase tracking-widest bg-slate-900 px-3 py-1 rounded-full border border-slate-700">
-             Result: <span className={classACount > classBCount ? "text-red-400 font-bold" : "text-blue-400 font-bold"}>{predictedClass}</span>
+          <div className="text-[9px] font-mono font-black uppercase tracking-widest bg-surface px-4 py-2 border border-border-strong">
+             PREDICTION: <span className={classACount > classBCount ? "text-rose-500" : "text-brand"}>{predictedClass}</span>
           </div>
        </div>
 
-       <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative shadow-inner overflow-hidden">
+       <div className="h-64 w-full bg-app border border-border-strong p-2 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
               <XAxis type="number" dataKey="x" domain={[0, 100]} hide />
               <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
               
-              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={radius * 2.5} fill="#fbbf24" fillOpacity={0.03} stroke="#fbbf24" strokeDasharray="3 3" strokeOpacity={0.4} />
+              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={radius * 2.5} fill="var(--brand)" fillOpacity={0.05} stroke="var(--brand)" strokeDasharray="4 4" strokeOpacity={0.3} />
 
               {neighbors.map((n, i) => (
-                 <ReferenceLine key={i} segment={[queryPoint, {x: n.x, y: n.y}]} stroke="#fbbf24" strokeOpacity={0.2} strokeWidth={1} />
+                 <ReferenceLine key={i} segment={[queryPoint, {x: n.x, y: n.y}]} stroke="var(--brand)" strokeOpacity={0.2} strokeWidth={1} />
               ))}
 
               <Scatter name="Data" data={knnPoints}>
                   {knnPoints.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} stroke={neighbors.find(n => n.id === entry.id) ? "#fbbf24" : "none"} strokeWidth={2} />
+                      <Cell key={`cell-${index}`} fill={entry.class === 'A' ? '#f43f5e' : 'var(--brand)'} stroke={neighbors.find(n => n.id === entry.id) ? "#ffffff" : "none"} strokeWidth={1} />
                   ))}
               </Scatter>
 
-              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={6} fill="#ffffff" stroke="#fbbf24" strokeWidth={2} />
+              <ReferenceDot x={queryPoint.x} y={queryPoint.y} r={5} fill="#ffffff" stroke="var(--brand)" strokeWidth={2} />
             </ScatterChart>
           </ResponsiveContainer>
        </div>
@@ -116,33 +117,34 @@ const NaiveBayesViz = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Class Separation: <span className="text-indigo-400 ml-2">{overlap.toFixed(1)}</span></label>
+            <div className="flex justify-between items-center bg-app border border-border-strong p-4">
+                <label className="text-[9px] font-mono font-black text-text-muted uppercase tracking-widest">CLASS_SEPARATION: <span className="text-brand ml-2">{overlap.toFixed(1)}</span></label>
                 <input 
                     type="range" min="0" max="8" step="0.5" 
                     value={overlap} onChange={(e) => setOverlap(parseFloat(e.target.value))}
-                    className="w-40 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-40 h-1 bg-border-strong rounded-none appearance-none cursor-pointer accent-brand"
                 />
             </div>
-            <div className="h-64 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2">
+            <div className="h-64 w-full bg-app border border-border-strong p-2 relative">
+                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorNB_A" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
                             </linearGradient>
                             <linearGradient id="colorNB_B" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="var(--brand)" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
                         <XAxis dataKey="x" hide />
                         <YAxis hide />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px' }} />
-                        <Area type="monotone" dataKey="probA" stroke="#ef4444" fillOpacity={1} fill="url(#colorNB_A)" name="P(x|C1)" />
-                        <Area type="monotone" dataKey="probB" stroke="#3b82f6" fillOpacity={1} fill="url(#colorNB_B)" name="P(x|C2)" />
-                        <ReferenceLine x={3 + overlap/2} stroke="#ffffff" strokeDasharray="3 3" strokeOpacity={0.5} label={{ value: 'Boundary', fill: '#fff', fontSize: 9, position: 'top' }} />
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', borderRadius: '0px', fontSize: '9px', fontFamily: 'monospace' }} />
+                        <Area type="monotone" dataKey="probA" stroke="#f43f5e" fillOpacity={1} fill="url(#colorNB_A)" name="P(x|C1)" />
+                        <Area type="monotone" dataKey="probB" stroke="var(--brand)" fillOpacity={1} fill="url(#colorNB_B)" name="P(x|C2)" />
+                        <ReferenceLine x={3 + overlap/2} stroke="#ffffff" strokeDasharray="4 4" strokeOpacity={0.3} label={{ value: 'BOUNDARY', fill: '#fff', fontSize: 8, position: 'top', fontFamily: 'monospace' }} />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
@@ -155,11 +157,11 @@ const DecisionTreeViz = () => {
   const width = 400;
   const height = 240;
   const nodes = [
-    { x: 200, y: 40, label: 'Entropy: 0.98\nFeature X > 5.2', color: 'indigo' },
-    { x: 100, y: 120, label: 'Feature Y ≤ 2.1', color: 'indigo' },
-    { x: 300, y: 120, label: 'Pure Leaf', color: 'emerald' },
-    { x: 50, y: 200, label: 'Class A', color: 'rose' },
-    { x: 150, y: 200, label: 'Class B', color: 'emerald' },
+    { x: 200, y: 40, label: 'ENTROPY: 0.98\nFEATURE_X > 5.2', color: 'brand' },
+    { x: 100, y: 120, label: 'FEATURE_Y ≤ 2.1', color: 'brand' },
+    { x: 300, y: 120, label: 'PURE_LEAF', color: 'brand' },
+    { x: 50, y: 200, label: 'CLASS_A', color: 'rose' },
+    { x: 150, y: 200, label: 'CLASS_B', color: 'brand' },
   ];
 
   const links = [
@@ -170,8 +172,9 @@ const DecisionTreeViz = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center w-full py-8 bg-slate-950 rounded-2xl border border-slate-800/50 shadow-inner overflow-hidden select-none">
-       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="max-w-md w-full">
+    <div className="flex flex-col items-center w-full py-12 bg-app border border-border-strong overflow-hidden select-none relative">
+       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+       <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="max-w-md w-full relative z-10">
           {/* Links */}
           {links.map((link, i) => {
              const from = nodes[link.from];
@@ -180,45 +183,44 @@ const DecisionTreeViz = () => {
                <path 
                  key={i} 
                  d={`M ${from.x} ${from.y} C ${from.x} ${(from.y + to.y) / 2}, ${to.x} ${(from.y + to.y) / 2}, ${to.x} ${to.y}`}
-                 stroke="#334155"
-                 strokeWidth="2"
+                 stroke="var(--border-strong)"
+                 strokeWidth="1.5"
                  fill="none"
-                 strokeDasharray="4 2"
+                 strokeDasharray="4 4"
                />
              );
           })}
 
           {/* Nodes */}
           {nodes.map((node, i) => {
-             const isLeaf = i >= 2;
+             const isLeaf = i >= 3;
              const colorMap = {
-               indigo: { bg: '#1e1b4b', border: '#6366f1', text: '#818cf8' },
-               emerald: { bg: '#064e3b', border: '#10b981', text: '#34d399' },
-               rose: { bg: '#4c0519', border: '#f43f5e', text: '#fb7185' }
+               brand: { bg: 'rgba(16, 185, 129, 0.1)', border: '#10b981', text: '#10b981' },
+               rose: { bg: 'rgba(244, 63, 94, 0.1)', border: '#f43f5e', text: '#f43f5e' }
              };
              const theme = colorMap[node.color as keyof typeof colorMap];
 
              return (
                <g key={i} transform={`translate(${node.x}, ${node.y})`}>
                   <rect 
-                    x={isLeaf ? -30 : -50} 
+                    x={isLeaf ? -35 : -55} 
                     y={isLeaf ? -15 : -25} 
-                    width={isLeaf ? 60 : 100} 
+                    width={isLeaf ? 70 : 110} 
                     height={isLeaf ? 30 : 50} 
-                    rx="8" 
-                    fill={theme.bg} 
+                    rx="0" 
+                    fill="var(--surface)" 
                     stroke={theme.border} 
-                    strokeWidth="2"
-                    className="transition-all hover:scale-110 cursor-help"
+                    strokeWidth="1"
+                    className="transition-all hover:scale-105 cursor-help"
                   />
                   {node.label.split('\n').map((line, lineIdx) => (
                     <text 
                       key={lineIdx}
-                      y={isLeaf ? 5 : (lineIdx === 0 ? -2 : 12)} 
+                      y={isLeaf ? 4 : (lineIdx === 0 ? -2 : 12)} 
                       textAnchor="middle" 
                       fill={theme.text} 
-                      fontSize={isLeaf ? "10" : "8"} 
-                      fontWeight="bold"
+                      fontSize={isLeaf ? "9" : "8"} 
+                      fontWeight="900"
                       className="pointer-events-none uppercase font-mono tracking-tighter"
                     >
                       {line}
@@ -228,7 +230,7 @@ const DecisionTreeViz = () => {
              );
           })}
        </svg>
-       <p className="text-[9px] text-slate-600 mt-6 uppercase tracking-[0.3em] font-mono">Recursive Binary Splitting</p>
+       <p className="text-[8px] text-text-muted mt-8 uppercase tracking-[0.4em] font-mono font-black">RECURSIVE_BINARY_SPLITTING_SEQUENCE</p>
     </div>
   );
 };
@@ -374,22 +376,33 @@ export const ClassificationView: React.FC = () => {
       exit={{ opacity: 0 }}
       className="space-y-12 pb-20"
     >
-      <header className="mb-12 border-b border-slate-800 pb-8">
+      <header className="mb-12 border-b border-border-strong pb-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 font-mono text-[8px] text-brand/20 tracking-[0.5em] pointer-events-none">
+          CLASSIFICATION_ENGINE_v4.0
+        </div>
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center gap-3 mb-6"
+        >
+          <div className="w-12 h-[1px] bg-brand" />
+          <span className="text-[10px] font-mono font-black text-brand uppercase tracking-[0.3em]">SUPERVISED_LEARNING</span>
+        </motion.div>
         <motion.h1 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl font-serif font-bold text-white mb-4"
+          className="text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight"
         >
-          Supervised: Classification
+          Classification
         </motion.h1>
         <motion.p 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+          className="text-text-secondary text-lg max-w-3xl leading-relaxed font-sans uppercase tracking-tight"
         >
-          The task of predicting a discrete class label. Models learn to find the optimal decision boundary that generalizes well to unseen samples in complex feature spaces.
+          Predict discrete class labels by mapping input features to categorical outputs through optimized decision boundaries.
         </motion.p>
       </header>
 

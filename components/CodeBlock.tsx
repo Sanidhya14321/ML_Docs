@@ -52,38 +52,38 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
   };
 
   return (
-    <div className="my-8 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 shadow-2xl bg-[#1e1e1e] group relative font-mono text-sm transition-colors duration-300">
+    <div className="my-8 rounded-none overflow-hidden border border-border-strong bg-app group relative font-mono text-sm transition-all duration-300">
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#252526] border-b border-white/5 select-none">
-        <div className="flex items-center gap-4">
-          <div className="flex space-x-2 opacity-80 hover:opacity-100 transition-opacity">
-            <div className="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-            <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+      <div className="flex items-center justify-between px-5 py-3 bg-surface border-b border-border-strong select-none">
+        <div className="flex items-center gap-6">
+          <div className="flex space-x-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+            <div className="w-2 h-2 rounded-none bg-text-muted"></div>
+            <div className="w-2 h-2 rounded-none bg-text-muted"></div>
+            <div className="w-2 h-2 rounded-none bg-text-muted"></div>
           </div>
-          <div className="flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-3">
             {filename && (
                 <div className="flex items-center gap-2 opacity-60">
-                    <Terminal size={12} className="text-slate-400" />
-                    <span className="text-xs text-slate-300 font-medium tracking-wide">{filename}</span>
+                    <Terminal size={12} className="text-brand" />
+                    <span className="text-[10px] text-text-primary font-black uppercase tracking-widest">{filename}</span>
                 </div>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-             <div className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <div className="flex items-center gap-4">
+             <div className="px-2 py-0.5 rounded-none bg-app border border-border-strong text-[9px] font-black text-text-muted uppercase tracking-[0.2em]">
                 {language}
              </div>
              <button 
                 onClick={handleCopy}
-                className="p-1.5 rounded-md hover:bg-white/10 transition-all text-slate-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                className="p-1.5 rounded-none hover:bg-brand/10 transition-all text-text-muted hover:text-brand focus:outline-none focus:ring-1 focus:ring-brand"
                 title="Copy Code"
                 aria-label="Copy code to clipboard"
                 >
                 <AnimatePresence mode="wait">
                     {copied ? (
                     <motion.div key="check" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
-                        <Check size={14} className="text-emerald-400" />
+                        <Check size={14} className="text-emerald-500" />
                     </motion.div>
                     ) : (
                     <motion.div key="copy" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }}>
@@ -96,8 +96,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'python',
       </div>
 
       {/* Code Area */}
-      <div className="relative overflow-x-auto custom-scrollbar bg-[#1e1e1e]">
-        <pre className={`language-${language} !bg-transparent !m-0 !p-6 !font-mono !text-[13.5px] !leading-loose`}>
+      <div className="relative overflow-x-auto custom-scrollbar bg-app/50">
+        <pre className={`language-${language} !bg-transparent !m-0 !p-8 !font-mono !text-[13px] !leading-relaxed`}>
           <code ref={codeRef} className={`language-${language}`}>
             {code.trim()}
           </code>

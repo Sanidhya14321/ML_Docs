@@ -1,48 +1,49 @@
 /* src/styles/tokens.css */
 :root {
-  /* Colors - Zinc (Neutral) */
-  --color-zinc-50: #fafafa;
-  --color-zinc-100: #f4f4f5;
-  --color-zinc-200: #e4e4e7;
-  --color-zinc-300: #d4d4d8;
-  --color-zinc-400: #a1a1aa;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #52525b;
-  --color-zinc-700: #3f3f46;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #18181b;
-  --color-zinc-950: #09090b;
+  /* Colors - Slate (Neutral) */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
 
-  /* Colors - Teal (Primary) */
-  --color-teal-50: #f0fdfa;
-  --color-teal-100: #ccfbf1;
-  --color-teal-200: #99f6e4;
-  --color-teal-300: #5eead4;
-  --color-teal-400: #2dd4bf;
-  --color-teal-500: #14b8a6;
-  --color-teal-600: #0d9488;
-  --color-teal-700: #0f766e;
-  --color-teal-800: #115e59;
-  --color-teal-900: #134e4a;
-  --color-teal-950: #042f2e;
+  /* Colors - Emerald (Primary) */
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-950: #022c22;
 
-  /* Colors - Rose (Accent) */
-  --color-rose-400: #fb7185;
-  --color-rose-500: #f43f5e;
+  /* Colors - Indigo (Accent) */
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
 
   /* Semantic Tokens - Light */
-  --bg-app: var(--color-zinc-50);
+  --bg-app: #fcfcfc;
   --bg-surface: #ffffff;
-  --bg-surface-hover: var(--color-zinc-100);
-  --text-primary: var(--color-zinc-900);
-  --text-secondary: var(--color-zinc-600);
-  --text-muted: var(--color-zinc-400);
-  --border-subtle: var(--color-zinc-200);
-  --border-strong: var(--color-zinc-300);
+  --bg-surface-hover: #f5f5f5;
+  --bg-surface-active: #eeeeee;
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #888888;
+  --border-subtle: #e5e5e5;
+  --border-strong: #cccccc;
   
-  --brand-primary: var(--color-teal-500);
-  --brand-hover: var(--color-teal-600);
-  --brand-surface: var(--color-teal-50);
+  --brand-primary: #10b981;
+  --brand-hover: #059669;
+  --brand-surface: #ecfdf5;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -79,16 +80,17 @@
 
 .dark {
   /* Semantic Tokens - Dark */
-  --bg-app: var(--color-zinc-950);
-  --bg-surface: var(--color-zinc-900);
-  --bg-surface-hover: var(--color-zinc-800);
-  --text-primary: var(--color-zinc-100);
-  --text-secondary: var(--color-zinc-400);
-  --text-muted: var(--color-zinc-500);
-  --border-subtle: var(--color-zinc-800);
-  --border-strong: var(--color-zinc-700);
+  --bg-app: #050505;
+  --bg-surface: #0a0a0a;
+  --bg-surface-hover: #111111;
+  --bg-surface-active: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --border-subtle: #1a1a1a;
+  --border-strong: #27272a;
 
-  --brand-primary: var(--color-teal-400);
-  --brand-hover: var(--color-teal-300);
-  --brand-surface: var(--color-teal-950);
+  --brand-primary: #10b981;
+  --brand-hover: #34d399;
+  --brand-surface: #022c22;
 }

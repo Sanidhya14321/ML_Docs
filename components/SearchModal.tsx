@@ -49,7 +49,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
         e.preventDefault();
         setSelectedIndex(prev => Math.min(prev + 1, results.length - 1));
         if (listRef.current) {
-            // Basic scroll into view logic
             const element = listRef.current.children[0]?.children[Math.min(selectedIndex + 1, results.length - 1)] as HTMLElement;
             if(element) element.scrollIntoView({ block: 'nearest' });
         }
@@ -96,38 +95,38 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-app/90 backdrop-blur-sm z-[100]"
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-xl z-[101] px-4"
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-2xl z-[101] px-4"
             role="dialog"
             aria-modal="true"
             aria-label="Search Topics"
           >
-            <div className="bg-white dark:bg-[#0f1117] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[60vh] transition-colors duration-300">
-              <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-                <Search size={20} className="text-slate-400" />
+            <div className="bg-surface border border-border-strong rounded-none shadow-2xl overflow-hidden flex flex-col max-h-[70vh] transition-all duration-300">
+              <div className="flex items-center gap-4 p-6 border-b border-border-strong bg-app/50">
+                <Search size={20} className="text-brand" />
                 <input 
                   ref={inputRef}
                   type="text" 
-                  placeholder="Search topics, labs, or concepts..."
+                  placeholder="SEARCH_NEURAL_NODES..."
                   aria-label="Search query"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-slate-900 dark:text-white outline-none placeholder:text-slate-500 text-lg transition-colors duration-300"
+                  className="flex-1 bg-transparent text-text-primary outline-none placeholder:text-text-muted font-mono font-black text-lg uppercase tracking-widest"
                 />
                 <div className="hidden sm:flex items-center gap-2">
-                   <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 border border-slate-200 dark:border-slate-700 transition-colors duration-300">ESC</span>
+                   <span className="text-[9px] font-mono font-black bg-surface px-2 py-1 border border-border-strong text-text-muted uppercase tracking-widest">ESC</span>
                 </div>
               </div>
               
-              <div ref={listRef} className="flex-1 overflow-y-auto p-2 custom-scrollbar">
+              <div ref={listRef} className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                  {results.length === 0 ? (
-                   <div className="p-8 text-center text-slate-500">
-                      <p>No results found for "{query}"</p>
+                   <div className="p-12 text-center text-text-muted">
+                      <p className="font-mono font-black text-[10px] uppercase tracking-[0.4em]">NO_RECORDS_FOUND_FOR: "{query}"</p>
                    </div>
                  ) : (
                    <div className="space-y-1">
@@ -136,19 +135,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                           key={item.id}
                           onClick={() => handleSelect(item.id)}
                           onMouseEnter={() => setSelectedIndex(idx)}
-                          className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between group transition-colors ${idx === selectedIndex ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900'}`}
+                          className={`w-full text-left px-6 py-4 rounded-none flex items-center justify-between group transition-all ${idx === selectedIndex ? 'bg-brand text-app' : 'text-text-secondary hover:bg-app'}`}
                         >
-                           <div className="flex items-center gap-3">
-                              <div className={`p-2 rounded-lg ${idx === selectedIndex ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+                           <div className="flex items-center gap-5">
+                              <div className={`p-2 rounded-none ${idx === selectedIndex ? 'bg-app/20 text-app' : 'bg-surface border border-border-strong text-text-muted'}`}>
                                  {getIcon(item.type)}
                               </div>
                               <div>
-                                 <div className={`font-medium ${idx === selectedIndex ? 'text-white' : 'text-slate-900 dark:text-slate-200'}`}>{item.title}</div>
-                                 <div className={`text-xs ${idx === selectedIndex ? 'text-indigo-200' : 'text-slate-500'} truncate max-w-[300px]`}>{item.description}</div>
+                                 <div className={`text-[11px] font-mono font-black uppercase tracking-widest ${idx === selectedIndex ? 'text-app' : 'text-text-primary'}`}>{item.title}</div>
+                                 <div className={`text-[9px] font-mono uppercase tracking-tighter mt-1 ${idx === selectedIndex ? 'text-app/70' : 'text-text-muted'} truncate max-w-[400px]`}>{item.description}</div>
                               </div>
                            </div>
                            {idx === selectedIndex && (
-                             <CornerDownLeft size={16} className="text-white/50" />
+                             <CornerDownLeft size={14} className="text-app/50" />
                            )}
                         </button>
                       ))}
@@ -156,9 +155,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
                  )}
               </div>
               
-              <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 text-center">
-                 <p className="text-[10px] text-slate-400 font-mono">
-                    <span className="font-bold">{results.length}</span> results found
+              <div className="p-4 bg-app border-t border-border-strong text-center">
+                 <p className="text-[9px] text-text-muted font-mono font-black uppercase tracking-[0.4em]">
+                    <span className="text-brand">{results.length}</span> NODES_INDEXED_IN_MEMORY
                  </p>
               </div>
             </div>

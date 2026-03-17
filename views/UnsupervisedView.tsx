@@ -94,33 +94,39 @@ const KMeansViz = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+            <div className="flex justify-between items-center bg-slate-900/50 p-6 rounded-xl border border-slate-800/50 backdrop-blur-sm">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Sliders size={12} /> Hyperparameter K: <span className="text-indigo-400 text-sm ml-2">{k}</span>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <Sliders size={12} className="text-emerald-500" /> 
+                        Hyperparameter K: <span className="text-emerald-500 text-xs ml-1">{k}</span>
                     </label>
                     <input 
                         type="range" min="1" max="6" step="1" 
                         value={k} onChange={(e) => setK(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 mt-2"
+                        className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                     />
                 </div>
-                <div className="text-[10px] font-mono px-3 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                    Minimizing Within-Cluster Sum of Squares
+                <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Optimization Goal</span>
+                    <div className="text-[11px] font-mono px-3 py-1.5 rounded bg-slate-950 border border-slate-800 text-emerald-400/80">
+                        Minimize WCSS (Inertia)
+                    </div>
                 </div>
             </div>
 
-            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 relative overflow-hidden flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full p-4 overflow-visible">
+            <div className="h-80 w-full bg-slate-950 rounded-2xl border border-slate-800/50 relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+                <svg viewBox="0 0 100 100" className="w-full h-full p-8 overflow-visible relative z-10">
                     {/* Data Points */}
                     {clusters.map((p, i) => (
                         <motion.circle 
                             key={p.id}
                             cx={p.x}
                             cy={p.y}
-                            r={1.5}
+                            r={1.2}
                             animate={{ fill: p.fill }}
                             transition={{ duration: 0.5 }}
+                            className="drop-shadow-[0_0_2px_rgba(0,0,0,0.5)]"
                         />
                     ))}
 
@@ -135,15 +141,19 @@ const KMeansViz = () => {
                                 transition={{ type: 'spring', stiffness: 100, damping: 15 }}
                             >
                                 {/* Crosshair */}
-                                <line x1="-3" y1="0" x2="3" y2="0" stroke="white" strokeWidth="1" />
-                                <line x1="0" y1="-3" x2="0" y2="3" stroke="white" strokeWidth="1" />
+                                <line x1="-4" y1="0" x2="4" y2="0" stroke="white" strokeWidth="0.8" />
+                                <line x1="0" y1="-4" x2="0" y2="4" stroke="white" strokeWidth="0.8" />
                                 {/* Glow */}
-                                <circle r="6" stroke={c.fill} strokeWidth="1" fill="none" opacity="0.5" className="animate-pulse" />
+                                <circle r="6" stroke={c.fill} strokeWidth="1.5" fill="none" opacity="0.4" className="animate-pulse" />
+                                <circle r="2" fill="white" />
                             </motion.g>
                         ))}
                     </AnimatePresence>
                 </svg>
-                <div className="absolute top-2 right-2 text-[9px] text-slate-600 font-mono">Iteration: 10 (Converged)</div>
+                <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Status: Converged (Iter 10)</span>
+                </div>
             </div>
         </div>
     );
@@ -206,30 +216,41 @@ const DBSCANViz = () => {
 
     return (
         <div className="space-y-6">
-             <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+             <div className="flex justify-between items-center bg-slate-900/50 p-6 rounded-xl border border-slate-800/50 backdrop-blur-sm">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Sliders size={12} /> Epsilon (Radius): <span className="text-emerald-400 text-sm ml-2">{epsilon}</span>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <Sliders size={12} className="text-emerald-500" /> 
+                        Epsilon (Radius): <span className="text-emerald-500 text-xs ml-1">{epsilon}</span>
                     </label>
                     <input 
                         type="range" min="5" max="25" step="1" 
                         value={epsilon} onChange={(e) => setEpsilon(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500 mt-2"
+                        className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                     />
                 </div>
-                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest">
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500"></div> Normal</div>
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-slate-500"></div> Noise</div>
+                <div className="flex gap-6">
+                    <div className="flex flex-col items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Normal</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-slate-700"></div>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Noise</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative overflow-hidden">
+            <div className="h-80 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
                 <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                         <XAxis type="number" dataKey="x" domain={[0, 120]} hide />
                         <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
+                        <Tooltip 
+                            cursor={{ strokeDasharray: '3 3', stroke: '#334155' }} 
+                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px', color: '#94a3b8' }} 
+                        />
                         
                         <Scatter name="Data" data={clusteredData} shape="circle">
                             {clusteredData.map((entry, index) => (
@@ -238,6 +259,9 @@ const DBSCANViz = () => {
                         </Scatter>
                     </ScatterChart>
                 </ResponsiveContainer>
+                <div className="absolute top-4 right-4 text-[9px] font-mono text-slate-600 uppercase tracking-[0.2em]">
+                    Density-Based Clustering
+                </div>
             </div>
         </div>
     );
@@ -297,39 +321,40 @@ const PCAViz = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+            <div className="flex justify-between items-center bg-slate-900/50 p-6 rounded-xl border border-slate-800/50 backdrop-blur-sm">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Sliders size={12} /> Correlation (Spread): <span className="text-indigo-400 text-sm ml-2">{spread.toFixed(2)}</span>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <Sliders size={12} className="text-emerald-500" /> 
+                        Correlation (Spread): <span className="text-emerald-500 text-xs ml-1">{spread.toFixed(2)}</span>
                     </label>
                     <input 
                         type="range" min="0.1" max="0.99" step="0.01" 
                         value={spread} onChange={(e) => setSpread(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 mt-2"
+                        className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                     />
                 </div>
                 <button 
                     onClick={() => setShowProjections(!showProjections)}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${showProjections ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-slate-900 text-slate-500 border border-slate-700 hover:text-white'}`}
+                    className={`px-4 py-2 rounded border text-[10px] font-black uppercase tracking-[0.2em] transition-all ${showProjections ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'}`}
                 >
-                    {showProjections ? 'Hide Projections' : 'Show Projections'}
+                    {showProjections ? 'Disable Projections' : 'Enable Projections'}
                 </button>
             </div>
 
-            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4 relative overflow-hidden flex items-center justify-center select-none">
-                <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
+            <div className="h-80 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4 relative overflow-hidden flex items-center justify-center select-none">
+                <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible relative z-10">
                     <defs>
-                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <pattern id="grid-pca" width="10" height="10" patternUnits="userSpaceOnUse">
                             <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1e293b" strokeWidth="0.5"/>
                         </pattern>
                         <marker id="arrowPC1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                            <path d="M0,0 L0,6 L6,3 z" fill="#f43f5e" />
+                            <path d="M0,0 L0,6 L6,3 z" fill="#10b981" />
                         </marker>
                         <marker id="arrowPC2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                             <path d="M0,0 L0,6 L6,3 z" fill="#3b82f6" />
                         </marker>
                     </defs>
-                    <rect width="100" height="100" fill="url(#grid)" />
+                    <rect width="100" height="100" fill="url(#grid-pca)" />
 
                     {/* Infinite-looking PC1 Line */}
                     <motion.line 
@@ -337,7 +362,7 @@ const PCAViz = () => {
                             x1: pca.mean.x - pca.v1.x * 100, y1: pca.mean.y - pca.v1.y * 100,
                             x2: pca.mean.x + pca.v1.x * 100, y2: pca.mean.y + pca.v1.y * 100
                         }}
-                        stroke="#f43f5e" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.5"
+                        stroke="#10b981" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.3"
                     />
                     
                     {/* Infinite-looking PC2 Line */}
@@ -346,7 +371,7 @@ const PCAViz = () => {
                             x1: pca.mean.x - pca.v2.x * 100, y1: pca.mean.y - pca.v2.y * 100,
                             x2: pca.mean.x + pca.v2.x * 100, y2: pca.mean.y + pca.v2.y * 100
                         }}
-                        stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.3"
+                        stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.2"
                     />
 
                     {/* Projections onto PC1 */}
@@ -367,11 +392,11 @@ const PCAViz = () => {
                                 >
                                     <motion.line 
                                         animate={{ x1: p.x, y1: p.y, x2: projX, y2: projY }}
-                                        stroke="#f43f5e" strokeWidth="0.3" opacity="0.3" 
+                                        stroke="#10b981" strokeWidth="0.3" opacity="0.2" 
                                     />
                                     <motion.circle 
                                         animate={{ cx: projX, cy: projY }}
-                                        r="1" fill="#f43f5e" opacity="0.6" 
+                                        r="0.8" fill="#10b981" opacity="0.5" 
                                     />
                                 </motion.g>
                             )
@@ -384,7 +409,7 @@ const PCAViz = () => {
                             x1: pca.mean.x, y1: pca.mean.y,
                             x2: pca.mean.x + pca.v1.x * 30, y2: pca.mean.y + pca.v1.y * 30
                         }}
-                        stroke="#f43f5e" strokeWidth="2" markerEnd="url(#arrowPC1)"
+                        stroke="#10b981" strokeWidth="1.5" markerEnd="url(#arrowPC1)"
                     />
                     {/* PC2 Vector */}
                     <motion.line 
@@ -392,7 +417,7 @@ const PCAViz = () => {
                             x1: pca.mean.x, y1: pca.mean.y,
                             x2: pca.mean.x + pca.v2.x * 15, y2: pca.mean.y + pca.v2.y * 15
                         }}
-                        stroke="#3b82f6" strokeWidth="2" markerEnd="url(#arrowPC2)"
+                        stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowPC2)"
                     />
 
                     {/* Data Points */}
@@ -401,29 +426,30 @@ const PCAViz = () => {
                             key={p.id}
                             animate={{ cx: p.x, cy: p.y }}
                             transition={{ type: "spring", stiffness: 120, damping: 15 }}
-                            r="1.8" fill="#94a3b8" opacity="0.9" 
+                            r="1.5" fill="#94a3b8" opacity="0.8" 
                         />
                     ))}
 
                     {/* Centroid */}
-                    <circle cx={pca.mean.x} cy={pca.mean.y} r="3" fill="#fff" stroke="#0f172a" strokeWidth="1" />
+                    <circle cx={pca.mean.x} cy={pca.mean.y} r="2.5" fill="#fff" stroke="#0f172a" strokeWidth="1" />
                 </svg>
 
                 {/* Info Overlay */}
-                <div className="absolute top-4 right-4 flex flex-col gap-2 bg-slate-900/90 p-3 rounded-xl border border-slate-800 backdrop-blur-md shadow-xl">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-1 bg-rose-500 rounded"></div>
-                        <span className="text-[10px] text-slate-300 font-bold uppercase">PC1 (Var: {(pca.lambda1).toFixed(0)})</span>
+                <div className="absolute top-6 right-6 flex flex-col gap-3 bg-slate-900/90 p-4 rounded-xl border border-slate-800 backdrop-blur-md shadow-2xl">
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-1 bg-emerald-500 rounded-full"></div>
+                        <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">PC1 (Var: {(pca.lambda1).toFixed(0)})</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-1 bg-blue-500 rounded"></div>
-                        <span className="text-[10px] text-slate-300 font-bold uppercase">PC2 (Var: {(pca.lambda2).toFixed(0)})</span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-1 bg-blue-500 rounded-full"></div>
+                        <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">PC2 (Var: {(pca.lambda2).toFixed(0)})</span>
                     </div>
                 </div>
             </div>
-            <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 leading-relaxed">
-                The red vector <strong>(PC1)</strong> aligns with the direction of maximum variance. The blue vector <strong>(PC2)</strong> is orthogonal to it. 
-                Dimensionality reduction involves projecting points onto PC1 (red dots) and discarding the distance to the line (information loss).
+            <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800/50 text-[11px] text-slate-500 leading-relaxed font-mono">
+                <span className="text-emerald-500/80 font-bold uppercase mr-2">[Analysis]</span>
+                The emerald vector (PC1) aligns with the direction of maximum variance. The blue vector (PC2) is orthogonal. 
+                Dimensionality reduction involves projecting points onto PC1 and discarding the orthogonal component.
             </div>
         </div>
     );
@@ -460,30 +486,41 @@ const IsolationForestViz = () => {
 
     return (
         <div className="space-y-6">
-             <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+             <div className="flex justify-between items-center bg-slate-900/50 p-6 rounded-xl border border-slate-800/50 backdrop-blur-sm">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Sliders size={12} /> Contamination: <span className="text-rose-400 text-sm ml-2">{(contamination * 100).toFixed(0)}%</span>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <Sliders size={12} className="text-rose-500" /> 
+                        Contamination: <span className="text-rose-500 text-xs ml-1">{(contamination * 100).toFixed(0)}%</span>
                     </label>
                     <input 
                         type="range" min="0.01" max="0.25" step="0.01" 
                         value={contamination} onChange={(e) => setContamination(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500 mt-2"
+                        className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
                     />
                 </div>
-                <div className="flex gap-4 text-[10px] font-bold uppercase tracking-widest">
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500"></div> Normal</div>
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-rose-500"></div> Anomaly</div>
+                <div className="flex gap-6">
+                    <div className="flex flex-col items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Normal</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></div>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Anomaly</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-2 relative overflow-hidden">
+            <div className="h-80 w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-4 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#1e293b 1px, transparent 1px)', backgroundSize: '25px 25px' }} />
                 <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                         <XAxis type="number" dataKey="x" domain={[0, 100]} hide />
                         <YAxis type="number" dataKey="y" domain={[0, 100]} hide />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px' }} />
+                        <Tooltip 
+                            cursor={{ strokeDasharray: '3 3', stroke: '#334155' }} 
+                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px', color: '#94a3b8' }} 
+                        />
                         <Scatter name="Data" data={data} shape="circle">
                             {data.map((entry: any, index: number) => (
                                 <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -491,6 +528,9 @@ const IsolationForestViz = () => {
                         </Scatter>
                     </ScatterChart>
                 </ResponsiveContainer>
+                <div className="absolute bottom-4 left-4 text-[9px] font-mono text-slate-600 uppercase tracking-[0.2em]">
+                    Isolation Forest Detection
+                </div>
             </div>
         </div>
     );
@@ -555,30 +595,29 @@ const TSNEViz = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+            <div className="flex justify-between items-center bg-slate-900/50 p-6 rounded-xl border border-slate-800/50 backdrop-blur-sm">
                 <div className="w-1/2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <Sliders size={12} /> Perplexity: <span className="text-amber-400 text-sm ml-2">{perplexity}</span>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <Sliders size={12} className="text-amber-500" /> 
+                        Perplexity: <span className="text-amber-500 text-xs ml-1">{perplexity}</span>
                     </label>
                     <input 
                         type="range" min="5" max="60" step="5" 
                         value={perplexity} onChange={(e) => setPerplexity(Number(e.target.value))}
-                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500 mt-2"
+                        className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
                     />
                 </div>
-                <div className="text-[10px] font-mono px-3 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400 text-right">
-                    {perplexity < 15 ? "Focus: Local (Fragmented)" : perplexity > 40 ? "Focus: Global (Uniform)" : "Balanced Structure"}
+                <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Focus Mode</span>
+                    <div className="text-[11px] font-mono px-3 py-1.5 rounded bg-slate-950 border border-slate-800 text-amber-400/80">
+                        {perplexity < 15 ? "Local (Fragmented)" : perplexity > 40 ? "Global (Uniform)" : "Balanced Structure"}
+                    </div>
                 </div>
             </div>
 
-            <div className="h-72 w-full bg-slate-950 rounded-2xl border border-slate-800/50 relative overflow-hidden flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full p-4 overflow-visible">
-                    <defs>
-                        <radialGradient id="glowPoint">
-                            <stop offset="0%" stopColor="white" stopOpacity="0.8"/>
-                            <stop offset="100%" stopColor="white" stopOpacity="0"/>
-                        </radialGradient>
-                    </defs>
+            <div className="h-80 w-full bg-slate-950 rounded-2xl border border-slate-800/50 relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                <svg viewBox="0 0 100 100" className="w-full h-full p-8 overflow-visible relative z-10">
                     <AnimatePresence>
                         {data.map((p) => (
                             <motion.circle 
@@ -586,19 +625,22 @@ const TSNEViz = () => {
                                 initial={false}
                                 animate={{ cx: p.x, cy: p.y, fill: p.fill }}
                                 transition={{ type: "spring", stiffness: 50, damping: 15 }}
-                                r={1.5}
-                                opacity={0.8}
+                                r={1.2}
+                                opacity={0.7}
+                                className="drop-shadow-[0_0_2px_rgba(0,0,0,0.3)]"
                             />
                         ))}
                     </AnimatePresence>
                 </svg>
-                <div className="absolute bottom-2 left-2 text-[9px] text-slate-600 font-mono">
-                    High Dim &rarr; 2D Embedding
+                <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">High Dim &rarr; 2D Embedding</span>
                 </div>
             </div>
             
-            <div className="text-xs text-slate-500 text-center max-w-lg mx-auto">
-                <strong className="text-amber-400">Perplexity</strong> can be interpreted as the number of effective nearest neighbors. Low values preserve local splits; high values prioritize global geometry.
+            <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800/50 text-[11px] text-slate-500 leading-relaxed font-mono text-center">
+                <span className="text-amber-500/80 font-bold uppercase mr-2">[Theory]</span>
+                Perplexity is the effective number of neighbors. Low values preserve local splits; high values prioritize global geometry.
             </div>
         </div>
     );
@@ -614,20 +656,30 @@ export const UnsupervisedView: React.FC = () => {
       exit={{ opacity: 0 }}
       className="space-y-12 pb-20"
     >
-      <header className="mb-12 border-b border-slate-800 pb-8">
+      <header className="mb-12 border-b border-slate-800/50 pb-8">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3 mb-4"
+        >
+          <div className="h-px w-8 bg-emerald-500/50" />
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em]">
+            Pattern Recognition
+          </span>
+        </motion.div>
         <motion.h1 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl font-serif font-bold text-white mb-4"
+          className="text-6xl font-black text-white mb-6 tracking-tighter"
         >
-          Unsupervised Learning
+          UNSUPERVISED <span className="text-emerald-500">LEARNING</span>
         </motion.h1>
         <motion.p 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+          className="text-slate-400 text-lg max-w-3xl leading-relaxed font-medium"
         >
           Extracting structure from noise. Unsupervised algorithms organize data without the guidance of explicit labels, identifying clusters, densities, dimensions, and anomalies.
         </motion.p>

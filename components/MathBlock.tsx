@@ -10,7 +10,7 @@ interface MathBlockProps {
 export const MathBlock: React.FC<MathBlockProps> = ({ children, label, type = 'block' }) => {
   if (type === 'inline') {
     return (
-      <span className="math-serif italic font-bold text-indigo-400 bg-indigo-500/5 px-1 rounded mx-0.5">
+      <span className="math-serif italic font-bold text-brand bg-brand/5 px-1.5 py-0.5 rounded-none mx-0.5 border border-brand/10">
         {children}
       </span>
     );
@@ -20,29 +20,29 @@ export const MathBlock: React.FC<MathBlockProps> = ({ children, label, type = 'b
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      className="my-10 p-8 bg-slate-100 dark:bg-slate-900/30 border-2 border-slate-200 dark:border-slate-800/50 rounded-3xl relative group overflow-hidden transition-colors duration-300"
+      className="my-10 p-10 bg-surface border border-border-strong rounded-none relative group overflow-hidden transition-all duration-300"
     >
-      <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-30 transition-opacity">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" className="text-indigo-500">
-           <path d="M10,10 L30,10 L30,30 L10,30 L10,10 Z" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 2" />
+      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
+        <svg width="60" height="60" viewBox="0 0 40 40" fill="currentColor" className="text-brand">
+           <path d="M10,10 L30,10 L30,30 L10,30 L10,10 Z" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
         </svg>
       </div>
       
       {label && (
-        <div className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-          <div className="w-4 h-px bg-slate-300 dark:bg-slate-800"></div>
+        <div className="text-[9px] font-mono font-black text-text-muted uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
+          <div className="w-6 h-px bg-border-strong"></div>
           {label}
         </div>
       )}
       
-      <div className="math-serif text-2xl md:text-3xl text-slate-800 dark:text-slate-100 leading-relaxed tracking-wider text-center py-4 font-light">
+      <div className="math-serif text-2xl md:text-4xl text-text-primary leading-relaxed tracking-wider text-center py-6 font-light">
         {children}
       </div>
       
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-800"></div>
-        <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-800"></div>
-        <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-800"></div>
+      <div className="absolute bottom-4 left-6 flex gap-2 opacity-20">
+        <div className="w-1 h-1 bg-brand"></div>
+        <div className="w-1 h-1 bg-brand"></div>
+        <div className="w-1 h-1 bg-brand"></div>
       </div>
     </motion.div>
   );

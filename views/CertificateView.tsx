@@ -14,76 +14,92 @@ export const CertificateView: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen p-8 flex flex-col items-center justify-center relative overflow-hidden"
+      className="min-h-screen p-8 flex flex-col items-center justify-center relative overflow-hidden bg-app"
     >
       {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/10 via-slate-950 to-slate-950 -z-10"></div>
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" 
+           style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       
-      <div className="mb-8 flex gap-4 print:hidden">
-        <button 
+      <div className="mb-12 flex gap-4 print:hidden relative z-10">
+        <Button 
           onClick={handlePrint}
-          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold shadow-lg shadow-indigo-600/20 transition-all"
+          variant="primary"
+          size="lg"
+          leftIcon={<Printer size={18} />}
         >
-          <Printer size={16} /> Print / Save PDF
-        </button>
+          EXPORT_PDF
+        </Button>
       </div>
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-[800px] bg-white text-slate-900 p-12 rounded-lg shadow-2xl border-[16px] border-double border-slate-200 relative overflow-hidden"
+        className="w-full max-w-[900px] bg-white text-slate-950 p-16 rounded-none shadow-2xl border border-slate-950 relative overflow-hidden"
         id="certificate-frame"
       >
-        {/* Certificate Border Pattern */}
-        <div className="absolute inset-0 border-[2px] border-slate-900/5 m-4 pointer-events-none"></div>
-        <div className="absolute inset-0 border-[1px] border-slate-900/10 m-6 pointer-events-none"></div>
+        {/* Technical Border Pattern */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-slate-950" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-950" />
+        <div className="absolute top-0 left-0 h-full w-1 bg-slate-950" />
+        <div className="absolute top-0 right-0 h-full w-1 bg-slate-950" />
+        
+        <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-slate-950" />
+        <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-slate-950" />
+        <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-slate-950" />
+        <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-slate-950" />
 
         {/* Watermark */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
-           <BrainCircuit size={400} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.02] pointer-events-none">
+           <BrainCircuit size={500} />
         </div>
 
-        <div className="text-center relative z-10 space-y-8">
-           <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center text-white">
-                 <Award size={48} />
+        <div className="text-center relative z-10 space-y-12">
+           <div className="flex justify-center mb-8">
+              <div className="w-24 h-24 bg-slate-950 rounded-none flex items-center justify-center text-white">
+                 <Award size={56} />
               </div>
            </div>
 
-           <div className="space-y-2">
-              <h1 className="text-5xl font-serif font-bold text-slate-900 tracking-tight uppercase">Certificate</h1>
-              <p className="text-xl font-light text-slate-500 uppercase tracking-[0.4em]">Of Completion</p>
-           </div>
-
-           <div className="py-8">
-              <p className="text-slate-500 italic mb-4">This certifies that</p>
-              <div className="text-4xl font-serif font-bold text-indigo-900 border-b-2 border-indigo-900/20 pb-4 inline-block min-w-[300px]">
-                 AI Engineer
+           <div className="space-y-4">
+              <h1 className="text-6xl font-display font-black text-slate-950 tracking-tighter uppercase leading-none">CERTIFICATE</h1>
+              <div className="flex items-center justify-center gap-4">
+                 <div className="h-px w-12 bg-slate-950/20" />
+                 <p className="text-sm font-mono font-black text-slate-500 uppercase tracking-[0.5em]">OF_COMPLETION</p>
+                 <div className="h-px w-12 bg-slate-950/20" />
               </div>
-              <p className="text-slate-500 italic mt-6 mb-2">has successfully completed the comprehensive curriculum</p>
-              <h2 className="text-2xl font-bold text-slate-800">{CURRICULUM.title}</h2>
            </div>
 
-           <div className="grid grid-cols-2 gap-12 mt-12 pt-8 border-t border-slate-100">
-              <div className="text-center">
-                 <div className="text-lg font-bold text-slate-900 font-serif">
+           <div className="py-12 space-y-8">
+              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">THIS_CERTIFIES_THAT_NODE_ID:</p>
+              <div className="text-5xl font-display font-black text-slate-950 border-b-4 border-slate-950 pb-6 inline-block min-w-[400px] uppercase tracking-tight">
+                 AI_ENGINEER_01
+              </div>
+              <p className="text-slate-500 font-mono text-xs uppercase tracking-widest leading-relaxed">
+                HAS_SUCCESSFULLY_SYNCHRONIZED_WITH_THE_NEURAL_ARCHITECTURE_OF
+              </p>
+              <h2 className="text-3xl font-display font-black text-slate-950 uppercase tracking-tight">{CURRICULUM.title}</h2>
+           </div>
+
+           <div className="grid grid-cols-2 gap-20 mt-16 pt-12 border-t border-slate-100">
+              <div className="text-center space-y-2">
+                 <div className="text-xl font-mono font-black text-slate-950 uppercase tracking-widest">
                     {new Date().toLocaleDateString()}
                  </div>
-                 <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Date</div>
+                 <div className="text-[9px] font-mono font-black text-slate-400 uppercase tracking-[0.3em]">TIMESTAMP</div>
               </div>
-              <div className="text-center">
-                 <div className="text-lg font-bold text-slate-900 font-serif font-signature">
-                    The Neural Codex Team
+              <div className="text-center space-y-2">
+                 <div className="text-xl font-mono font-black text-slate-950 uppercase tracking-widest">
+                    AI_CODEX_CORE
                  </div>
-                 <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Instructor</div>
+                 <div className="text-[9px] font-mono font-black text-slate-400 uppercase tracking-[0.3em]">AUTHORITY</div>
               </div>
            </div>
 
-           <div className="mt-8 flex justify-center">
-              <div className="bg-slate-50 px-4 py-2 rounded border border-slate-100 flex items-center gap-2">
-                 <CheckCircle size={14} className="text-emerald-500" />
-                 <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Verified Credential</span>
+           <div className="mt-12 flex justify-center">
+              <div className="bg-emerald-50 px-6 py-3 rounded-none border border-emerald-100 flex items-center gap-3">
+                 <CheckCircle size={16} className="text-emerald-500" />
+                 <span className="text-[10px] font-mono font-black text-emerald-600 uppercase tracking-[0.3em]">VERIFIED_CREDENTIAL_HASH: {Math.random().toString(36).substring(2, 15).toUpperCase()}</span>
               </div>
            </div>
         </div>

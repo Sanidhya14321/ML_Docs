@@ -23,7 +23,6 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   const topic = getTopicById(topicId);
   const initialCode = topic?.labConfig?.initialCode || DEFAULT_CODE;
 
-  // Use updated hook which now manages code state and persistence
   const { code, setCode, resetCode, logs, isRunning, runCode, clearLogs } = useCodeRunner(topicId, initialCode);
 
   const [activeTab, setActiveTab] = useState<'editor' | 'console'>('editor');
@@ -33,7 +32,6 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   const { markAsCompleted, isCompleted } = useCourseProgress();
   const completed = isCompleted(topicId);
 
-  // Detect mobile
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -41,21 +39,18 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Simulate Environment Boot Sequence
   useEffect(() => {
     setIsBooting(true);
     const timer = setTimeout(() => {
         setIsBooting(false);
-    }, 2000); // 2 second boot simulation
+    }, 2000);
     return () => clearTimeout(timer);
   }, [topicId]);
 
-  // Auto-complete logic based on execution logs
   useEffect(() => {
     if (!isRunning && logs.length > 0) {
        const lastLog = logs[logs.length - 1];
        if (lastLog.type === 'system' && lastLog.content.includes('Execution completed')) {
-           // If the code ran successfully, we mark it as complete
            if (!isCompleted(topicId)) {
                markAsCompleted(topicId);
                triggerConfetti();
@@ -65,11 +60,7 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
   }, [isRunning, logs, topicId, markAsCompleted, isCompleted]);
 
   const handleRun = () => {
-    if (isMobile) {
-        setActiveTab('console');
-    } else {
-        setActiveTab('console');
-    }
+    setActiveTab('console');
     runCode();
   };
 
@@ -81,64 +72,68 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
 
   if (isBooting) {
       return (
-          <div className="h-full flex items-center justify-center bg-[#020617] text-slate-300">
-              <LoadingOverlay message="Provisioning Environment" subMessage="Allocating GPU Container..." />
+          <div className="h-full flex items-center justify-center bg-app text-text-secondary">
+              <LoadingOverlay message="PROVISIONING_ENVIRONMENT" subMessage="ALLOCATING_GPU_CONTAINER_INSTANCE..." />
           </div>
       );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#0f1117] relative z-50">
+    <div className="h-full flex flex-col bg-app relative z-50">
       {/* Lab Header */}
-      <header className="h-14 border-b border-slate-800 bg-[#020617] flex items-center justify-between px-4 shrink-0">
-        <div className="flex items-center gap-4">
-           <button onClick={onBack} className="text-xs font-mono text-slate-500 hover:text-white transition-colors">← Exit</button>
-           <div className="h-4 w-px bg-slate-800 hidden sm:block" />
-           <span className="text-sm font-bold text-slate-200 flex items-center gap-2">
-              <Terminal size={14} className="text-indigo-400" />
-              <span className="hidden sm:inline">Interactive Workspace</span>
-           </span>
-           <span className="text-xs text-slate-600 font-mono hidden md:inline truncate max-w-[200px]">{topic?.title || topicId}</span>
+      <header className="h-14 border-b border-border-strong bg-surface flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-6">
+           <button onClick={onBack} className="text-[10px] font-mono font-black text-text-muted hover:text-brand uppercase tracking-widest transition-colors">← EXIT_SESSION</button>
+           <div className="h-4 w-px bg-border-strong hidden sm:block" />
+           <div className="flex items-center gap-3">
+              <Terminal size={14} className="text-brand" />
+              <span className="text-[10px] font-mono font-black text-text-primary uppercase tracking-[0.2em] hidden sm:inline">LAB_WORKSPACE_V1.0</span>
+           </div>
+           <span className="text-[10px] text-text-muted font-mono hidden md:inline truncate max-w-[200px] uppercase tracking-tighter opacity-50">[{topic?.title || topicId}]</span>
         </div>
         
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden lg:flex items-center gap-2 text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 mr-2">
-             <Server size={10} /> System Online
+        <div className="flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-2 text-[9px] font-mono font-black text-emerald-500 bg-emerald-500/5 px-3 py-1 border border-emerald-500/20 uppercase tracking-widest">
+             <Server size={10} /> SYSTEM_ONLINE
           </div>
 
           <AnimatePresence>
             {completed && (
                 <motion.div 
-                    initial={{ opacity: 0, scale: 0.8 }} 
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="hidden sm:flex items-center gap-2 text-emerald-400 text-xs font-bold mr-4 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20"
+                    initial={{ opacity: 0, x: 20 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    className="hidden sm:flex items-center gap-2 text-emerald-500 text-[9px] font-mono font-black uppercase tracking-widest px-3 py-1 bg-emerald-500/5 border border-emerald-500/20"
                 >
-                    <CheckCircle size={12} /> Completed
+                    <CheckCircle size={10} /> SYNC_COMPLETE
                 </motion.div>
             )}
           </AnimatePresence>
 
-          {topic?.labConfig?.hints && topic.labConfig.hints.length > 0 && (
-             <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-md hover:bg-amber-500/20 transition-colors">
-                <Lightbulb size={12} /> <span className="hidden sm:inline">Hints</span>
-             </button>
-          )}
-          <button 
-            onClick={handleReset}
-            disabled={isRunning}
-            className="p-2 text-slate-500 hover:text-white transition-colors disabled:opacity-50"
-            title="Reset Code"
-          >
-            <RotateCcw size={16} />
-          </button>
-          <button 
-            onClick={handleRun}
-            disabled={isRunning}
-            className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold rounded-md transition-all shadow-lg shadow-indigo-900/20"
-          >
-            {isRunning ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-            {isRunning ? 'Running...' : 'Run'}
-          </button>
+          <div className="h-4 w-px bg-border-strong hidden sm:block" />
+
+          <div className="flex items-center gap-2">
+            {topic?.labConfig?.hints && topic.labConfig.hints.length > 0 && (
+               <button className="flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono font-black text-amber-500 bg-amber-500/5 border border-amber-500/20 hover:bg-amber-500/10 uppercase tracking-widest transition-colors">
+                  <Lightbulb size={12} /> <span className="hidden sm:inline">HINTS</span>
+               </button>
+            )}
+            <button 
+              onClick={handleReset}
+              disabled={isRunning}
+              className="p-2 text-text-muted hover:text-text-primary transition-colors disabled:opacity-50"
+              title="Reset Code"
+            >
+              <RotateCcw size={16} />
+            </button>
+            <button 
+              onClick={handleRun}
+              disabled={isRunning}
+              className="flex items-center gap-3 px-6 py-1.5 bg-text-primary text-app hover:bg-brand disabled:opacity-50 transition-all font-mono font-black text-[10px] uppercase tracking-[0.2em]"
+            >
+              {isRunning ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} fill="currentColor" />}
+              {isRunning ? 'EXECUTING...' : 'RUN_CODE'}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -148,25 +143,25 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
           isMobile={isMobile}
           initialLeftWidth={35}
           left={
-            <div className="bg-[#020617] min-h-full p-6 pb-20">
+            <div className="bg-app min-h-full p-8 pb-24">
                <DocViewer topicId={topicId} title="Lab Instructions" isCompact={true} />
             </div>
           }
           right={
             <div className="flex flex-col h-full bg-[#1e1e1e]">
               {/* Editor Tabs */}
-              <div className="flex bg-[#252526] border-b border-[#1e1e1e] shrink-0">
+              <div className="flex bg-[#1a1a1a] border-b border-white/5 shrink-0">
                 <button 
                    onClick={() => setActiveTab('editor')}
-                   className={`px-4 py-2.5 text-xs font-medium flex items-center gap-2 border-t-2 ${activeTab === 'editor' ? 'bg-[#1e1e1e] text-indigo-300 border-indigo-500' : 'text-slate-500 border-transparent hover:text-slate-300'}`}
+                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'editor' ? 'bg-white/5 text-brand border-brand' : 'text-white/40 border-transparent hover:text-white/60'}`}
                 >
-                  <FileCode size={14} /> main.py
+                  <FileCode size={14} /> SOURCE_CODE
                 </button>
                 <button 
                    onClick={() => setActiveTab('console')}
-                   className={`px-4 py-2.5 text-xs font-medium flex items-center gap-2 border-t-2 ${activeTab === 'console' ? 'bg-[#1e1e1e] text-white border-indigo-500' : 'text-slate-500 border-transparent hover:text-slate-300'}`}
+                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'console' ? 'bg-white/5 text-white border-brand' : 'text-white/40 border-transparent hover:text-white/60'}`}
                 >
-                  <Terminal size={14} /> Console {logs.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>}
+                  <Terminal size={14} /> SYSTEM_CONSOLE {logs.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
                 </button>
               </div>
 
