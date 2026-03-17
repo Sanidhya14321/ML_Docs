@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
 import { Newspaper, ExternalLink, Calendar, Tag, RefreshCw, AlertCircle, Loader2 } from 'lucide-react';
+import { Button } from '../components/Button';
 
 interface NewsItem {
   title: string;

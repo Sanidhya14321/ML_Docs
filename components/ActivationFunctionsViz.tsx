@@ -47,36 +47,38 @@ export const ActivationFunctionsViz: React.FC = () => {
     const data = generateData(current.fn, current.range);
 
     return (
-        <div className="flex flex-col md:flex-row gap-6 bg-slate-950 rounded-2xl border border-slate-800/50 p-6">
-            <div className="w-full md:w-1/3 flex flex-col gap-2">
-                <label className="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Select Function</label>
+        <div className="flex flex-col md:flex-row gap-8 bg-app border border-border-strong p-8 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px)', backgroundSize: '100% 30px' }} />
+            
+            <div className="w-full md:w-1/3 flex flex-col gap-3 relative z-10">
+                <label className="text-[10px] font-mono font-black text-text-muted uppercase tracking-[0.3em] mb-4">SELECT_FUNCTION</label>
                 {(Object.keys(functions) as Array<keyof typeof functions>).map((key) => (
                     <button
                         key={key}
                         onClick={() => setActiveFunc(key)}
-                        className={`px-4 py-3 rounded-lg text-left text-sm font-bold transition-all border ${activeFunc === key ? 'bg-slate-800 border-indigo-500 text-white shadow-lg shadow-indigo-500/10' : 'bg-transparent border-transparent text-slate-500 hover:bg-slate-900 hover:text-slate-300'}`}
+                        className={`px-4 py-3 border font-mono text-[10px] font-black uppercase tracking-widest text-left transition-all ${activeFunc === key ? 'bg-brand border-brand text-app shadow-[0_0_20px_rgba(16,185,129,0.2)]' : 'bg-surface border-border-strong text-text-muted hover:text-brand hover:border-brand'}`}
                     >
                         {functions[key].name}
                     </button>
                 ))}
                 
-                <div className="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                <div className="mt-8 p-4 bg-surface border border-border-strong">
+                    <p className="text-[10px] font-mono text-text-muted leading-relaxed uppercase tracking-widest">
                         {current.desc}
                     </p>
                 </div>
             </div>
 
-            <div className="flex-1 h-64 bg-slate-900/30 rounded-xl border border-slate-800/50 relative">
+            <div className="flex-1 h-80 bg-surface/30 border border-border-strong relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis dataKey="x" type="number" stroke="#475569" fontSize={10} tickCount={7} />
-                        <YAxis stroke="#475569" fontSize={10} />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '10px' }} itemStyle={{ color: current.color }} />
-                        <ReferenceLine x={0} stroke="#334155" />
-                        <ReferenceLine y={0} stroke="#334155" />
-                        <Line type="monotone" dataKey="y" stroke={current.color} strokeWidth={3} dot={false} animationDuration={500} />
+                    <LineChart data={data} margin={{ top: 30, right: 30, bottom: 30, left: 30 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-strong)" />
+                        <XAxis dataKey="x" type="number" stroke="var(--text-muted)" fontSize={9} tickCount={7} fontFamily="monospace" fontWeight="900" />
+                        <YAxis stroke="var(--text-muted)" fontSize={9} fontFamily="monospace" fontWeight="900" />
+                        <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', fontSize: '9px', fontFamily: 'monospace', fontWeight: '900', borderRadius: '0' }} itemStyle={{ color: 'var(--brand)' }} />
+                        <ReferenceLine x={0} stroke="var(--border-strong)" />
+                        <ReferenceLine y={0} stroke="var(--border-strong)" />
+                        <Line type="monotone" dataKey="y" stroke="var(--brand)" strokeWidth={3} dot={false} animationDuration={500} />
                     </LineChart>
                 </ResponsiveContainer>
             </div>

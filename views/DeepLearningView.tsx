@@ -57,27 +57,29 @@ const NeuralNetworkViz = () => {
   const c3 = useMemo(() => createConnections(h2Nodes, outputNodes, layerX[2], layerX[3]), []);
 
   return (
-    <div className="w-full h-80 bg-slate-950/50 rounded-3xl border border-slate-800 flex items-center justify-center relative overflow-hidden shadow-inner select-none backdrop-blur-sm group">
+    <div className="w-full h-80 bg-app border border-border-strong flex items-center justify-center relative overflow-hidden select-none group">
        <button 
          onClick={() => setIsPlaying(!isPlaying)}
-         className="absolute top-4 right-4 z-20 p-2 rounded-lg bg-slate-800/80 text-slate-400 hover:text-white hover:bg-indigo-600 transition-all opacity-0 group-hover:opacity-100"
+         className="absolute top-4 right-4 z-20 p-2 bg-surface border border-border-strong text-text-muted hover:text-brand transition-all opacity-0 group-hover:opacity-100"
        >
-         {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+         {isPlaying ? <Pause size={14} /> : <Play size={14} />}
        </button>
 
-       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full p-4">
+       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full p-4 relative z-10">
           <defs>
             <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feGaussianBlur stdDeviation="3" result="blur"/>
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
             <linearGradient id="forwardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#6366f1" />
-                <stop offset="100%" stopColor="#818cf8" />
+                <stop offset="0%" stopColor="var(--brand)" />
+                <stop offset="100%" stopColor="var(--brand)" stopOpacity={0.5} />
             </linearGradient>
             <linearGradient id="backGrad" x1="100%" y1="0%" x2="0%" y2="0%">
                 <stop offset="0%" stopColor="#f43f5e" />
-                <stop offset="100%" stopColor="#fb7185" />
+                <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.5} />
             </linearGradient>
           </defs>
 
@@ -88,11 +90,11 @@ const NeuralNetworkViz = () => {
                       <path 
                         key={conn.key} 
                         d={conn.d} 
-                        stroke="#1e293b" 
-                        strokeWidth={conn.weight * 1.5} 
+                        stroke="var(--border-strong)" 
+                        strokeWidth={conn.weight * 1} 
                         fill="none" 
                         className="transition-all duration-700"
-                        strokeOpacity={activeStep === 0 ? 0.6 : 0.2}
+                        strokeOpacity={activeStep === 0 ? 0.4 : 0.1}
                       />
                   ))}
                   {activeStep === 0 && layer.map((conn) => (
@@ -100,11 +102,11 @@ const NeuralNetworkViz = () => {
                         key={`${conn.key}-active`}
                         d={conn.d} 
                         stroke="url(#forwardGrad)" 
-                        strokeWidth={conn.weight * 2} 
+                        strokeWidth={conn.weight * 1.5} 
                         fill="none" 
-                        strokeDasharray="5 10"
-                        className="animate-[flow_1.5s_linear_infinite]"
-                        strokeOpacity={0.5}
+                        strokeDasharray="4 8"
+                        className="animate-[flow_2s_linear_infinite]"
+                        strokeOpacity={0.4}
                       />
                   ))}
                   {activeStep === 2 && layer.map((conn) => (
@@ -112,12 +114,12 @@ const NeuralNetworkViz = () => {
                         key={`${conn.key}-back`}
                         d={conn.d} 
                         stroke="url(#backGrad)" 
-                        strokeWidth={conn.weight * 1.5} 
+                        strokeWidth={conn.weight * 1} 
                         fill="none" 
-                        strokeDasharray="5 10"
-                        className="animate-[flow_1.5s_linear_infinite]"
+                        strokeDasharray="4 8"
+                        className="animate-[flow_2s_linear_infinite]"
                         style={{ animationDirection: 'reverse' }}
-                        strokeOpacity={0.4}
+                        strokeOpacity={0.3}
                       />
                   ))}
               </g>
@@ -131,10 +133,10 @@ const NeuralNetworkViz = () => {
                         key={nIdx} 
                         cx={layerX[lIdx]} 
                         cy={y} 
-                        r={lIdx === 0 || lIdx === 3 ? 9 : 7} 
-                        fill="#020617" 
-                        stroke={activeStep === 0 ? (lIdx === 0 ? '#6366f1' : '#1e293b') : activeStep === 2 ? '#f43f5e' : '#1e293b'} 
-                        strokeWidth="2" 
+                        r={lIdx === 0 || lIdx === 3 ? 8 : 6} 
+                        fill="var(--surface)" 
+                        stroke={activeStep === 0 ? (lIdx === 0 ? 'var(--brand)' : 'var(--border-strong)') : activeStep === 2 ? '#f43f5e' : 'var(--border-strong)'} 
+                        strokeWidth="1.5" 
                         filter={activeStep === 0 && lIdx === 0 ? "url(#nodeGlow)" : ""}
                         className="transition-colors duration-1000"
                       />
@@ -144,11 +146,11 @@ const NeuralNetworkViz = () => {
 
           {/* Legend */}
           <g transform="translate(20, 20)">
-             <rect width="140" height="42" rx="10" fill="#020617" stroke="#1e293b" />
-             <text x="14" y="26" fill="#94a3b8" fontSize="9" fontWeight="bold" className="font-mono uppercase tracking-widest">
-                {activeStep === 0 ? "Forwarding" : activeStep === 1 ? "Error: 0.042" : "Backpropping"}
+             <rect width="160" height="40" rx="0" fill="var(--surface)" stroke="var(--border-strong)" />
+             <text x="12" y="24" fill="var(--text-muted)" fontSize="9" fontWeight="900" className="font-mono uppercase tracking-widest">
+                {activeStep === 0 ? "STATUS: FORWARD_PASS" : activeStep === 1 ? "LOSS_VAL: 0.042" : "STATUS: BACK_PROP"}
              </text>
-             <circle cx="122" cy="23" r="4" fill={activeStep === 0 ? "#6366f1" : activeStep === 1 ? "#fbbf24" : "#f43f5e"} className="animate-pulse" />
+             <circle cx="145" cy="21" r="3" fill={activeStep === 0 ? "var(--brand)" : activeStep === 1 ? "#fbbf24" : "#f43f5e"} className="animate-pulse" />
           </g>
        </svg>
     </div>
@@ -156,55 +158,57 @@ const NeuralNetworkViz = () => {
 };
 
 const ConvolutionViz = () => (
-    <div className="flex items-center justify-center gap-4 py-8 select-none">
-        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-800 border border-slate-700">
+    <div className="flex items-center justify-center gap-6 py-10 bg-app border border-border-strong relative overflow-hidden select-none">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        
+        <div className="grid grid-cols-4 gap-1 p-2 bg-surface border border-border-strong relative z-10">
              {Array.from({length: 16}).map((_,i) => (
-                 <div key={i} className={`w-4 h-4 md:w-6 md:h-6 ${[5,6,9,10].includes(i) ? 'bg-indigo-500' : 'bg-slate-700'}`}></div>
+                 <div key={i} className={`w-4 h-4 md:w-8 md:h-8 border ${[5,6,9,10].includes(i) ? 'bg-brand/40 border-brand' : 'bg-app border-border-strong'}`}></div>
              ))}
         </div>
-        <div className="text-slate-500 font-mono text-xl">×</div>
-        <div className="grid grid-cols-2 gap-1 p-1 bg-indigo-900 border border-indigo-500">
-            <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">1</div>
-            <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">0</div>
-            <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">0</div>
-            <div className="w-4 h-4 md:w-6 md:h-6 bg-white/20 text-[8px] flex items-center justify-center">1</div>
+        <div className="text-text-muted font-mono text-xs font-black relative z-10">×</div>
+        <div className="grid grid-cols-2 gap-1 p-2 bg-brand/10 border border-brand/50 relative z-10">
+            <div className="w-4 h-4 md:w-8 md:h-8 bg-brand/20 text-[8px] font-mono font-black flex items-center justify-center text-brand">1</div>
+            <div className="w-4 h-4 md:w-8 md:h-8 bg-brand/20 text-[8px] font-mono font-black flex items-center justify-center text-brand">0</div>
+            <div className="w-4 h-4 md:w-8 md:h-8 bg-brand/20 text-[8px] font-mono font-black flex items-center justify-center text-brand">0</div>
+            <div className="w-4 h-4 md:w-8 md:h-8 bg-brand/20 text-[8px] font-mono font-black flex items-center justify-center text-brand">1</div>
         </div>
-        <div className="text-slate-500 font-mono text-xl">=</div>
-        <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800 border border-slate-700">
+        <div className="text-text-muted font-mono text-xs font-black relative z-10">=</div>
+        <div className="grid grid-cols-3 gap-1 p-2 bg-surface border border-border-strong relative z-10">
              {Array.from({length: 9}).map((_,i) => (
-                 <div key={i} className={`w-4 h-4 md:w-6 md:h-6 ${i === 4 ? 'bg-emerald-500' : 'bg-slate-700'}`}></div>
+                 <div key={i} className={`w-4 h-4 md:w-8 md:h-8 border ${i === 4 ? 'bg-brand border-brand shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-app border-border-strong'}`}></div>
              ))}
         </div>
     </div>
 );
 
 const AttentionViz = () => {
-    const words = ['The', 'cat', 'sat', 'on'];
+    const words = ['THE', 'NEURAL', 'NODE', 'ACTIVE'];
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
-    // Dynamic attention weights based on hover
-    // In a real model, this is computed. Here we simulate the focus.
     const getWeights = (idx: number) => {
         const base = [0.1, 0.1, 0.1, 0.1];
-        base[idx] = 0.7; // Self focus
-        if (idx === 1) base[2] = 0.2; // Cat -> Sat
-        if (idx === 2) base[1] = 0.2; // Sat -> Cat
+        base[idx] = 0.7; 
+        if (idx === 1) base[2] = 0.2; 
+        if (idx === 2) base[1] = 0.2; 
         return base;
     };
 
     const currentWeights = hoverIndex !== null ? getWeights(hoverIndex) : [0.5, 0.3, 0.1, 0.1];
 
     return (
-        <div className="flex flex-col items-center py-6 gap-6">
-            <div className="flex gap-4">
+        <div className="flex flex-col items-center py-8 gap-10 bg-app border border-border-strong relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            
+            <div className="flex gap-4 relative z-10">
                 {words.map((word, i) => (
                     <div 
                         key={i} 
                         onMouseEnter={() => setHoverIndex(i)}
                         onMouseLeave={() => setHoverIndex(null)}
                         className={`
-                            px-3 py-2 rounded-lg border font-mono text-sm cursor-default transition-all duration-300
-                            ${hoverIndex === i ? 'bg-indigo-500 border-indigo-400 text-white scale-110' : 'bg-slate-900 border-slate-700 text-slate-400'}
+                            px-4 py-2 border font-mono text-[10px] font-black cursor-default transition-all duration-300 uppercase tracking-widest
+                            ${hoverIndex === i ? 'bg-brand border-brand text-app scale-105' : 'bg-surface border-border-strong text-text-muted'}
                         `}
                     >
                         {word}
@@ -212,45 +216,46 @@ const AttentionViz = () => {
                 ))}
             </div>
             
-            <div className="flex flex-col items-center gap-2">
-                <div className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">Context Weighting</div>
-                <div className="flex gap-4 items-end h-24">
+            <div className="flex flex-col items-center gap-4 relative z-10">
+                <div className="text-[9px] text-text-muted font-mono font-black uppercase tracking-[0.3em]">CONTEXT_WEIGHT_DISTRIBUTION</div>
+                <div className="flex gap-6 items-end h-24">
                     {currentWeights.map((w, i) => (
-                        <div key={i} className="flex flex-col items-center gap-1">
+                        <div key={i} className="flex flex-col items-center gap-2">
                             <div 
-                                className="w-10 bg-indigo-500/40 border border-indigo-500/60 rounded-t transition-all duration-500 shadow-[0_0_15px_rgba(99,102,241,0.2)]" 
+                                className="w-12 bg-brand/20 border border-brand/40 transition-all duration-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]" 
                                 style={{ height: `${w * 100}%` }}
                             ></div>
-                            <span className="text-[8px] text-slate-600 font-mono">{(w * 100).toFixed(0)}%</span>
+                            <span className="text-[8px] text-text-muted font-mono font-black">{(w * 100).toFixed(0)}%</span>
                         </div>
                     ))}
                 </div>
             </div>
             
-            <p className="text-[9px] text-slate-600 font-mono text-center max-w-xs uppercase tracking-widest leading-relaxed">
+            <p className="text-[9px] text-text-muted font-mono text-center max-w-xs uppercase tracking-widest leading-relaxed px-6 relative z-10">
                 {hoverIndex !== null 
-                    ? `Showing how the model focuses on other words when processing "${words[hoverIndex]}"`
-                    : "Hover over a word to see its attention map"}
+                    ? `MAPPING_ATTENTION_VECTOR_FOR: "${words[hoverIndex]}"`
+                    : "HOVER_TOKEN_TO_INITIATE_ATTENTION_SCAN"}
             </p>
         </div>
     );
 };
 
 const EmbeddingsViz = () => (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full bg-app border border-border-strong p-6 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
         <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+            <ScatterChart margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-strong)" />
                 <XAxis type="number" dataKey="x" hide domain={[0, 8]} />
                 <YAxis type="number" dataKey="y" hide domain={[0, 8]} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', borderRadius: '8px' }} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-strong)', fontSize: '9px', fontFamily: 'monospace', fontWeight: '900', borderRadius: '0' }} />
                 
-                <ReferenceLine segment={[{x: 2, y: 2}, {x: 2, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" />
-                <ReferenceLine segment={[{x: 6, y: 2}, {x: 6, y: 6}]} stroke="#94a3b8" strokeDasharray="3 3" />
-                <ReferenceLine segment={[{x: 2, y: 2}, {x: 6, y: 2}]} stroke="#475569" strokeDasharray="2 2" />
+                <ReferenceLine segment={[{x: 2, y: 2}, {x: 2, y: 6}]} stroke="var(--brand)" strokeDasharray="3 3" strokeOpacity={0.4} />
+                <ReferenceLine segment={[{x: 6, y: 2}, {x: 6, y: 6}]} stroke="var(--brand)" strokeDasharray="3 3" strokeOpacity={0.4} />
+                <ReferenceLine segment={[{x: 2, y: 2}, {x: 6, y: 2}]} stroke="var(--border-strong)" strokeDasharray="2 2" />
 
                 <Scatter data={embeddingData} shape="circle">
-                    <LabelList dataKey="label" position="top" fill="#cbd5e1" fontSize={11} offset={10} fontWeight="bold" />
+                    <LabelList dataKey="label" position="top" fill="var(--text-muted)" fontSize={9} offset={10} style={{ fontFamily: 'monospace', fontWeight: '900', textTransform: 'uppercase' }} />
                 </Scatter>
             </ScatterChart>
         </ResponsiveContainer>
@@ -258,38 +263,39 @@ const EmbeddingsViz = () => (
 );
 
 const BackpropViz = () => (
-    <div className="flex flex-col gap-4 p-5 bg-slate-900/50 rounded-2xl border border-slate-800/50">
-        <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800 pb-3">
-             <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> Forward</span>
-             <span className="flex items-center gap-1">Backward <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div></span>
+    <div className="flex flex-col gap-6 p-6 bg-app border border-border-strong relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-[0.3em] text-text-muted border-b border-border-strong pb-4 relative z-10">
+             <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand"></div> FORWARD_PASS</span>
+             <span className="flex items-center gap-2">ERROR_GRADIENT <div className="w-2 h-2 bg-rose-500"></div></span>
         </div>
-        <div className="flex justify-between items-center gap-2 py-2">
-            <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-indigo-500 flex items-center justify-center bg-indigo-900/20 text-indigo-300 font-bold shadow-lg shadow-indigo-900/20">x</div>
-                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">In</span>
+        <div className="flex justify-between items-center gap-4 py-4 relative z-10">
+            <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 border-2 border-brand flex items-center justify-center bg-brand/10 text-brand font-black font-mono text-xs shadow-[0_0_15px_rgba(16,185,129,0.2)]">X</div>
+                <span className="text-[8px] text-text-muted font-black uppercase tracking-widest">INPUT</span>
             </div>
             
-            <div className="flex-1 h-[2px] bg-slate-800 relative group overflow-hidden">
-                <div className="absolute inset-0 bg-indigo-500/20 animate-pulse"></div>
+            <div className="flex-1 h-[1px] bg-border-strong relative overflow-hidden">
+                <div className="absolute inset-0 bg-brand/20 animate-pulse"></div>
             </div>
 
-            <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-slate-600 flex items-center justify-center bg-slate-800 text-slate-300 font-bold">h</div>
-                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">Hidden</span>
+            <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 border-2 border-border-strong flex items-center justify-center bg-surface text-text-muted font-black font-mono text-xs">H</div>
+                <span className="text-[8px] text-text-muted font-black uppercase tracking-widest">HIDDEN</span>
             </div>
 
-             <div className="flex-1 h-[2px] bg-slate-800 relative group overflow-hidden">
+             <div className="flex-1 h-[1px] bg-border-strong relative overflow-hidden">
                 <div className="absolute inset-0 bg-rose-500/20 animate-pulse"></div>
             </div>
 
-            <div className="flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center bg-emerald-900/20 text-emerald-300 font-bold">y&#770;</div>
-                <span className="text-[8px] mt-2 text-slate-600 font-black uppercase">Pred</span>
+            <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 border-2 border-brand flex items-center justify-center bg-brand/10 text-brand font-black font-mono text-xs">Y</div>
+                <span className="text-[8px] text-text-muted font-black uppercase tracking-widest">PRED</span>
             </div>
         </div>
-        <div className="bg-slate-950 p-4 rounded-xl text-[10px] font-mono text-slate-500 border border-slate-800 leading-relaxed italic">
-            <span className="text-rose-400 font-bold not-italic">Backprop Rule:</span> <br/>
-            Chain gradients backwards to update weights using calculus.
+        <div className="bg-surface p-4 border border-border-strong text-[9px] font-mono text-text-muted uppercase tracking-widest leading-relaxed relative z-10">
+            <span className="text-rose-500 font-black">BACKPROP_RULE:</span> <br/>
+            CHAIN_GRADIENTS_BACKWARDS_TO_UPDATE_WEIGHTS_VIA_CALCULUS.
         </div>
     </div>
 );
@@ -320,34 +326,36 @@ const BPTTViz = () => {
     }, [phase]);
 
     return (
-        <div className="w-full bg-slate-950 rounded-2xl border border-slate-800/50 p-6 relative overflow-hidden">
-            <div className="absolute top-3 right-4 text-[9px] font-mono font-black uppercase tracking-widest bg-slate-900 px-2 py-1 rounded border border-slate-800">
-                Mode: <span className={phase === 'forward' ? 'text-indigo-400' : 'text-rose-400'}>{phase === 'forward' ? 'Inference' : 'Learning (BPTT)'}</span>
+        <div className="w-full bg-app border border-border-strong p-8 relative overflow-hidden select-none">
+            <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(90deg, #1e293b 1px, transparent 1px)', backgroundSize: '60px 100%' }} />
+            
+            <div className="absolute top-4 right-4 text-[8px] font-mono font-black uppercase tracking-widest bg-surface px-3 py-1.5 border border-border-strong z-20">
+                MODE: <span className={phase === 'forward' ? 'text-brand' : 'text-rose-500'}>{phase === 'forward' ? 'INFERENCE' : 'LEARNING_BPTT'}</span>
             </div>
             
-            <div className="flex justify-around items-center mt-8">
+            <div className="flex justify-around items-center mt-10 relative z-10">
                 {[0, 1, 2].map((t) => {
                     const isActive = phase === 'forward' ? step >= t : step <= t;
                     const isGradient = phase === 'backward' && step <= t;
 
                     return (
-                        <div key={t} className="flex flex-col items-center gap-2 relative group">
-                             <div className="absolute -top-7 text-[8px] text-slate-600 font-mono font-bold tracking-widest">T={t}</div>
-                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110' : isActive ? 'border-emerald-500 bg-emerald-900/30 text-emerald-300' : 'border-slate-800 bg-slate-900 text-slate-700'}`}>
+                        <div key={t} className="flex flex-col items-center gap-3 relative group">
+                             <div className="absolute -top-8 text-[8px] text-text-muted font-mono font-black tracking-[0.3em] uppercase">STEP_T{t}</div>
+                             <div className={`w-10 h-10 border-2 flex items-center justify-center text-[10px] font-black font-mono transition-all duration-500 ${isGradient ? 'border-rose-500 bg-rose-500/10 text-rose-500 scale-110' : isActive ? 'border-brand bg-brand/10 text-brand' : 'border-border-strong bg-surface text-text-muted opacity-40'}`}>
                                 Y
                              </div>
-                             <div className={`w-[2px] h-6 transition-colors duration-500 ${isGradient ? 'bg-rose-500' : isActive ? 'bg-slate-700' : 'bg-slate-900'}`}></div>
-                             <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center text-xs font-bold transition-all duration-500 z-10 ${isGradient ? 'border-rose-500 bg-rose-900/30 text-rose-300 scale-110 shadow-[0_0_20px_rgba(244,63,94,0.3)]' : isActive ? 'border-indigo-500 bg-indigo-900/20 text-indigo-300' : 'border-slate-800 bg-slate-900 text-slate-700'}`}>
+                             <div className={`w-[1px] h-8 transition-colors duration-500 ${isGradient ? 'bg-rose-500' : isActive ? 'bg-brand' : 'bg-border-strong opacity-40'}`}></div>
+                             <div className={`w-12 h-12 border-2 flex items-center justify-center text-[10px] font-black font-mono transition-all duration-500 z-10 ${isGradient ? 'border-rose-500 bg-rose-500/10 text-rose-500 scale-110 shadow-[0_0_20px_rgba(244,63,94,0.2)]' : isActive ? 'border-brand bg-brand/10 text-brand' : 'border-border-strong bg-surface text-text-muted opacity-40'}`}>
                                 H
                              </div>
-                             <div className={`w-[2px] h-6 transition-colors duration-500 ${isActive ? 'bg-slate-700' : 'bg-slate-900'}`}></div>
-                             <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-all duration-500 ${isActive ? 'border-slate-500 bg-slate-800 text-white' : 'border-slate-900 bg-slate-950 text-slate-800'}`}>
+                             <div className={`w-[1px] h-8 transition-colors duration-500 ${isActive ? 'bg-brand' : 'bg-border-strong opacity-40'}`}></div>
+                             <div className={`w-10 h-10 border-2 flex items-center justify-center text-[10px] font-black font-mono transition-all duration-500 ${isActive ? 'border-text-muted bg-surface text-text-primary' : 'border-border-strong bg-surface text-text-muted opacity-40'}`}>
                                 X
                              </div>
                              {t < 2 && (
-                                 <div className="absolute top-[3.5rem] left-9 w-12 h-8 flex items-center justify-center">
-                                     <div className={`absolute w-full h-[2px] transition-colors duration-500 ${phase === 'forward' && step > t ? 'bg-indigo-500' : 'bg-slate-900'}`}></div>
-                                     <div className={`absolute w-full h-[2px] transition-all duration-500 ${phase === 'backward' && step <= t ? 'bg-rose-500 translate-y-1 opacity-100' : 'opacity-0'}`}></div>
+                                 <div className="absolute top-[4.5rem] left-10 w-16 h-8 flex items-center justify-center">
+                                     <div className={`absolute w-full h-[1px] transition-colors duration-500 ${phase === 'forward' && step > t ? 'bg-brand' : 'bg-border-strong opacity-40'}`}></div>
+                                     <div className={`absolute w-full h-[1px] transition-all duration-500 ${phase === 'backward' && step <= t ? 'bg-rose-500 translate-y-1 opacity-100' : 'opacity-0'}`}></div>
                                  </div>
                              )}
                         </div>
@@ -359,67 +367,69 @@ const BPTTViz = () => {
 };
 
 const RAGViz = () => (
-    <div className="flex flex-col gap-6 p-6 bg-slate-900/50 rounded-2xl border border-slate-800 items-center justify-center relative overflow-hidden select-none">
+    <div className="flex flex-col gap-10 p-10 bg-app border border-border-strong items-center justify-center relative overflow-hidden select-none">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(45deg, #1e293b 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+        
         {/* Connection Dashed Line */}
-        <div className="absolute top-1/2 left-4 right-4 h-0 border-t-2 border-dashed border-slate-800/50 -z-0 hidden md:block"></div>
+        <div className="absolute top-1/2 left-10 right-10 h-[1px] border-t border-dashed border-border-strong -z-0 hidden md:block"></div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-lg gap-4 z-10">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-xl gap-6 z-10">
             {/* Step 1: Query */}
-            <div className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-lg group">
-                    <Search size={22} className="text-indigo-400 group-hover:scale-110 transition-transform" />
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 border border-border-strong bg-surface flex items-center justify-center shadow-lg group transition-all hover:border-brand">
+                    <Search size={24} className="text-brand group-hover:scale-110 transition-transform" />
                 </div>
                 <div className="text-center">
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Query</div>
-                    <div className="text-[9px] text-slate-600 font-mono">Input</div>
+                    <div className="text-[10px] font-black text-text-primary uppercase tracking-[0.2em]">QUERY</div>
+                    <div className="text-[8px] text-text-muted font-mono uppercase tracking-widest mt-1">INPUT_SIGNAL</div>
                 </div>
             </div>
 
-            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+            <ArrowRight size={14} className="text-border-strong rotate-90 md:rotate-0" />
 
             {/* Step 2: Vector DB */}
-            <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-2xl bg-emerald-900/10 border border-emerald-500/20 flex flex-col items-center justify-center shadow-lg relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
-                    <Database size={24} className="text-emerald-500 z-10" />
-                    <div className="absolute bottom-1 w-8 h-0.5 bg-emerald-500/50 rounded-full animate-pulse"></div>
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-20 h-20 border-2 border-brand/20 bg-brand/5 flex flex-col items-center justify-center shadow-lg relative overflow-hidden group transition-all hover:border-brand/40">
+                    <div className="absolute inset-0 bg-brand/5 group-hover:bg-brand/10 transition-colors"></div>
+                    <Database size={28} className="text-brand z-10" />
+                    <div className="absolute bottom-2 w-10 h-[1px] bg-brand/50 rounded-full animate-pulse"></div>
                 </div>
                 <div className="text-center">
-                    <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Vector DB</div>
-                    <div className="text-[9px] text-emerald-500/60 font-mono">Similarity Search</div>
+                    <div className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">VECTOR_DB</div>
+                    <div className="text-[8px] text-brand/60 font-mono uppercase tracking-widest mt-1">SIMILARITY_SCAN</div>
                 </div>
             </div>
 
-            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+            <ArrowRight size={14} className="text-border-strong rotate-90 md:rotate-0" />
 
             {/* Step 3: Context */}
-            <div className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-lg relative group">
-                    <FileText size={22} className="text-amber-400 z-10 group-hover:-translate-y-1 transition-transform" />
-                    <FileText size={22} className="text-amber-400/50 absolute top-4 left-5 -z-0" />
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-16 h-16 border border-border-strong bg-surface flex items-center justify-center shadow-lg relative group transition-all hover:border-brand">
+                    <FileText size={24} className="text-brand z-10 group-hover:-translate-y-1 transition-transform" />
+                    <FileText size={24} className="text-brand/30 absolute top-5 left-6 -z-0" />
                 </div>
                 <div className="text-center">
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Context</div>
-                    <div className="text-[9px] text-slate-600 font-mono">Top-K Chunks</div>
+                    <div className="text-[10px] font-black text-text-primary uppercase tracking-[0.2em]">CONTEXT</div>
+                    <div className="text-[8px] text-text-muted font-mono uppercase tracking-widest mt-1">TOP_K_CHUNKS</div>
                 </div>
             </div>
 
-            <ArrowRight size={16} className="text-slate-700 rotate-90 md:rotate-0" />
+            <ArrowRight size={14} className="text-border-strong rotate-90 md:rotate-0" />
 
             {/* Step 4: LLM */}
-            <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-xl shadow-indigo-600/20">
-                    <Bot size={28} className="text-white" />
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-20 h-20 border border-brand bg-brand flex items-center justify-center shadow-xl shadow-brand/20">
+                    <Bot size={32} className="text-app" />
                 </div>
                 <div className="text-center">
-                    <div className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">LLM</div>
-                    <div className="text-[9px] text-indigo-400/60 font-mono">Generation</div>
+                    <div className="text-[10px] font-black text-brand uppercase tracking-[0.2em]">LLM_CORE</div>
+                    <div className="text-[8px] text-brand/60 font-mono uppercase tracking-widest mt-1">SYNTHESIS</div>
                 </div>
             </div>
         </div>
         
-        <div className="bg-slate-950 px-4 py-1.5 rounded-full border border-slate-800 text-[9px] text-slate-500 font-mono z-20 mt-4 md:mt-0">
-            Augmented Prompt = Context + Query
+        <div className="bg-surface px-6 py-2 border border-border-strong text-[9px] text-text-muted font-mono font-black uppercase tracking-[0.3em] z-20 mt-6 md:mt-0">
+            AUGMENTED_PROMPT = CONTEXT + QUERY
         </div>
     </div>
 );
@@ -434,12 +444,23 @@ export const DeepLearningView: React.FC = () => {
       exit={{ opacity: 0 }}
       className="space-y-12 pb-20"
     >
-      <header className="mb-12 border-b border-slate-800 pb-8">
+      <header className="mb-12 border-b border-border-strong pb-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 font-mono text-[8px] text-brand/20 tracking-[0.5em] pointer-events-none">
+          NEURAL_ENGINE_v5.0
+        </div>
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex items-center gap-3 mb-6"
+        >
+          <div className="w-12 h-[1px] bg-brand" />
+          <span className="text-[10px] font-mono font-black text-brand uppercase tracking-[0.3em]">DEEP_LEARNING_ARCHITECTURE</span>
+        </motion.div>
         <motion.h1 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl font-serif font-bold text-white mb-4"
+          className="text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight"
         >
           Deep Learning
         </motion.h1>
@@ -447,9 +468,9 @@ export const DeepLearningView: React.FC = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-slate-400 text-xl max-w-3xl leading-relaxed font-light"
+          className="text-text-secondary text-lg max-w-3xl leading-relaxed font-sans uppercase tracking-tight"
         >
-          Harnessing the power of multi-layered artificial neural networks. Deep learning identifies complex hierarchies of features within massive datasets to solve tasks once thought impossible for machines.
+          Harness multi-layered neural networks to identify complex hierarchies of features within massive datasets.
         </motion.p>
       </header>
 

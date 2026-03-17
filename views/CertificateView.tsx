@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, CheckCircle, Printer, BrainCircuit } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
+import { Button } from '../components/Button';
 
 export const CertificateView: React.FC = () => {
   const handlePrint = () => {
