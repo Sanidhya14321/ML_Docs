@@ -158,7 +158,7 @@ export const NewsFeedView: React.FC = () => {
               <Newspaper size={20} />
               <span className="text-[10px] font-mono font-black uppercase tracking-[0.4em]">LIVE_INTELLIGENCE_STREAM</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-black text-text-primary leading-none uppercase tracking-tighter">
+            <h1 className="text-4xl md:text-5xl font-heading font-black text-text-primary leading-none uppercase tracking-tighter">
               NEURAL_FEED
             </h1>
             <p className="text-text-secondary mt-4 max-w-2xl text-lg font-light leading-relaxed">
@@ -232,7 +232,7 @@ export const NewsFeedView: React.FC = () => {
                     </span>
                   </div>
                   
-                  <h2 className="text-2xl font-display font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors leading-tight">
+                  <h2 className="text-2xl font-heading font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors leading-tight">
                     {item.title}
                   </h2>
                   

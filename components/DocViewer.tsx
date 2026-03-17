@@ -74,7 +74,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
             </button>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-display font-black text-text-primary mb-8 leading-none uppercase tracking-tight transition-all duration-300">
+          <h1 className="text-4xl md:text-6xl font-heading font-black text-text-primary mb-8 leading-none uppercase tracking-tight transition-all duration-300">
             {displayTitle}
           </h1>
           
@@ -111,7 +111,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
       {/* Compact Header for Lab Mode */}
       {isCompact && (
         <div className="mb-8 pb-6 border-b border-border-strong">
-           <h2 className="text-2xl font-display font-black text-text-primary mb-3 uppercase tracking-tight">{displayTitle}</h2>
+           <h2 className="text-2xl font-heading font-black text-text-primary mb-3 uppercase tracking-tight">{displayTitle}</h2>
            <p className="text-sm text-text-secondary leading-relaxed font-light">{displayDesc}</p>
         </div>
       )}
@@ -172,7 +172,7 @@ export const DocViewer: React.FC<DocViewerProps> = ({ topicId, title, isCompact 
              <div className="mt-24 p-12 border border-border-strong bg-surface relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-1 h-full bg-brand" />
                 <div className="relative z-10 text-center max-w-xl mx-auto">
-                    <h3 className="text-2xl font-display font-black text-text-primary mb-4 uppercase tracking-tight">READY_FOR_DEPLOYMENT?</h3>
+                    <h3 className="text-2xl font-heading font-black text-text-primary mb-4 uppercase tracking-tight">READY_FOR_DEPLOYMENT?</h3>
                     <p className="text-text-secondary font-light mb-8">Launch the interactive workspace to apply these concepts against real-world data structures.</p>
                     <a href={`#lab/${topicId}`} className="inline-flex items-center gap-3 px-8 py-4 bg-text-primary text-app hover:bg-brand font-mono font-black text-[12px] uppercase tracking-[0.2em] transition-all group/btn shadow-xl">
                        LAUNCH_LAB_ENVIRONMENT <ArrowRight size={18} className="group-hover/btn:translate-x-2 transition-transform" />

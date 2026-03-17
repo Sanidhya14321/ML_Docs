@@ -52,7 +52,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 0.2 }}
-               className="text-4xl md:text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight leading-none"
+               className="text-4xl md:text-6xl font-heading font-black text-text-primary mb-6 uppercase tracking-tight leading-none"
              >
                 {CURRICULUM.title}
              </motion.h1>
@@ -78,7 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
              
              <div className="flex justify-between items-end mb-4">
                 <span className="text-[9px] font-mono font-black text-text-muted uppercase tracking-widest">COMPLETION_INDEX</span>
-                <span className="text-3xl font-display font-black text-text-primary">{overallProgress}%</span>
+                <span className="text-3xl font-heading font-black text-text-primary">{overallProgress}%</span>
              </div>
              <div className="w-full h-1 bg-border-subtle mb-8 relative overflow-hidden">
                 <motion.div 
@@ -140,7 +140,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                        {isComplete ? <CheckCircle size={20} /> : (Icon ? <Icon size={20} /> : null)}
                     </div>
                     <div>
-                       <h3 className="text-xl font-display font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors">{module.title}</h3>
+                       <h3 className="text-xl font-heading font-black text-text-primary uppercase tracking-tight group-hover:text-brand transition-colors">{module.title}</h3>
                        <div className="flex items-center gap-3 text-[9px] font-mono font-black text-text-muted uppercase tracking-widest mt-1">
                           <span>{module.chapters.reduce((acc, c) => acc + c.topics.length, 0)} NODES</span>
                           <span className="w-1 h-1 bg-border-strong rounded-full" />

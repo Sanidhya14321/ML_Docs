@@ -77,7 +77,7 @@ const CalculusViz = () => {
                 </div>
                 <div className="text-right w-full sm:w-auto">
                     <div className="text-[9px] text-text-muted font-mono font-black uppercase tracking-widest mb-1">INSTANTANEOUS_GRADIENT</div>
-                    <div className="text-3xl font-display font-black text-text-primary uppercase tracking-tighter">f'(x) = {slope.toFixed(1)}</div>
+                    <div className="text-3xl font-heading font-black text-text-primary uppercase tracking-tighter">f'(x) = {slope.toFixed(1)}</div>
                 </div>
             </div>
 
@@ -174,7 +174,7 @@ export const FoundationsView: React.FC = () => {
            <span className="text-[10px] font-mono font-black text-brand uppercase tracking-[0.4em]">CORE_ARCHITECTURE_V1.0</span>
            <div className="h-px w-12 bg-brand" />
         </div>
-        <h1 className="text-5xl md:text-8xl font-display font-black text-text-primary mb-10 leading-none uppercase tracking-tight">
+        <h1 className="text-5xl md:text-8xl font-heading font-black text-text-primary mb-10 leading-none uppercase tracking-tight">
           THEORETICAL_FOUNDATIONS
         </h1>
         <p className="text-text-secondary text-xl max-w-3xl leading-relaxed font-light italic">
@@ -185,7 +185,7 @@ export const FoundationsView: React.FC = () => {
       {/* SECTION 1: LINEAR ALGEBRA */}
       <motion.section variants={MOTION_VARIANTS.item} id="linear-algebra" className="scroll-mt-24">
         <div className="flex items-center gap-6 mb-16">
-            <h2 className="text-3xl font-display font-black text-text-primary uppercase tracking-tight">01 // LINEAR_ALGEBRA</h2>
+            <h2 className="text-3xl font-heading font-black text-text-primary uppercase tracking-tight">01 // LINEAR_ALGEBRA</h2>
             <div className="h-px bg-border-strong flex-1"></div>
         </div>
         <AlgorithmCard
@@ -218,7 +218,7 @@ output = np.matmul(W, a)`}
       {/* SECTION 2: CALCULUS */}
       <motion.section variants={MOTION_VARIANTS.item} id="calculus" className="scroll-mt-24">
         <div className="flex items-center gap-6 mb-16">
-            <h2 className="text-3xl font-display font-black text-text-primary uppercase tracking-tight">02 // CALCULUS_&_GRADIENTS</h2>
+            <h2 className="text-3xl font-heading font-black text-text-primary uppercase tracking-tight">02 // CALCULUS_&_GRADIENTS</h2>
             <div className="h-px bg-border-strong flex-1"></div>
         </div>
         <AlgorithmCard
@@ -250,7 +250,7 @@ print(x.grad) # f'(2) = 2*2 = 4.0`}
       {/* SECTION 3: PROBABILITY */}
       <motion.section variants={MOTION_VARIANTS.item} id="probability" className="scroll-mt-24">
         <div className="flex items-center gap-6 mb-16">
-            <h2 className="text-3xl font-display font-black text-text-primary uppercase tracking-tight">03 // PROBABILITY_&_STATISTICS</h2>
+            <h2 className="text-3xl font-heading font-black text-text-primary uppercase tracking-tight">03 // PROBABILITY_&_STATISTICS</h2>
             <div className="h-px bg-border-strong flex-1"></div>
         </div>
         <AlgorithmCard
@@ -285,12 +285,12 @@ posterior = (likelihood * prior) / 1.0 # simplified`}
       {/* SECTION 4: OPTIMIZATION */}
       <motion.section variants={MOTION_VARIANTS.item} id="optimization" className="scroll-mt-24">
          <div className="flex items-center gap-6 mb-16">
-            <h2 className="text-3xl font-display font-black text-text-primary uppercase tracking-tight">04 // OPTIMIZATION</h2>
+            <h2 className="text-3xl font-heading font-black text-text-primary uppercase tracking-tight">04 // OPTIMIZATION</h2>
             <div className="h-px bg-border-strong flex-1"></div>
         </div>
         <div className="bg-surface border border-border-strong rounded-none p-12 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-1 h-full bg-brand" />
-            <h3 className="text-3xl font-display font-black text-text-primary mb-6 uppercase tracking-tight">THE_QUEST_FOR_MINIMA</h3>
+            <h3 className="text-3xl font-heading font-black text-text-primary mb-6 uppercase tracking-tight">THE_QUEST_FOR_MINIMA</h3>
             <p className="text-text-secondary leading-relaxed mb-10 font-light italic max-w-3xl">
                 Optimization is the engine that drives learning. It involves traversing a high-dimensional "Loss Landscape" to find the set of parameters that minimizes error. 
                 Algorithms like <strong>Gradient Descent</strong> and <strong>Adam</strong> navigate these valleys.

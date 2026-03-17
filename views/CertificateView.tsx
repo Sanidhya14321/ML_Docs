@@ -63,7 +63,7 @@ export const CertificateView: React.FC = () => {
            </div>
 
            <div className="space-y-4">
-              <h1 className="text-6xl font-display font-black text-slate-950 tracking-tighter uppercase leading-none">CERTIFICATE</h1>
+              <h1 className="text-6xl font-heading font-black text-slate-950 tracking-tighter uppercase leading-none">CERTIFICATE</h1>
               <div className="flex items-center justify-center gap-4">
                  <div className="h-px w-12 bg-slate-950/20" />
                  <p className="text-sm font-mono font-black text-slate-500 uppercase tracking-[0.5em]">OF_COMPLETION</p>
@@ -73,13 +73,13 @@ export const CertificateView: React.FC = () => {
 
            <div className="py-12 space-y-8">
               <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">THIS_CERTIFIES_THAT_NODE_ID:</p>
-              <div className="text-5xl font-display font-black text-slate-950 border-b-4 border-slate-950 pb-6 inline-block min-w-[400px] uppercase tracking-tight">
+              <div className="text-5xl font-heading font-black text-slate-950 border-b-4 border-slate-950 pb-6 inline-block min-w-[400px] uppercase tracking-tight">
                  AI_ENGINEER_01
               </div>
               <p className="text-slate-500 font-mono text-xs uppercase tracking-widest leading-relaxed">
                 HAS_SUCCESSFULLY_SYNCHRONIZED_WITH_THE_NEURAL_ARCHITECTURE_OF
               </p>
-              <h2 className="text-3xl font-display font-black text-slate-950 uppercase tracking-tight">{CURRICULUM.title}</h2>
+              <h2 className="text-3xl font-heading font-black text-slate-950 uppercase tracking-tight">{CURRICULUM.title}</h2>
            </div>
 
            <div className="grid grid-cols-2 gap-20 mt-16 pt-12 border-t border-slate-100">

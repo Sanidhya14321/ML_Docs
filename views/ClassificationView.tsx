@@ -392,7 +392,7 @@ export const ClassificationView: React.FC = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-6xl font-display font-black text-text-primary mb-6 uppercase tracking-tight"
+          className="text-6xl font-heading font-black text-text-primary mb-6 uppercase tracking-tight"
         >
           Classification
         </motion.h1>

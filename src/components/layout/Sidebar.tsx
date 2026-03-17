@@ -95,7 +95,7 @@ const ChapterItem: React.FC<{
         )}
       >
         <span className="opacity-40">{isOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}</span>
-        <span className="font-display">{chapter.title}</span>
+        <span className="font-heading">{chapter.title}</span>
       </button>
       
       <AnimatePresence initial={false}>
@@ -179,7 +179,7 @@ export const SidebarContent: React.FC<SidebarProps> = ({ currentPath, onNavigate
             <div className="w-8 h-8 rounded-none bg-text-primary flex items-center justify-center">
               <BrainCircuit size={18} className="text-app" />
             </div>
-            <h1 className="font-display font-black text-lg text-text-primary tracking-tighter uppercase">AI_CODEX</h1>
+            <h1 className="font-heading font-black text-lg text-text-primary tracking-tighter uppercase">AI_CODEX</h1>
           </div>
           <p className="text-[9px] text-text-muted font-mono font-black uppercase tracking-[0.4em] opacity-50">NEURAL_ARCH_V3.2</p>
       </div>

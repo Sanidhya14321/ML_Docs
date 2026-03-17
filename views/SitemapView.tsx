@@ -56,7 +56,7 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl font-display font-black text-text-primary mb-6 uppercase tracking-tighter"
+          className="text-5xl font-heading font-black text-text-primary mb-6 uppercase tracking-tighter"
         >
           SITE_ARCHITECTURE
         </motion.h1>
@@ -90,7 +90,7 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
              <div className="w-10 h-10 rounded-none bg-brand/10 flex items-center justify-center text-brand">
                 <Folder size={20} />
              </div>
-             <h2 className="text-xl font-display font-black text-text-primary uppercase tracking-tight">DIRECTORY_TREE</h2>
+             <h2 className="text-xl font-heading font-black text-text-primary uppercase tracking-tight">DIRECTORY_TREE</h2>
           </div>
           
           <div className="bg-surface border border-border-strong rounded-none p-10 space-y-4">
@@ -121,7 +121,7 @@ export const SitemapView: React.FC<SitemapViewProps> = ({ navItems, onNavigate }
              <div className="w-10 h-10 rounded-none bg-brand/10 flex items-center justify-center text-brand">
                 <FileText size={20} />
              </div>
-             <h2 className="text-xl font-display font-black text-text-primary uppercase tracking-tight">DEVOPS_ARTIFACTS</h2>
+             <h2 className="text-xl font-heading font-black text-text-primary uppercase tracking-tight">DEVOPS_ARTIFACTS</h2>
           </div>
 
           <div className="space-y-6">

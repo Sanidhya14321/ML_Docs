@@ -77,7 +77,7 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
              <Info size={20} />
           </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-display font-black text-text-primary uppercase tracking-tight">{title}</h2>
+            <h2 className="text-xl md:text-2xl font-heading font-black text-text-primary uppercase tracking-tight">{title}</h2>
             <div className="flex items-center gap-2 mt-1">
                <div className={`px-2 py-0.5 rounded-none text-[8px] font-mono uppercase tracking-widest border ${complexityColors[complexity]}`}>
                 {complexity}

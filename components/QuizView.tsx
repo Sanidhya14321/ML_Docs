@@ -61,7 +61,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
              {passed ? <Award size={40} /> : <AlertCircle size={40} />}
           </div>
 
-          <h2 className="text-3xl font-display font-black text-text-primary mb-3 uppercase tracking-tight">
+          <h2 className="text-3xl font-heading font-black text-text-primary mb-3 uppercase tracking-tight">
             {passed ? 'ASSESSMENT_PASSED' : 'NEEDS_OPTIMIZATION'}
           </h2>
           <p className="text-text-secondary font-light mb-10">
@@ -114,7 +114,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ topicId, onBack, onComplete 
           key={currentQuestion.text}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl md:text-4xl font-display font-black text-text-primary leading-tight uppercase tracking-tight"
+          className="text-2xl md:text-4xl font-heading font-black text-text-primary leading-tight uppercase tracking-tight"
         >
           {currentQuestion.text}
         </motion.h1>
