@@ -4,6 +4,7 @@ import React from 'react';
 export enum ViewSection {
   DASHBOARD = 'dashboard',
   NEWS_FEED = 'news-feed',
+  TASKS = 'tasks',
   FOUNDATIONS = 'foundations',
   OPTIMIZATION = 'optimization',
   REGRESSION = 'regression',

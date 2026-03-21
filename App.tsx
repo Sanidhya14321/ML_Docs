@@ -13,6 +13,7 @@ import { QuizView } from './components/QuizView';
 import { SitemapView } from './views/SitemapView';
 import { CertificateView } from './views/CertificateView';
 import { NewsFeedView } from './views/NewsFeedView';
+import { TasksView } from './src/views/TasksView';
 import { ModuleOverviewView } from './src/views/ModuleOverviewView';
 import { getTopicById } from './lib/contentHelpers';
 import { NAV_ITEMS } from './lib/navigation-data';
@@ -114,6 +115,9 @@ const App: React.FC = () => {
   }
   else if (currentPath === ViewSection.NEWS_FEED) {
        contentElement = <NewsFeedView />;
+  }
+  else if (currentPath === ViewSection.TASKS) {
+       contentElement = <TasksView />;
   }
   else if (currentPath === ViewSection.CERTIFICATE) {
        contentElement = <CertificateView />;

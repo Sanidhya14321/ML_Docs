@@ -11,7 +11,8 @@ import {
   Maximize2, 
   LocateFixed,
   BrainCircuit,
-  Hash
+  Hash,
+  ListTodo
 } from 'lucide-react';
 import { CURRICULUM } from '../../../data/curriculum';
 import { Module, Chapter, Topic } from '../../../types';
@@ -220,6 +221,29 @@ export const SidebarContent: React.FC<SidebarProps> = ({ currentPath, onNavigate
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-border-strong/20">
+        <div className="mb-0 border-b border-border-strong">
+          <button 
+            onClick={() => onNavigate('tasks')}
+            className={cn(
+              "w-full flex items-center gap-4 px-5 py-5 sticky top-0 bg-surface/95 backdrop-blur-md z-20 border-b border-border-strong transition-colors text-left group",
+              currentPath === 'tasks' ? "bg-surface-active" : "hover:bg-surface-hover"
+            )}
+          >
+            <span className={cn(
+              "transition-colors",
+              currentPath === 'tasks' ? "text-brand" : "text-brand opacity-60 group-hover:opacity-100"
+            )}>
+              <ListTodo size={14} />
+            </span>
+            <h3 className={cn(
+              "text-[11px] font-mono font-black uppercase tracking-[0.3em] transition-colors",
+              currentPath === 'tasks' ? "text-text-primary" : "text-text-muted group-hover:text-text-primary"
+            )}>
+              Study Plan
+            </h3>
+          </button>
+        </div>
+
         {CURRICULUM.modules.map((module: Module) => (
           <ModuleItem 
             key={module.id} 

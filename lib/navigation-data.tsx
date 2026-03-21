@@ -1,5 +1,5 @@
 
-import { Newspaper } from 'lucide-react';
+import { Newspaper, ListTodo } from 'lucide-react';
 import { CURRICULUM } from '../data/curriculum';
 import { NavigationItem, ViewSection } from '../types';
 
@@ -10,6 +10,12 @@ export const NAV_ITEMS: NavigationItem[] = [
     id: ViewSection.NEWS_FEED,
     label: 'News Feed',
     icon: <Newspaper size={18} />,
+    category: 'Live'
+  },
+  {
+    id: ViewSection.TASKS,
+    label: 'Study Plan',
+    icon: <ListTodo size={18} />,
     category: 'Live'
   },
   ...CURRICULUM.modules.map((module) => ({
