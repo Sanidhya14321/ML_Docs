@@ -93,6 +93,7 @@ const SortableTaskItem: React.FC<SortableTaskItemProps> = ({ task, onToggle, onD
 export const TasksView: React.FC = () => {
   const { tasks, addTask, toggleTask, deleteTask, reorderTasks } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -125,6 +126,12 @@ export const TasksView: React.FC = () => {
 
   const completedCount = tasks.filter(t => t.completed).length;
   const progress = tasks.length === 0 ? 0 : Math.round((completedCount / tasks.length) * 100);
+
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'active') return !task.completed;
+    if (filter === 'completed') return task.completed;
+    return true;
+  });
 
   return (
     <motion.div
@@ -185,6 +192,23 @@ export const TasksView: React.FC = () => {
         </button>
       </form>
 
+      <div className="flex gap-2 mb-6">
+        {(['all', 'active', 'completed'] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={cn(
+              "px-4 py-2 text-[10px] font-mono font-black uppercase tracking-widest transition-colors border",
+              filter === f 
+                ? "bg-brand text-app border-brand" 
+                : "bg-surface text-text-muted border-border-strong hover:border-brand hover:text-text-primary"
+            )}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-2">
         <DndContext
           sensors={sensors}
@@ -192,10 +216,10 @@ export const TasksView: React.FC = () => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={tasks.map(t => t.id)}
+            items={filteredTasks.map(t => t.id)}
             strategy={verticalListSortingStrategy}
           >
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <SortableTaskItem
                 key={task.id}
                 task={task}
@@ -206,7 +230,7 @@ export const TasksView: React.FC = () => {
           </SortableContext>
         </DndContext>
 
-        {tasks.length === 0 && (
+        {filteredTasks.length === 0 && (
           <div className="text-center py-12 border border-dashed border-border-strong text-text-muted font-mono text-sm uppercase tracking-widest">
             NO_TASKS_FOUND
           </div>
