@@ -124,12 +124,30 @@ const ModuleItem: React.FC<{
   expandTimestamp: number;
 }> = ({ module, currentPath, onNavigate, expandAction, expandTimestamp }) => {
   const Icon = module.icon;
+  const isActive = currentPath === module.id;
+  
   return (
     <div className="mb-0 border-b border-border-strong">
-      <div className="flex items-center gap-4 px-5 py-5 text-text-primary sticky top-0 bg-surface/95 backdrop-blur-md z-20 border-b border-border-strong">
-        <span className="text-brand opacity-60">{Icon ? <Icon size={14} /> : null}</span>
-        <h3 className="text-[11px] font-mono font-black uppercase tracking-[0.3em] text-text-muted">{module.title}</h3>
-      </div>
+      <button 
+        onClick={() => onNavigate(module.id)}
+        className={cn(
+          "w-full flex items-center gap-4 px-5 py-5 sticky top-0 bg-surface/95 backdrop-blur-md z-20 border-b border-border-strong transition-colors text-left group",
+          isActive ? "bg-surface-active" : "hover:bg-surface-hover"
+        )}
+      >
+        <span className={cn(
+          "transition-colors",
+          isActive ? "text-brand" : "text-brand opacity-60 group-hover:opacity-100"
+        )}>
+          {Icon ? <Icon size={14} /> : null}
+        </span>
+        <h3 className={cn(
+          "text-[11px] font-mono font-black uppercase tracking-[0.3em] transition-colors",
+          isActive ? "text-text-primary" : "text-text-muted group-hover:text-text-primary"
+        )}>
+          {module.title}
+        </h3>
+      </button>
       <div className="divide-y divide-border-strong/10">
         {module.chapters.map((chapter: Chapter) => (
           <ChapterItem 

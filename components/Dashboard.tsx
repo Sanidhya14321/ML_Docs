@@ -134,7 +134,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               transition={{ delay: idx * 0.05 }}
               className="bg-surface group"
             >
-              <div className="p-8 border-b border-border-subtle bg-app/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
+              <button 
+                onClick={() => onNavigate(module.id)}
+                className="w-full text-left p-8 border-b border-border-subtle bg-app/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 hover:bg-surface-hover transition-colors"
+              >
                  <div className="flex items-center gap-5">
                     <div className={`w-12 h-12 rounded-none border flex items-center justify-center transition-all duration-300 ${isComplete ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-brand/5 border-brand/20 text-brand'}`}>
                        {isComplete ? <CheckCircle size={20} /> : (Icon ? <Icon size={20} /> : null)}
@@ -149,7 +152,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                     </div>
                  </div>
                  {isComplete && <div className="text-emerald-500/10 hidden sm:block"><Trophy size={48} /></div>}
-              </div>
+              </button>
 
               <div className="p-8 space-y-10">
                  {module.chapters.map(chapter => (

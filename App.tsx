@@ -13,8 +13,10 @@ import { QuizView } from './components/QuizView';
 import { SitemapView } from './views/SitemapView';
 import { CertificateView } from './views/CertificateView';
 import { NewsFeedView } from './views/NewsFeedView';
+import { ModuleOverviewView } from './src/views/ModuleOverviewView';
 import { getTopicById } from './lib/contentHelpers';
 import { NAV_ITEMS } from './lib/navigation-data';
+import { CURRICULUM } from './data/curriculum';
 import { useCourseProgress } from './hooks/useCourseProgress';
 import { useTheme } from './hooks/useTheme';
 import { 
@@ -89,6 +91,7 @@ const App: React.FC = () => {
   const isLabMode = currentPath.startsWith('lab/');
   const labTopicId = isLabMode ? currentPath.replace('lab/', '') : '';
   const currentTopic = getTopicById(currentPath);
+  const currentModule = CURRICULUM.modules.find(m => m.id === currentPath);
   const isQuizMode = currentTopic?.type === 'quiz';
 
   // Determine Content
@@ -99,6 +102,9 @@ const App: React.FC = () => {
   }
   else if (isQuizMode) {
      contentElement = <QuizView topicId={currentPath} onBack={() => navigateTo(ViewSection.DASHBOARD)} onComplete={() => navigateTo(ViewSection.DASHBOARD)} />;
+  }
+  else if (currentModule) {
+     contentElement = <ModuleOverviewView module={currentModule} onNavigate={navigateTo} />;
   }
   else if (currentPath === ViewSection.DASHBOARD) {
      contentElement = <Dashboard onNavigate={navigateTo} />;
