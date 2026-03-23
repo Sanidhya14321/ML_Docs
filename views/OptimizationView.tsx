@@ -206,7 +206,7 @@ export const OptimizationView: React.FC = () => {
           id="gradient-descent"
           title="Gradient Descent"
           complexity="Fundamental"
-          theory="A first-order iterative optimization algorithm for finding the minimum of a cost function. It moves downhill in the direction of the steepest decrease—calculated via the negative of the gradient."
+          theory="A first-order iterative optimization algorithm for finding the minimum of a cost function. It moves downhill in the direction of the steepest decrease—calculated via the negative of the gradient. Advanced variants use Momentum to accelerate descent in relevant directions and dampen oscillations, while Learning Rate Decay (scheduling) reduces the step size over time to ensure stable convergence near the global minimum."
           math={<span>&theta;<sub>t+1</sub> = &theta;<sub>t</sub> - &eta; &nabla;J(&theta;<sub>t</sub>)</span>}
           mathLabel="Parameter Update Vector"
           code={`def update_weights(w, g, lr):
@@ -215,6 +215,8 @@ export const OptimizationView: React.FC = () => {
           cons={['Sensitive to learning rate', 'Can oscillate in ravines', 'Vanishing gradients in deep paths']}
           hyperparameters={[
             { name: 'Learning Rate (η)', description: 'Controls the step size at each iteration. Large values can overshoot the minimum; small values converge slowly.', default: '0.01' },
+            { name: 'Momentum (γ)', description: 'Accelerates gradient descent by navigating along the relevant direction and softening the oscillate in ravines.', default: '0.9' },
+            { name: 'Decay Rate', description: 'Reduces the learning rate over time (e.g., step decay or exponential decay) to fine-tune weights as the model approaches the minimum.', default: '1e-6' },
             { name: 'Iterations (Epochs)', description: 'The number of passes through the entire training dataset.', default: '1000' }
           ]}
           steps={[
