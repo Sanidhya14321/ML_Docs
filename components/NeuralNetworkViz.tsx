@@ -5,10 +5,13 @@ interface Connection {
   d: string;
   weight: number;
   key: string;
+  fromIdx: number;
+  toIdx: number;
 }
 
 export const NeuralNetworkViz: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [selectedNode, setSelectedNode] = useState<{ layer: number; index: number } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,6 +28,7 @@ export const NeuralNetworkViz: React.FC = () => {
   const h1Nodes = [50, 100, 150, 200, 250];
   const h2Nodes = [70, 130, 190, 250];
   const outputNodes = [110, 190];
+  const allNodes = [inputNodes, h1Nodes, h2Nodes, outputNodes];
 
   const createConnections = (nodesLeft: number[], nodesRight: number[], xLeft: number, xRight: number): Connection[] => {
     const paths: Connection[] = [];
@@ -34,7 +38,9 @@ export const NeuralNetworkViz: React.FC = () => {
             paths.push({
                 d: `M ${xLeft} ${nodesLeft[i]} C ${xLeft + (xRight - xLeft)/2} ${nodesLeft[i]}, ${xLeft + (xRight - xLeft)/2} ${nodesRight[j]}, ${xRight} ${nodesRight[j]}`,
                 weight,
-                key: `${xLeft}-${i}-${j}`
+                key: `${xLeft}-${i}-${j}`,
+                fromIdx: i,
+                toIdx: j
             });
         }
     }
@@ -44,13 +50,25 @@ export const NeuralNetworkViz: React.FC = () => {
   const c1 = useMemo(() => createConnections(inputNodes, h1Nodes, layerX[0], layerX[1]), []);
   const c2 = useMemo(() => createConnections(h1Nodes, h2Nodes, layerX[1], layerX[2]), []);
   const c3 = useMemo(() => createConnections(h2Nodes, outputNodes, layerX[2], layerX[3]), []);
+  const connections = [c1, c2, c3];
+
+  const isConnectionHighlighted = (lIdx: number, conn: Connection) => {
+    if (!selectedNode) return false;
+    if (selectedNode.layer === lIdx && selectedNode.index === conn.fromIdx) return true;
+    if (selectedNode.layer === lIdx + 1 && selectedNode.index === conn.toIdx) return true;
+    return false;
+  };
 
   return (
     <div className="w-full h-80 bg-slate-950/50 rounded-3xl border border-slate-800 flex items-center justify-center relative overflow-hidden shadow-inner select-none backdrop-blur-sm">
-       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full p-4">
+       <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="w-full h-full p-4" onClick={() => setSelectedNode(null)}>
           <defs>
             <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="activeGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur"/>
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
             <linearGradient id="forwardGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -61,22 +79,30 @@ export const NeuralNetworkViz: React.FC = () => {
                 <stop offset="0%" stopColor="#f43f5e" />
                 <stop offset="100%" stopColor="#fb7185" />
             </linearGradient>
+            <linearGradient id="highlightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#34d399" />
+            </linearGradient>
           </defs>
 
           {/* Lines */}
-          {[c1, c2, c3].map((layer, lIdx) => (
+          {connections.map((layer, lIdx) => (
               <g key={lIdx}>
-                  {layer.map((conn) => (
-                      <path 
-                        key={conn.key} 
-                        d={conn.d} 
-                        stroke="#1e293b" 
-                        strokeWidth={conn.weight * 1.5} 
-                        fill="none" 
-                        className="transition-all duration-700"
-                        strokeOpacity={activeStep === 0 ? 0.6 : 0.2}
-                      />
-                  ))}
+                  {layer.map((conn) => {
+                      const isHighlighted = isConnectionHighlighted(lIdx, conn);
+                      return (
+                        <path 
+                          key={conn.key} 
+                          d={conn.d} 
+                          stroke={isHighlighted ? "#10b981" : "#1e293b"} 
+                          strokeWidth={isHighlighted ? conn.weight * 3 : conn.weight * 1.5} 
+                          fill="none" 
+                          className="transition-all duration-500"
+                          strokeOpacity={isHighlighted ? 0.8 : (activeStep === 0 ? 0.6 : 0.2)}
+                          filter={isHighlighted ? "url(#nodeGlow)" : ""}
+                        />
+                      );
+                  })}
                   {activeStep === 0 && layer.map((conn) => (
                       <path 
                         key={`${conn.key}-active`}
@@ -106,23 +132,40 @@ export const NeuralNetworkViz: React.FC = () => {
           ))}
 
           {/* Nodes */}
-          {[inputNodes, h1Nodes, h2Nodes, outputNodes].map((layer, lIdx) => (
+          {allNodes.map((layer, lIdx) => (
               <g key={lIdx}>
-                  {layer.map((y, nIdx) => (
-                      <circle 
-                        key={nIdx} 
-                        cx={layerX[lIdx]} 
-                        cy={y} 
-                        r={lIdx === 0 || lIdx === 3 ? 9 : 7} 
-                        fill="#020617" 
-                        stroke={activeStep === 0 ? (lIdx === 0 ? '#6366f1' : '#1e293b') : activeStep === 2 ? '#f43f5e' : '#1e293b'} 
-                        strokeWidth="2" 
-                        filter={activeStep === 0 && lIdx === 0 ? "url(#nodeGlow)" : ""}
-                        className="transition-colors duration-1000"
-                      />
-                  ))}
+                  {layer.map((y, nIdx) => {
+                      const isSelected = selectedNode?.layer === lIdx && selectedNode?.index === nIdx;
+                      return (
+                        <circle 
+                          key={nIdx} 
+                          cx={layerX[lIdx]} 
+                          cy={y} 
+                          r={lIdx === 0 || lIdx === 3 ? 9 : 7} 
+                          fill={isSelected ? "#10b981" : "#020617"} 
+                          stroke={isSelected ? "#34d399" : (activeStep === 0 ? (lIdx === 0 ? '#6366f1' : '#1e293b') : activeStep === 2 ? '#f43f5e' : '#1e293b')} 
+                          strokeWidth={isSelected ? "3" : "2"} 
+                          filter={isSelected ? "url(#activeGlow)" : (activeStep === 0 && lIdx === 0 ? "url(#nodeGlow)" : "")}
+                          className="transition-all duration-300 cursor-pointer hover:stroke-indigo-400"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedNode({ layer: lIdx, index: nIdx });
+                          }}
+                        />
+                      );
+                  })}
               </g>
           ))}
+
+          {/* Tooltip */}
+          {selectedNode && (
+            <g transform={`translate(${layerX[selectedNode.layer] + 15}, ${allNodes[selectedNode.layer][selectedNode.index] - 25})`}>
+              <rect width="70" height="24" rx="6" fill="#0f172a" stroke="#10b981" strokeWidth="1" />
+              <text x="35" y="16" fill="#10b981" fontSize="10" fontWeight="bold" textAnchor="middle" className="font-mono">
+                Act: {(0.1 + Math.random() * 0.9).toFixed(3)}
+              </text>
+            </g>
+          )}
 
           {/* Legend */}
           <g transform="translate(20, 20)">
