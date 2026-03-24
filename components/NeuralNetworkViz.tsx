@@ -12,6 +12,7 @@ interface Connection {
 export const NeuralNetworkViz: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedNode, setSelectedNode] = useState<{ layer: number; index: number } | null>(null);
+  const [hoveredNode, setHoveredNode] = useState<{ layer: number; index: number } | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,13 +152,24 @@ export const NeuralNetworkViz: React.FC = () => {
                             e.stopPropagation();
                             setSelectedNode({ layer: lIdx, index: nIdx });
                           }}
+                          onMouseEnter={() => setHoveredNode({ layer: lIdx, index: nIdx })}
+                          onMouseLeave={() => setHoveredNode(null)}
                         />
                       );
                   })}
               </g>
           ))}
 
-          {/* Tooltip */}
+          {/* Tooltips */}
+          {hoveredNode && (
+            <g transform={`translate(${layerX[hoveredNode.layer] + 15}, ${allNodes[hoveredNode.layer][hoveredNode.index] + 10})`} className="pointer-events-none">
+              <rect width="60" height="18" rx="4" fill="#1e293b" stroke="#475569" strokeWidth="1" opacity="0.9" />
+              <text x="30" y="12" fill="#f1f5f9" fontSize="8" fontWeight="bold" textAnchor="middle" className="font-mono uppercase tracking-tighter">
+                L:{hoveredNode.layer} N:{hoveredNode.index}
+              </text>
+            </g>
+          )}
+
           {selectedNode && (
             <g transform={`translate(${layerX[selectedNode.layer] + 15}, ${allNodes[selectedNode.layer][selectedNode.index] - 25})`}>
               <rect width="70" height="24" rx="6" fill="#0f172a" stroke="#10b981" strokeWidth="1" />
