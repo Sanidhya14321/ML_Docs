@@ -192,16 +192,16 @@ export const TasksView: React.FC = () => {
         </button>
       </form>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex p-1 bg-surface border border-border-strong mb-8 w-fit">
         {(['all', 'active', 'completed'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={cn(
-              "px-4 py-2 text-[10px] font-mono font-black uppercase tracking-widest transition-colors border",
+              "px-6 py-2 text-[10px] font-mono font-black uppercase tracking-widest transition-all duration-200",
               filter === f 
-                ? "bg-brand text-app border-brand" 
-                : "bg-surface text-text-muted border-border-strong hover:border-brand hover:text-text-primary"
+                ? "bg-brand text-app" 
+                : "text-text-muted hover:text-text-primary hover:bg-surface-hover"
             )}
           >
             {f}
