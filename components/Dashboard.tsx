@@ -5,6 +5,7 @@ import { CURRICULUM } from '../data/curriculum';
 import { useCourseProgress } from '../hooks/useCourseProgress';
 import { Play, CheckCircle, Circle, Trophy } from 'lucide-react';
 import { DashboardSkeleton } from './Skeletons';
+import { Hero3D } from './Hero3D';
 
 interface DashboardProps {
   onNavigate: (path: string) => void;
@@ -42,6 +43,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     >
       {/* Hero Section */}
       <header className="relative overflow-hidden rounded-none bg-app border border-border-strong p-8 md:p-12 shadow-sm transition-all duration-300">
+        <Hero3D />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
           <div className="flex-1">
              <div className="flex items-center gap-3 text-brand mb-6">
@@ -104,6 +106,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
              style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
       </header>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { label: 'Overall Progress', value: `${Math.round(overallProgress)}%`, icon: Trophy, color: 'text-brand' },
+          { label: 'Modules Completed', value: `${CURRICULUM.modules.filter(m => isCompleted(m.id)).length}/${CURRICULUM.modules.length}`, icon: CheckCircle, color: 'text-emerald-500' },
+          { label: 'Active Topics', value: `${CURRICULUM.modules.reduce((acc, m) => acc + m.chapters.reduce((acc2, c) => acc2 + c.topics.length, 0), 0)}`, icon: Circle, color: 'text-indigo-500' }
+        ].map((stat, idx) => (
+          <motion.div 
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.1 }}
+            className="bg-surface border border-border-strong p-6 flex items-center gap-6 group hover:border-brand transition-colors"
+          >
+            <div className={`w-12 h-12 flex items-center justify-center bg-app border border-border-strong group-hover:border-brand/30 transition-colors ${stat.color}`}>
+              <stat.icon size={24} />
+            </div>
+            <div>
+              <div className="text-[9px] font-mono font-black text-text-muted uppercase tracking-widest mb-1">{stat.label}</div>
+              <div className="text-2xl font-heading font-black text-text-primary">{stat.value}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
       {/* Dynamic Modules Grid */}
       <motion.div 

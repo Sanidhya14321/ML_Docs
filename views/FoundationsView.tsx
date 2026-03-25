@@ -314,6 +314,39 @@ posterior = (likelihood * prior) / 1.0 # simplified`}
             </div>
         </div>
       </motion.section>
+
+      {/* SECTION 5: SCIKIT-LEARN ESTIMATORS */}
+      <motion.section variants={MOTION_VARIANTS.item} id="estimators" className="scroll-mt-24">
+        <div className="flex items-center gap-6 mb-16">
+            <h2 className="text-3xl font-heading font-black text-text-primary uppercase tracking-tight">05 // ESTIMATOR_BASICS</h2>
+            <div className="h-px bg-border-strong flex-1"></div>
+        </div>
+        <AlgorithmCard
+              id="scikit-estimators" title="FITTING_&_PREDICTING" complexity="Fundamental"
+              theory="Scikit-learn provides a consistent API for all machine learning models. An 'Estimator' is any object that learns from data; it may be a classification, regression or clustering algorithm or a transformer that extracts/filters useful features from raw data."
+              math={<LatexRenderer formula="y_{pred} = f(X_{test}; \theta)" />} mathLabel="Prediction Function"
+              code={`from sklearn.ensemble import RandomForestClassifier
+# 1. Initialize Estimator
+clf = RandomForestClassifier(random_state=0)
+
+# 2. Fit to Data
+X = [[1, 2, 3], [11, 12, 13]] # 2 samples, 3 features
+y = [0, 1] # classes
+clf.fit(X, y)
+
+# 3. Predict New Samples
+clf.predict([[4, 5, 6], [14, 15, 16]])`}
+              pros={['Consistent API across all models', 'Robust documentation', 'Wide range of algorithms']}
+              cons={['Not optimized for deep learning', 'Limited GPU support']}
+              steps={[
+                "Choose an estimator class (e.g., `RandomForestClassifier`).",
+                "Instantiate with hyperparameters: `model = Estimator(param1=val1)`.",
+                "Call `fit(X, y)` to learn from training data.",
+                "Call `predict(X_new)` to generate predictions.",
+                "Use `score(X_test, y_test)` to evaluate performance."
+              ]}
+          />
+      </motion.section>
     </motion.div>
   );
 };

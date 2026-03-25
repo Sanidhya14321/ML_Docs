@@ -744,6 +744,38 @@ prompt = f"Context: {results['documents']}\nQuery: {user_query}"`}
       >
         <RAGViz />
       </AlgorithmCard>
+
+      <AlgorithmCard
+        id="pytorch-nn"
+        title="PyTorch NN Module"
+        complexity="Advanced"
+        theory="PyTorch's `torch.nn` module provides all the building blocks for creating neural networks. It includes layers (Linear, Conv2d, LSTM), activation functions (ReLU, Sigmoid), and loss functions (MSELoss, CrossEntropyLoss). Modules can contain other Modules, allowing for complex hierarchical architectures."
+        math={<span>L(y, ŷ) = &Sigma; (y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup></span>}
+        mathLabel="Mean Squared Error"
+        code={`import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleNet(nn.Module):
+    def __init__(self):
+        super(SimpleNet, self).__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.fc1 = nn.Linear(9216, 128)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        return x`}
+        pros={['Highly flexible and dynamic', 'Pythonic design', 'Excellent community support']}
+        cons={['Steeper learning curve than Keras', 'Requires manual boilerplate for training loops']}
+        steps={[
+            "Define a class inheriting from `nn.Module`.",
+            "Initialize layers in `__init__`.",
+            "Define the forward pass in `forward(x)`.",
+            "Instantiate the model and move to GPU: `model.to('cuda')`.",
+            "Define loss function and optimizer: `criterion = nn.CrossEntropyLoss()`, `optimizer = torch.optim.Adam(model.parameters())`."
+        ]}
+      />
       </motion.div>
     </motion.div>
   );

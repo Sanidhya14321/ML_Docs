@@ -69,6 +69,7 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
     <motion.div 
       id={id} 
       variants={itemVariants}
+      whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
       className="bg-surface border border-border-strong rounded-none overflow-hidden mb-16 shadow-sm scroll-mt-24 transition-all duration-300 group/card"
     >
       <div className="p-6 md:p-8 border-b border-border-strong bg-app/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
