@@ -148,18 +148,18 @@ export const LabWorkspace: React.FC<LabWorkspaceProps> = ({ topicId, onBack }) =
             </div>
           }
           right={
-            <div className="flex flex-col h-full bg-[#1e1e1e]">
+            <div className="flex flex-col h-full bg-app">
               {/* Editor Tabs */}
-              <div className="flex bg-[#1a1a1a] border-b border-white/5 shrink-0">
+              <div className="flex bg-surface border-b border-border-strong shrink-0">
                 <button 
                    onClick={() => setActiveTab('editor')}
-                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'editor' ? 'bg-white/5 text-brand border-brand' : 'text-white/40 border-transparent hover:text-white/60'}`}
+                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'editor' ? 'bg-surface-active text-brand border-brand' : 'text-text-muted border-transparent hover:text-text-primary'}`}
                 >
                   <FileCode size={14} /> SOURCE_CODE
                 </button>
                 <button 
                    onClick={() => setActiveTab('console')}
-                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'console' ? 'bg-white/5 text-white border-brand' : 'text-white/40 border-transparent hover:text-white/60'}`}
+                   className={`px-6 py-3 text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-3 border-b-2 transition-all ${activeTab === 'console' ? 'bg-surface-active text-text-primary border-brand' : 'text-text-muted border-transparent hover:text-text-primary'}`}
                 >
                   <Terminal size={14} /> SYSTEM_CONSOLE {logs.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>}
                 </button>

@@ -66,49 +66,49 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
               <button
                 key={topic.id}
                 onClick={() => handleSelect(topic.id)}
-                className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-surface-hover transition-colors text-left group"
+                className="w-full flex items-center gap-4 p-3 rounded-none hover:bg-surface-hover transition-colors text-left group"
               >
-                <div className="w-10 h-10 rounded-lg bg-surface-hover border border-border-subtle flex items-center justify-center text-text-muted group-hover:text-brand transition-colors">
+                <div className="w-10 h-10 rounded-none bg-surface-hover border border-border-strong flex items-center justify-center text-text-muted group-hover:text-brand transition-colors">
                   {topic.type === 'lab' ? <Terminal size={20} /> : topic.type === 'quiz' ? <Award size={20} /> : <FileText size={20} />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-text-primary truncate">{topic.title}</span>
+                    <span className="font-heading font-black text-text-primary uppercase tracking-tight truncate">{topic.title}</span>
                     <Badge variant="secondary" size="sm" className="capitalize">{topic.type}</Badge>
                   </div>
-                  <p className="text-xs text-text-muted truncate mt-0.5">{topic.description}</p>
+                  <p className="text-[10px] font-mono text-text-muted truncate mt-0.5">{topic.description}</p>
                 </div>
               </button>
             ))}
           </div>
         ) : query.length >= 2 ? (
           <div className="p-12 text-center">
-            <p className="text-text-secondary">No results found for "{query}"</p>
+            <p className="text-text-secondary font-mono">No results found for "{query}"</p>
           </div>
         ) : (
           <div className="p-8">
-             <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-4">Quick Actions</h4>
+             <h4 className="text-[10px] font-mono font-black text-text-muted uppercase tracking-widest mb-4">Quick Actions</h4>
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <button onClick={() => handleSelect('intro')} className="flex items-center gap-3 p-3 rounded-xl bg-surface-hover border border-border-subtle hover:border-brand/30 transition-all text-left">
+                <button onClick={() => handleSelect('intro')} className="flex items-center gap-3 p-3 rounded-none bg-surface-hover border border-border-strong hover:border-brand/30 transition-all text-left">
                     <FileText size={16} className="text-brand" />
-                    <span className="text-sm font-medium">Introduction</span>
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-text-primary">Introduction</span>
                 </button>
-                <button onClick={() => handleSelect('lab-setup')} className="flex items-center gap-3 p-3 rounded-xl bg-surface-hover border border-border-subtle hover:border-brand/30 transition-all text-left">
+                <button onClick={() => handleSelect('lab-setup')} className="flex items-center gap-3 p-3 rounded-none bg-surface-hover border border-border-strong hover:border-brand/30 transition-all text-left">
                     <Terminal size={16} className="text-brand" />
-                    <span className="text-sm font-medium">Lab Setup</span>
+                    <span className="text-[10px] font-mono font-black uppercase tracking-widest text-text-primary">Lab Setup</span>
                 </button>
              </div>
           </div>
         )}
       </div>
 
-      <div className="p-4 bg-surface-hover border-t border-border-subtle flex items-center justify-between text-[10px] text-text-muted">
+      <div className="p-4 bg-surface-hover border-t border-border-strong flex items-center justify-between text-[10px] font-mono text-text-muted uppercase tracking-widest">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1"><Command size={10} /> + K to search</span>
-          <span className="flex items-center gap-1"><kbd className="px-1 rounded bg-zinc-200 dark:bg-zinc-800 border border-border-subtle">ESC</kbd> to close</span>
+          <span className="flex items-center gap-1"><kbd className="px-1 rounded-none bg-surface border border-border-strong">ESC</kbd> to close</span>
         </div>
         <div>
-          <span>Search powered by AI Codex</span>
+          <span>Search powered by AI_CODEX</span>
         </div>
       </div>
     </Modal>

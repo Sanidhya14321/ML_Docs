@@ -29,7 +29,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   return (
     <div
       className={cn(
-        'relative flex shrink-0 overflow-hidden rounded-full bg-surface-hover border border-border-subtle',
+        'relative flex shrink-0 overflow-hidden rounded-none bg-surface-active border border-border-strong',
         sizes[size],
         className
       )}
@@ -44,7 +44,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           className="aspect-square h-full w-full object-cover"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center font-bold text-text-secondary uppercase">
+        <div className="flex h-full w-full items-center justify-center font-mono font-black text-text-muted uppercase">
           {fallback?.slice(0, 2) || '?'}
         </div>
       )}

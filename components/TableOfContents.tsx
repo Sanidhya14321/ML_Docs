@@ -54,8 +54,8 @@ export const TableOfContents: React.FC = () => {
   if (items.length === 0) return null;
 
   return (
-    <div className="hidden xl:block fixed top-32 right-8 w-64 p-6 border-l border-slate-800/50 space-y-4">
-      <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">
+    <div className="hidden xl:block fixed top-32 right-8 w-64 p-6 border-l border-border-strong space-y-4">
+      <div className="flex items-center gap-2 text-[10px] font-mono font-black text-text-muted uppercase tracking-[0.2em] mb-4">
         <List size={12} /> On This Page
       </div>
       <nav className="space-y-3">
@@ -64,26 +64,26 @@ export const TableOfContents: React.FC = () => {
             key={item.id}
             href={`#${item.id}`}
             className={`
-              block text-[11px] font-medium transition-all hover:text-indigo-400
-              ${item.level === 3 ? 'pl-4 text-slate-500' : 'text-slate-400'}
-              ${activeId === item.id ? 'text-indigo-400 font-bold translate-x-1' : ''}
+              block text-[11px] font-mono font-medium transition-all hover:text-brand uppercase tracking-wider
+              ${item.level === 3 ? 'pl-4 text-text-muted' : 'text-text-secondary'}
+              ${activeId === item.id ? 'text-brand font-black translate-x-1' : ''}
             `}
             whileHover={{ x: 2 }}
           >
             <div className="flex items-center gap-2">
-               {activeId === item.id && <motion.div layoutId="active-dot" className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />}
+               {activeId === item.id && <motion.div layoutId="active-dot" className="w-1.5 h-1.5 rounded-none bg-brand shadow-[0_0_8px_var(--color-brand)]" />}
                {item.label}
             </div>
           </motion.a>
         ))}
       </nav>
       
-      <div className="mt-8 pt-8 border-t border-slate-800/50">
-        <div className="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/10">
-          <p className="text-[10px] text-indigo-300 italic leading-relaxed">
+      <div className="mt-8 pt-8 border-t border-border-strong">
+        <div className="p-4 rounded-none bg-brand/5 border border-brand/10">
+          <p className="text-[10px] text-brand italic leading-relaxed font-serif">
             "Everything is theoretically impossible until it is done."
           </p>
-          <p className="text-[9px] text-slate-600 mt-2 font-mono uppercase">— Robert Heinlein</p>
+          <p className="text-[9px] text-text-muted mt-2 font-mono uppercase">— Robert Heinlein</p>
         </div>
       </div>
     </div>

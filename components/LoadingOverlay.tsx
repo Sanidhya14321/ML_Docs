@@ -22,10 +22,10 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
     >
       <div className="relative w-24 h-24 mb-8">
         <motion.div 
-          className="absolute inset-0 border-4 border-slate-200/20 dark:border-slate-800/50 rounded-full"
+          className="absolute inset-0 border-4 border-border-strong rounded-full"
         />
         <motion.div 
-          className="absolute inset-0 border-4 border-t-indigo-500 rounded-full"
+          className="absolute inset-0 border-4 border-t-brand rounded-full"
           animate={{ rotate: 360 }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
         />
@@ -39,7 +39,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-           <BrainCircuit size={28} className="text-slate-400 dark:text-slate-600" />
+           <BrainCircuit size={28} className="text-text-muted" />
         </motion.div>
       </div>
 
@@ -48,9 +48,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-lg font-serif font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2"
+          className="text-lg font-heading font-black text-text-primary flex items-center justify-center gap-2 uppercase tracking-tight"
         >
-          <Sparkles size={16} className="text-indigo-500" />
+          <Sparkles size={16} className="text-brand" />
           {message}
         </motion.h3>
         <motion.div 
@@ -59,12 +59,12 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           transition={{ delay: 0.4 }}
           className="flex flex-col items-center gap-2"
         >
-          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em]">
+          <p className="text-[10px] font-mono font-black text-text-muted uppercase tracking-[0.2em]">
             {subMessage}
           </p>
-          <div className="w-32 h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mt-1">
+          <div className="w-32 h-1 bg-border-strong rounded-none overflow-hidden mt-1">
             <motion.div 
-              className="h-full bg-indigo-500"
+              className="h-full bg-brand"
               animate={{ x: [-130, 130] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -73,7 +73,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       </div>
       
       {/* Background Glow Effect */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand/5 rounded-full blur-3xl pointer-events-none" />
     </motion.div>
   );
 };

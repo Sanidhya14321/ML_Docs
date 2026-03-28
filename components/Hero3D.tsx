@@ -29,7 +29,7 @@ function NeuralParticles() {
     <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#6366f1"
+        color="#00f0ff"
         size={0.01}
         sizeAttenuation={true}
         depthWrite={false}
@@ -55,12 +55,12 @@ function CentralNode() {
       <mesh ref={mesh}>
         <torusKnotGeometry args={[0.4, 0.15, 128, 16]} />
         <MeshDistortMaterial
-          color="#818cf8"
+          color="#00f0ff"
           speed={2}
           distort={0.4}
           radius={1}
           wireframe
-          emissive="#6366f1"
+          emissive="#00f0ff"
           emissiveIntensity={2}
         />
       </mesh>

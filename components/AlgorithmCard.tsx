@@ -60,9 +60,9 @@ export const AlgorithmCard: React.FC<AlgorithmCardProps> = ({
   }
 
   const complexityColors = {
-    'Fundamental': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-    'Intermediate': 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
-    'Advanced': 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
+    'Fundamental': 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+    'Intermediate': 'bg-surface-active text-text-secondary border-border-strong',
+    'Advanced': 'bg-brand/10 text-brand border-brand/20'
   };
 
   return (

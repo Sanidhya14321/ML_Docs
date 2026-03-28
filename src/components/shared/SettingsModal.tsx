@@ -20,7 +20,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       icon: <Sun size={18} />,
       content: (
         <div className="space-y-4">
-          <p className="text-sm text-text-secondary">Customize how AI Codex looks on your device.</p>
+          <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Customize how AI_CODEX looks on your device.</p>
           <div className="grid grid-cols-3 gap-3">
             {[
               { id: 'light', label: 'Light', icon: <Sun size={20} /> },
@@ -31,14 +31,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 key={t.id}
                 onClick={() => setTheme(t.id as any)}
                 className={cn(
-                  'flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all',
+                  'flex flex-col items-center justify-center gap-2 p-4 rounded-none border transition-all',
                   theme === t.id 
                     ? 'bg-brand/5 border-brand text-brand shadow-sm' 
-                    : 'bg-surface border-border-subtle text-text-secondary hover:border-brand/30'
+                    : 'bg-surface border-border-strong text-text-secondary hover:border-brand/30'
                 )}
               >
                 {t.icon}
-                <span className="text-xs font-bold">{t.label}</span>
+                <span className="text-[10px] font-mono font-black uppercase tracking-widest">{t.label}</span>
               </button>
             ))}
           </div>
@@ -51,7 +51,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       icon: <Bell size={18} />,
       content: (
         <div className="space-y-4">
-          <p className="text-sm text-text-secondary">Manage your learning reminders and updates.</p>
+          <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Manage your learning reminders and updates.</p>
           <Button variant="outline" className="w-full justify-start gap-3">
             <Bell size={16} />
             <span>Enable Push Notifications</span>
@@ -65,13 +65,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       icon: <User size={18} />,
       content: (
         <div className="space-y-4">
-          <div className="flex items-center gap-4 p-4 rounded-xl bg-surface-hover border border-border-subtle">
-             <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand font-bold">
+          <div className="flex items-center gap-4 p-4 rounded-none bg-surface-hover border border-border-strong">
+             <div className="w-12 h-12 rounded-none bg-brand/10 flex items-center justify-center text-brand font-heading font-black">
                 JD
              </div>
              <div>
-                <h4 className="font-bold text-text-primary">John Doe</h4>
-                <p className="text-xs text-text-muted">john.doe@example.com</p>
+                <h4 className="font-heading font-black text-text-primary uppercase tracking-tight">John Doe</h4>
+                <p className="text-[10px] font-mono text-text-muted">john.doe@example.com</p>
              </div>
           </div>
           <Button variant="destructive" className="w-full gap-2">
@@ -96,10 +96,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           <div key={section.id} className="space-y-4">
             <div className="flex items-center gap-2 text-text-primary">
               <span className="text-brand">{section.icon}</span>
-              <h3 className="font-bold tracking-tight">{section.title}</h3>
+              <h3 className="font-heading font-black uppercase tracking-tight">{section.title}</h3>
             </div>
             {section.content}
-            <div className="h-px bg-border-subtle last:hidden" />
+            <div className="h-px bg-border-strong last:hidden" />
           </div>
         ))}
       </div>

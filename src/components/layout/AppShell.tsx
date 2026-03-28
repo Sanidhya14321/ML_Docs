@@ -12,10 +12,23 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ children, currentPath, onNavigate }) => {
-  const { isSidebarOpen } = useUIStore();
+  const { isSidebarOpen, setSidebarOpen } = useUIStore();
 
   return (
     <div className="flex h-screen bg-app text-text-primary overflow-hidden font-sans">
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <SidebarContent currentPath={currentPath} onNavigate={onNavigate} />
 

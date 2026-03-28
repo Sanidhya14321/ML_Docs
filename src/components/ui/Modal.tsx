@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-app/80 backdrop-blur-sm"
           />
 
           {/* Modal Content */}
@@ -72,7 +72,7 @@ export const Modal: React.FC<ModalProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className={cn(
-              'relative w-full bg-surface border border-border-subtle rounded-2xl shadow-2xl flex flex-col overflow-hidden',
+              'relative w-full bg-surface border border-border-strong rounded-none shadow-2xl flex flex-col overflow-hidden',
               sizes[size],
               className
             )}
@@ -81,12 +81,12 @@ export const Modal: React.FC<ModalProps> = ({
             <div className="flex items-start justify-between p-6 pb-4">
               <div className="space-y-1">
                 {title && (
-                  <h2 className="text-xl font-bold text-text-primary leading-none tracking-tight">
+                  <h2 className="text-xl font-heading font-black text-text-primary uppercase tracking-tight">
                     {title}
                   </h2>
                 )}
                 {description && (
-                  <p className="text-sm text-text-secondary">
+                  <p className="text-sm text-text-muted font-mono">
                     {description}
                   </p>
                 )}
@@ -95,7 +95,7 @@ export const Modal: React.FC<ModalProps> = ({
                 variant="ghost"
                 size="xs"
                 onClick={onClose}
-                className="rounded-full w-8 h-8 p-0"
+                className="rounded-none w-8 h-8 p-0 border border-border-strong hover:border-brand"
                 aria-label="Close modal"
               >
                 <X size={18} />
@@ -109,7 +109,7 @@ export const Modal: React.FC<ModalProps> = ({
 
             {/* Footer */}
             {footer && (
-              <div className="flex items-center justify-end gap-3 p-6 pt-4 bg-surface-hover border-t border-border-subtle">
+              <div className="flex items-center justify-end gap-3 p-6 pt-4 bg-surface-active border-t border-border-strong">
                 {footer}
               </div>
             )}

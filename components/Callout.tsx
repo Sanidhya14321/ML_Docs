@@ -14,31 +14,31 @@ interface CalloutProps {
 const variants = {
   note: {
     icon: Info,
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    titleColor: 'text-blue-300'
+    color: 'text-brand',
+    bg: 'bg-brand/5',
+    border: 'border-brand/20',
+    titleColor: 'text-brand'
   },
   warning: {
     icon: AlertTriangle,
-    color: 'text-amber-400',
-    bg: 'bg-amber-500/10',
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/5',
     border: 'border-amber-500/20',
-    titleColor: 'text-amber-300'
+    titleColor: 'text-amber-500'
   },
   tip: {
     icon: Lightbulb,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/10',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/5',
     border: 'border-emerald-500/20',
-    titleColor: 'text-emerald-300'
+    titleColor: 'text-emerald-500'
   },
   danger: {
     icon: Flame,
-    color: 'text-rose-400',
-    bg: 'bg-rose-500/10',
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/5',
     border: 'border-rose-500/20',
-    titleColor: 'text-rose-300'
+    titleColor: 'text-rose-500'
   }
 };
 
@@ -52,21 +52,21 @@ export const Callout: React.FC<CalloutProps> = ({ type = 'note', title, children
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       whileHover={{ scale: 1.01 }}
-      className={`relative my-8 p-5 rounded-2xl border ${style.bg} ${style.border} overflow-hidden group`}
+      className={`relative my-8 p-6 rounded-none border ${style.bg} ${style.border} overflow-hidden group`}
     >
-      <div className={`absolute top-0 left-0 w-1 h-full ${style.bg.replace('/10', '/50')}`} />
+      <div className={`absolute top-0 left-0 w-1 h-full ${style.bg.replace('/5', '/50')}`} />
       
       <div className="flex gap-4">
-        <div className={`mt-0.5 p-2 rounded-lg bg-slate-950/50 ${style.color} shadow-sm h-fit`}>
+        <div className={`mt-0.5 p-2 rounded-none bg-surface border border-border-strong ${style.color} shadow-sm h-fit`}>
           <Icon size={18} />
         </div>
         <div className="flex-1">
           {title && (
-            <h4 className={`text-sm font-bold uppercase tracking-wide mb-2 ${style.titleColor}`}>
+            <h4 className={`text-[10px] font-mono font-black uppercase tracking-widest mb-2 ${style.titleColor}`}>
               {title}
             </h4>
           )}
-          <div className="text-sm text-slate-300 leading-relaxed">
+          <div className="text-sm text-text-secondary leading-relaxed font-light">
             {children}
           </div>
         </div>

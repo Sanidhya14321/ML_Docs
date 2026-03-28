@@ -20,7 +20,7 @@ export const Navbar: React.FC = () => {
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="md:hidden rounded-none"
+          className="rounded-none"
           aria-label="Toggle menu"
         >
           <Menu size={18} />

@@ -28,10 +28,10 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems,
   if (!breadcrumbPath || currentPath === ViewSection.DASHBOARD) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap scrollbar-hide px-1">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-[11px] font-mono font-medium text-text-muted overflow-x-auto whitespace-nowrap scrollbar-hide px-1">
       <button 
         onClick={() => onNavigate(ViewSection.DASHBOARD)}
-        className="hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors flex items-center gap-1 p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800"
+        className="hover:text-brand transition-colors flex items-center gap-1 p-1.5 rounded-none hover:bg-surface-hover"
         title="Back to Dashboard"
       >
         <Home size={14} />
@@ -39,15 +39,15 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ currentPath, navItems,
       
       {breadcrumbPath.map((item, idx) => (
         <React.Fragment key={item.id}>
-            <ChevronRight size={12} className="text-slate-400 dark:text-slate-600 shrink-0" />
+            <ChevronRight size={12} className="text-text-secondary shrink-0" />
             <button
                 onClick={() => onNavigate(item.id)}
                 disabled={idx === breadcrumbPath.length - 1}
                 className={`
-                    px-2 py-1 rounded transition-all truncate max-w-[120px] sm:max-w-[200px] flex items-center
+                    px-2 py-1 rounded-none transition-all truncate max-w-[120px] sm:max-w-[200px] flex items-center uppercase tracking-wider
                     ${idx === breadcrumbPath.length - 1 
-                        ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-500/10 cursor-default ring-1 ring-indigo-500/20' 
-                        : 'hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}
+                        ? 'text-brand font-black bg-brand/10 cursor-default ring-1 ring-brand/20' 
+                        : 'hover:text-text-primary hover:bg-surface-hover'}
                 `}
             >
                 {item.label}

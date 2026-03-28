@@ -189,8 +189,8 @@ export const SidebarContent: React.FC<SidebarProps> = ({ currentPath, onNavigate
 
   return (
     <aside className={cn(
-      'fixed inset-y-0 left-0 z-40 w-72 bg-surface border-r border-border-strong transition-transform duration-normal md:relative md:translate-x-0 flex flex-col',
-      !isSidebarOpen && '-translate-x-full'
+      'fixed inset-y-0 left-0 z-40 w-72 bg-surface border-r border-border-strong transition-all duration-normal flex flex-col',
+      !isSidebarOpen ? '-translate-x-full md:w-0 md:border-r-0 md:overflow-hidden' : 'translate-x-0 md:relative'
     )}>
       {/* Brand Header */}
       <div className="p-8 border-b border-border-strong bg-app/30">

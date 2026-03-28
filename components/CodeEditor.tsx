@@ -41,11 +41,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const lines = Array.from({ length: Math.max(lineCount, 15) }, (_, i) => i + 1);
 
   return (
-    <div className="relative h-full w-full flex bg-[#1e1e1e] font-mono text-sm overflow-hidden group">
+    <div className="relative h-full w-full flex bg-app font-mono text-sm overflow-hidden group">
       {/* Line Numbers Gutter */}
       <div 
         ref={lineNumbersRef}
-        className="w-12 pt-4 pb-4 pr-2 text-right text-slate-600 bg-[#1e1e1e] border-r border-[#333] select-none overflow-hidden"
+        className="w-12 pt-4 pb-4 pr-2 text-right text-text-muted bg-surface border-r border-border-strong select-none overflow-hidden"
       >
         {lines.map(line => (
           <div key={line} className="leading-6 h-6">{line}</div>
@@ -61,7 +61,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             onScroll={handleScroll}
             readOnly={readOnly}
             spellCheck={false}
-            className="absolute inset-0 w-full h-full bg-transparent text-slate-300 p-4 pl-4 leading-6 resize-none outline-none border-none focus:ring-0 selection:bg-indigo-500/30 font-mono"
+            className="absolute inset-0 w-full h-full bg-transparent text-text-primary p-4 pl-4 leading-6 resize-none outline-none border-none focus:ring-0 selection:bg-brand/30 font-mono"
             style={{ tabSize: 4 }}
          />
       </div>
@@ -70,7 +70,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
         <button
             onClick={handleCopy}
-            className="p-2 rounded-lg bg-slate-800/90 text-slate-400 hover:text-white hover:bg-slate-700 border border-slate-700 shadow-xl backdrop-blur-sm transition-all"
+            className="p-2 rounded-none bg-surface/90 text-text-muted hover:text-text-primary hover:bg-surface-hover border border-border-strong shadow-xl backdrop-blur-sm transition-all"
             title="Copy Code"
         >
             <AnimatePresence mode="wait">
@@ -89,7 +89,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
       {/* Language Badge */}
       <div className="absolute bottom-2 right-4 pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity">
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-800/50 px-2 py-1 rounded">
+        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted bg-surface/50 px-2 py-1 border border-border-strong">
             {language}
         </span>
       </div>

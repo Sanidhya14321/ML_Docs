@@ -10,10 +10,10 @@ interface CardProps extends HTMLMotionProps<'div'> {
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = 'default', isHoverable, children, ...props }, ref) => {
     const variants = {
-      default: 'bg-surface border-border-subtle shadow-sm',
+      default: 'bg-surface border-border-strong shadow-sm',
       outline: 'bg-transparent border-border-strong',
       ghost: 'bg-transparent border-transparent',
-      glass: 'bg-surface/60 backdrop-blur-md border-white/10 dark:border-zinc-800/50 shadow-lg',
+      glass: 'bg-surface/60 backdrop-blur-md border-border-strong shadow-lg',
     };
 
     return (
@@ -21,9 +21,9 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         whileHover={isHoverable ? { y: -4, transition: { duration: 0.2 } } : undefined}
         className={cn(
-          'rounded-xl border transition-all duration-normal overflow-hidden',
+          'rounded-none border transition-all duration-normal overflow-hidden',
           variants[variant],
-          isHoverable && 'hover:shadow-md hover:border-brand/30',
+          isHoverable && 'hover:shadow-md hover:border-brand/50',
           className
         )}
         {...props}
@@ -39,11 +39,11 @@ export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ cla
 );
 
 export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ className, ...props }) => (
-  <h3 className={cn('text-xl font-bold text-text-primary leading-none tracking-tight', className)} {...props} />
+  <h3 className={cn('text-xl font-heading font-black text-text-primary uppercase tracking-tight', className)} {...props} />
 );
 
 export const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ className, ...props }) => (
-  <p className={cn('text-sm text-text-secondary', className)} {...props} />
+  <p className={cn('text-sm text-text-muted font-mono', className)} {...props} />
 );
 
 export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => (

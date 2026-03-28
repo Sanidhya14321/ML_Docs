@@ -22,7 +22,7 @@ export const LabConsole: React.FC<LabConsoleProps> = ({ logs, onClear, isRunning
     switch (type) {
         case 'error': return 'text-rose-400';
         case 'system': return 'text-emerald-400 font-bold';
-        default: return 'text-slate-300';
+        default: return 'text-text-secondary';
     }
   };
 
@@ -35,16 +35,16 @@ export const LabConsole: React.FC<LabConsoleProps> = ({ logs, onClear, isRunning
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0f1117] font-mono text-xs">
+    <div className="flex flex-col h-full bg-app font-mono text-xs">
       {/* Console Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-[#1e1e1e]">
-        <div className="flex items-center gap-2 text-slate-400">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border-strong bg-surface">
+        <div className="flex items-center gap-2 text-text-muted">
            <Terminal size={14} />
            <span className="font-bold uppercase tracking-wider text-[10px]">Output Terminal</span>
         </div>
         <button 
            onClick={onClear}
-           className="p-1.5 text-slate-500 hover:text-white rounded-md hover:bg-slate-700 transition-colors"
+           className="p-1.5 text-text-muted hover:text-text-primary rounded-none hover:bg-surface-hover transition-colors"
            title="Clear Console"
         >
            <Trash2 size={14} />
@@ -57,7 +57,7 @@ export const LabConsole: React.FC<LabConsoleProps> = ({ logs, onClear, isRunning
             {logs.length === 0 && !isRunning && (
                 <motion.div 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="text-slate-600 italic flex items-center gap-2 mt-2"
+                    className="text-text-muted italic flex items-center gap-2 mt-2"
                 >
                     <Info size={14} /> Ready to execute...
                 </motion.div>
@@ -83,9 +83,9 @@ export const LabConsole: React.FC<LabConsoleProps> = ({ logs, onClear, isRunning
             {isRunning && (
                 <motion.div 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="flex items-center gap-2 text-indigo-400 mt-2"
+                    className="flex items-center gap-2 text-brand mt-2"
                 >
-                    <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+                    <span className="w-2 h-2 bg-brand rounded-full animate-pulse" />
                     Running...
                 </motion.div>
             )}

@@ -55,8 +55,8 @@ export const ResizableLayout: React.FC<ResizableLayoutProps> = ({
   // Mobile Layout: Vertical Stack
   if (isMobile) {
     return (
-      <div className="flex flex-col h-full w-full overflow-hidden bg-[#020617]">
-         <div className="h-1/2 overflow-y-auto border-b border-slate-800 relative z-10">
+      <div className="flex flex-col h-full w-full overflow-hidden bg-app">
+         <div className="h-1/2 overflow-y-auto border-b border-border-strong relative z-10">
             {left}
          </div>
          <div className="h-1/2 overflow-hidden bg-[#1e1e1e] relative z-0">
@@ -85,8 +85,8 @@ export const ResizableLayout: React.FC<ResizableLayoutProps> = ({
         style={{ left: `${leftWidth}%` }}
         onMouseDown={startDragging}
       >
-        <div className={`w-[1px] h-full transition-colors ${isDragging ? 'bg-indigo-500' : 'bg-slate-800 group-hover:bg-indigo-500/50'}`} />
-        <div className={`absolute p-1 rounded bg-slate-800 border border-slate-700 text-slate-500 transition-colors ${isDragging ? 'text-indigo-400 border-indigo-500' : 'group-hover:text-slate-300'}`}>
+        <div className={`w-[1px] h-full transition-colors ${isDragging ? 'bg-brand' : 'bg-border-strong group-hover:bg-brand/50'}`} />
+        <div className={`absolute p-1 rounded-none bg-surface border border-border-strong text-text-muted transition-colors ${isDragging ? 'text-brand border-brand' : 'group-hover:text-text-primary'}`}>
            <GripVertical size={12} />
         </div>
       </div>
