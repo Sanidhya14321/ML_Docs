@@ -7,6 +7,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { CourseProvider } from './contexts/CourseContext';
 
 window.addEventListener('error', (e) => {
+  fetch('/api/log_error', { method: 'POST', body: JSON.stringify({ message: e.message, stack: e.error?.stack }) });
   const errDiv = document.createElement('div');
   errDiv.style.position = 'fixed';
   errDiv.style.top = '0';
@@ -21,6 +22,7 @@ window.addEventListener('error', (e) => {
 });
 
 window.addEventListener('unhandledrejection', (e) => {
+  fetch('/api/log_error', { method: 'POST', body: JSON.stringify({ message: e.reason?.message, stack: e.reason?.stack }) });
   const errDiv = document.createElement('div');
   errDiv.style.position = 'fixed';
   errDiv.style.top = '0';
